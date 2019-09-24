@@ -42,6 +42,13 @@ Route::group([
 
     // post
     Route::resource('post', 'PostController');
+    Route::group([
+        'prefix' => 'post'
+    ], function () {
+        Route::patch('/{id}/like', 'PostController@like');
+        Route::patch('/{id}/dislike', 'PostController@dislike');
+        Route::get('/{id}/liked_users', 'PostController@likedUsers');
+    });
 
     // user
     Route::group([
@@ -50,5 +57,6 @@ Route::group([
         Route::get('/info', 'UserController@info');
         Route::get('/follow', 'UserController@follow');
         Route::get('/follow_me', 'UserController@followMe');
+        Route::get('/liked_posts', 'UserController@likedPosts');
     });
 });

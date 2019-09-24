@@ -19,7 +19,7 @@ class UserController extends Controller
      */
     public function follow(Request $request)
     {
-        return response()->json(auth()->user()->follows()->get());
+        return response()->json(auth()->user()->follows->all());
     }
 
     /**
@@ -27,6 +27,18 @@ class UserController extends Controller
      */
     public function followMe(Request $request)
     {
-        return response()->json(auth()->user()->followMes()->get());
+        return response()->json(auth()->user()->followMes->all());
+    }
+
+    /**
+     * liked posts
+     */
+    public function likedPosts(Request $request)
+    {
+        $posts = auth()->user()->load(['likePosts' => function ($query) {
+            $query->where('is_liked', \App\Models\PostLike::IS_LIKED_LIKE)
+                ->orderBy('updated_at', 'desc');
+        }])->likePosts->all();
+        return response()->json($posts);
     }
 }

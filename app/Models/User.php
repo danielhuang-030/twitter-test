@@ -70,24 +70,12 @@ class User extends Authenticatable
     }
 
     /**
-     * get API token
+     * like posts
      *
-     * @param integer $length
-     * @return string
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
      */
-    public static function getApiToken(int $length = 60)
+    public function likePosts()
     {
-        return Str::random($length);
-    }
-
-    /**
-     * update api token
-     */
-    public function updateApiToken()
-    {
-        do {
-            $this->api_token = static::getApiToken();
-        } while ($this->where('api_token', $this->api_token)->exists());
-        $this->save();
+        return $this->hasManyThrough(Post::class, PostLike::class, 'user_id', 'id', null, 'post_id');
     }
 }

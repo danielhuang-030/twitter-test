@@ -102,4 +102,61 @@ class PostController extends Controller
             'message' => 'Successfully deleted post!'
         ]);
     }
+
+    /**
+     * like
+     *
+     * @param int $id
+     */
+    public function like($id)
+    {
+        if (!$this->postService->like($id, auth()->user()->id)) {
+            return response()->json([
+                'message' => 'error'
+            ], 403);
+        }
+
+        return response()->json([
+            'message' => 'Successfully liked post!'
+        ]);
+    }
+
+    /**
+     * dislike
+     *
+     * @param int $id
+     */
+    public function dislike($id)
+    {
+        if (!$this->postService->dislike($id, auth()->user()->id)) {
+            return response()->json([
+                'message' => 'error'
+            ], 403);
+        }
+
+        return response()->json([
+            'message' => 'Successfully disliked post!'
+        ]);
+    }
+
+    /**
+     * liked users
+     *
+     * @param int $id
+     */
+    public function likedUsers($id)
+    {
+        $post = $this->postService->find($id);
+        if (null === $post) {
+            return response()->json([
+                'message' => 'error'
+            ], 403);
+        }
+
+        $users = $post->load(['likedUsers' => function ($query) {
+            $query->where('is_liked', \App\Models\PostLike::IS_LIKED_LIKE)
+                ->orderBy('updated_at', 'desc');
+        }])->likedUsers->all();
+        return response()->json($users);
+    }
 }

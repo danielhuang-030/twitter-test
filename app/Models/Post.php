@@ -17,4 +17,14 @@ class Post extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * liked users
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function likedUsers()
+    {
+        return $this->hasManyThrough(User::class, PostLike::class, 'post_id', 'id', null, 'user_id');
+    }
 }
