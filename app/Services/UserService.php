@@ -34,6 +34,6 @@ class UserService
     {
         $data['password'] = bcrypt($data['password']);
 
-        return $this->user->create($data);
+        return $this->userRepository->create($data);
     }
 }
