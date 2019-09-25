@@ -9,12 +9,6 @@ git clone https://github.com/danielhuang-030/twitter_test.git
 # composer install
 composer install
 
-# horizon install
-php artisan horizon:install
-
-# passport install
-php artisan passport:install
-
 # copy .env and setting db
 cp .env.example .env
 vi .env
@@ -28,6 +22,12 @@ php artisan key:generate
 
 # db migrate
 php artisan migrate
+
+# horizon install
+php artisan horizon:install
+
+# passport install
+php artisan passport:install
 
 # run horizon
 php artisan horizon
