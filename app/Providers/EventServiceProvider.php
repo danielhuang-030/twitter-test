@@ -21,6 +21,9 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\PostCreated' => [
             'App\Listeners\NotifyFollowers',
         ],
+        'Laravel\Passport\Events\AccessTokenCreated' => [
+            'App\Listeners\RevokeExistingTokens',
+        ],
     ];
 
     /**

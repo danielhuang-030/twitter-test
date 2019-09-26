@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 
 class UserRepository
 {
@@ -32,5 +33,16 @@ class UserRepository
     public function create(array $data)
     {
         return $this->user->create($data);
+    }
+
+    /**
+     * find
+     *
+     * @param int|array $id
+     * @return User|Collection
+     */
+    public function find($id)
+    {
+        return $this->user->find($id);
     }
 }
