@@ -7,8 +7,8 @@ jobs:
         environment:
             MYSQL_HOST: 127.0.0.1
             MYSQL_DB: testing
-            MYSQL_USER: root
-            MYSQL_ROOT_PASSWORD: root
+            # MYSQL_USER: root
+            # MYSQL_ROOT_PASSWORD: root
       - image: mysql:5.7
         command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --innodb-use-native-aio=0 --server-id=1 --log_bin=ON
         environment:
