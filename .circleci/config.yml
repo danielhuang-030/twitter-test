@@ -1,0 +1,66 @@
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: circleci/php:7.3-node-browsers
+        environment:
+            MYSQL_HOST: 127.0.0.1
+            MYSQL_DB: testing
+            MYSQL_USER: root
+            MYSQL_PASSWORD: root
+      - image: mysql:5.7
+        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --innodb-use-native-aio=0 --server-id=1 --log_bin=ON
+        environment:
+            MYSQL_USER: root
+            MYSQL_PASSWORD: root
+
+    working_directory: ~/myapp
+
+    steps:
+      - checkout
+      - run: sudo apt install -y libsqlite3-dev zlib1g-dev
+      - run: sudo apt install -y mysql-client
+      - run: sudo docker-php-ext-install zip
+      - run: sudo docker-php-ext-install pdo_mysql
+      - run: sudo composer self-update
+      - restore_cache:
+          keys:
+              - composer-v1-{{ checksum "composer.lock" }}
+              - composer-v1-
+      - run: cp .env.testing .env
+      - run: composer install -n --ignore-platform-reqs
+      - save_cache:
+          key: composer-v1-{{ checksum "composer.lock" }}
+          paths:
+              - vendor
+      - restore_cache: # special step to restore the dependency cache if `package.json` does not change
+          keys:
+              - node-v1-{{ checksum "package.json" }}
+              # fallback to using the latest cache if no exact match is found (See https://circleci.com/docs/2.0/caching/)
+              - node-v1-
+      - run: npm install
+      - save_cache: # special step to save the dependency cache with the `package.json` cache key template
+          key: node-v1-{{ checksum "package.json" }}
+          paths:
+              - node_modules
+      - run: npm run production
+      - run:
+          name: Mysql database
+          command: mysql -h 127.0.0.1 -u root -p root -e "create database testing;"
+      - run: php artisan key:generate
+      - run: php artisan migrate
+      - run: php artisan horizon:install
+      - run: php artisan passport:install
+      - run:
+          name: Run Laravel Server
+          command: php artisan serve
+          background: true
+      - run: vendor/bin/phpunit
+      # - run:
+      #     name: Start Chrome Driver
+      #     command: ./vendor/laravel/dusk/bin/chromedriver-linux
+      #     background: true
+      # - run:
+      #     name: Run Laravel Dusk Tests
+      #     command: php artisan dusk
