@@ -47,7 +47,7 @@ jobs:
       - run: npm run production
       - run:
           name: Mysql database
-          command: mysql -h 127.0.0.1 -uroot -proot -e "create database testing;"
+          command: mysql -h 127.0.0.1 -uroot -proot -e "CREATE DATABASE testing;"
       - run: php artisan key:generate
       - run: php artisan migrate
       - run: php artisan horizon:install
