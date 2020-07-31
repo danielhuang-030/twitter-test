@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\SignupRequest;
 
 class AuthController extends Controller
 {
@@ -30,21 +31,19 @@ class AuthController extends Controller
     /**
      * signup
      *
-     * @param Request $request
+     * @param SignupRequest $request
      */
-    public function signup(Request $request)
+    public function signup(SignupRequest $request)
     {
-        $r = $request->validate([
-            'name'     => 'required|string',
-            'email'    => 'required|string|email|unique:users',
-            'password' => 'required|string|confirmed'
-        ]);
-
-        $user = $this->userService->create([
-            'name'     => $request->input('name'),
-            'email'    => $request->input('email'),
-            'password' => $request->input('password'),
-        ]);
+        if (null === $this->userService->create($request->only([
+            'name',
+            'email',
+            'password',
+        ]))) {
+            return response()->json([
+                'message' => 'Failed to create user!'
+            ], 201);
+        }
 
         return response()->json([
             'message' => 'Successfully created user!'

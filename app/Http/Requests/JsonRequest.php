@@ -10,7 +10,7 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 abstract class JsonRequest extends FormRequest
 {
     /**
-     * Undocumented function
+     * failed validation
      *
      * @param Validator $validator
      * @return void
