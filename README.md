@@ -37,7 +37,7 @@ php artisan horizon
 ### API info
 
 * login
-  * POST /api/auth/login
+  * POST /api/login
     * Content-Type: application/json
     * JSON
 ```
@@ -48,7 +48,7 @@ php artisan horizon
 ```
 
 * signup
-  * POST /api/auth/signup
+  * POST /api/signup
     * Content-Type: application/json
     * JSON
 ```

@@ -2,14 +2,13 @@
 
 namespace App\Listeners;
 
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Repositories\UserRepository;
+use Laravel\Passport\Events\AccessTokenCreated;
 
 class RevokeExistingTokens
 {
     /**
-     * UserRepository
+     * UserRepository.
      *
      * @var UserRepository
      */
@@ -28,10 +27,11 @@ class RevokeExistingTokens
     /**
      * Handle the event.
      *
-     * @param  object  $event
+     * @param AccessTokenCreated $event
+     *
      * @return void
      */
-    public function handle($event)
+    public function handle(AccessTokenCreated $event)
     {
         $user = $this->userRepository->find($event->userId);
         if (null === $user) {
@@ -43,7 +43,7 @@ class RevokeExistingTokens
             ->limit(\PHP_INT_MAX)
             ->get()
             ->map(function ($token) {
-                $token->revoke();
-        });
+                $token->delete();
+            });
     }
 }
