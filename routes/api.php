@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -20,11 +18,10 @@ Route::group([
 });
 
 Route::group([
-    'middleware' => 'auth:api'
+    'middleware' => 'auth:api',
 ], function () {
-    // auth
+    // user
     Route::group([
-        'prefix' => 'auth'
     ], function () {
         Route::get('logout', 'AuthController@logout');
         Route::get('user', 'AuthController@user');
@@ -32,7 +29,7 @@ Route::group([
 
     // follow
     Route::group([
-        'prefix' => 'follow'
+        'prefix' => 'follow',
     ], function () {
         Route::get('/', 'FollowController@index');
         Route::post('/{id}', 'FollowController@store');
@@ -42,7 +39,7 @@ Route::group([
     // post
     Route::resource('post', 'PostController');
     Route::group([
-        'prefix' => 'post'
+        'prefix' => 'post',
     ], function () {
         Route::patch('/{id}/like', 'PostController@like');
         Route::patch('/{id}/dislike', 'PostController@dislike');
@@ -51,7 +48,7 @@ Route::group([
 
     // user
     Route::group([
-        'prefix' => 'user'
+        'prefix' => 'user',
     ], function () {
         Route::get('/info', 'UserController@info');
         Route::get('/follow', 'UserController@follow');

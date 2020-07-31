@@ -3,11 +3,17 @@
 namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Gate;
 use Laravel\Passport\Passport;
 
 class AuthServiceProvider extends ServiceProvider
 {
+    /**
+     * expire days.
+     *
+     * @var int
+     */
+    const EXPIRE_DAYS = 14;
+
     /**
      * The policy mappings for the application.
      *
@@ -27,6 +33,11 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         // passport routes
-        Passport::routes();
+        // Passport::routes();
+
+        $expireTime = now()->addDays(static::EXPIRE_DAYS);
+        Passport::tokensExpireIn($expireTime);
+        Passport::refreshTokensExpireIn($expireTime);
+        Passport::personalAccessTokensExpireIn($expireTime);
     }
 }
