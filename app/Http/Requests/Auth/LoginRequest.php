@@ -14,9 +14,13 @@ class LoginRequest extends JsonRequest
     public function rules()
     {
         return [
-            'email'       => 'required|string|email',
-            'password'    => 'required|string',
-            'remember_me' => 'boolean',
+            'email'       => [
+                'required',
+                'email',
+            ],
+            'password'    => [
+                'required',
+            ],
         ];
     }
 }
