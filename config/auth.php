@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\User;
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -13,7 +15,7 @@ return [
     */
 
     'defaults' => [
-        'guard'     => 'web',
+        'guard'     => 'api',
         'passwords' => 'users',
     ],
 
@@ -43,7 +45,6 @@ return [
         'api' => [
             'driver'   => 'passport',
             'provider' => 'users',
-            // 'hash'     => false,
         ],
     ],
 
@@ -67,7 +68,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model'  => App\Models\User::class,
+            'model'  => User::class,
         ],
 
         // 'users' => [
