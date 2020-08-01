@@ -15,13 +15,14 @@ class NotifyFollowers implements ShouldQueue
      * Handle the event.
      *
      * @param PostCreated $event
+     *
      * @return void
      */
     public function handle(PostCreated $event)
     {
-        $post      = $event->post;
-        $user      = $post->user;
-        $followers = $user->followMes;
+        $post = $event->post;
+        $user = $post->user;
+        $followers = $user->followers;
         if (0 === $followers->count()) {
             return;
         }

@@ -16,19 +16,19 @@ class UserController extends Controller
     }
 
     /**
-     * follow.
+     * following.
      */
     public function follow(Request $request, int $id = 0)
     {
-        return response()->json(Auth::user()->follows->all());
+        return response()->json(Auth::user()->following->all());
     }
 
     /**
-     * followed.
+     * followers.
      */
     public function followMe(Request $request)
     {
-        return response()->json(Auth::user()->followMes->all());
+        return response()->json(Auth::user()->followers->all());
     }
 
     /**
