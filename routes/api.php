@@ -33,11 +33,12 @@ Route::group([
     ], function () {
         Route::patch('{id}/like', 'PostController@like');
         Route::patch('{id}/dislike', 'PostController@dislike');
-        Route::patch('{id}/liked_users', 'PostController@likedUsers');
-        Route::patch('{id}/disliked_users', 'PostController@dislikedUsers');
+        Route::get('{id}/liked_users', 'PostController@likedUsers');
     });
     Route::resource('posts', 'PostController')->only([
+        'show',
         'store',
+        'update',
         'destroy',
     ]);
 
@@ -50,6 +51,5 @@ Route::group([
         Route::get('{id}/followers', 'UserController@followers');
         Route::get('{id}/posts', 'UserController@posts');
         Route::get('{id}/liked_posts', 'UserController@likedPosts');
-        Route::get('{id}/disliked_posts', 'UserController@dislikedPosts');
     });
 });

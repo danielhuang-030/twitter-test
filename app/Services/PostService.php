@@ -3,29 +3,30 @@
 namespace App\Services;
 
 use App\Models\Post;
-use App\Repositories\PostRepository;
+use App\Models\PostLike;
 use App\Repositories\PostLikeRepository;
+use App\Repositories\PostRepository;
 
 class PostService
 {
     /**
-     * PostRepository
+     * PostRepository.
      *
      * @var PostRepository
      */
     protected $postRepository;
 
     /**
-     * PostLikeRepository
+     * PostLikeRepository.
      *
      * @var PostLikeRepository
      */
     protected $postLikeRepository;
 
     /**
-     * construct
+     * construct.
      *
-     * @param PostRepository $postRepository
+     * @param PostRepository     $postRepository
      * @param PostLikeRepository $postLikeRepository
      */
     public function __construct(PostRepository $postRepository, PostLikeRepository $postLikeRepository)
@@ -35,10 +36,11 @@ class PostService
     }
 
     /**
-     * add
+     * add.
      *
      * @param array $requestData
-     * @param integer $userId
+     * @param int   $userId
+     *
      * @return Post
      */
     public function add(array $requestData, int $userId)
@@ -47,9 +49,10 @@ class PostService
     }
 
     /**
-     * find
+     * find.
      *
-     * @param integer $id
+     * @param int $id
+     *
      * @return Post
      */
     public function find(int $id)
@@ -58,11 +61,12 @@ class PostService
     }
 
     /**
-     * edit
+     * edit.
      *
      * @param array $requestData
-     * @param integer $id
-     * @param integer $userId
+     * @param int   $id
+     * @param int   $userId
+     *
      * @return Post
      */
     public function edit(array $requestData, int $id, int $userId)
@@ -71,8 +75,7 @@ class PostService
         if (null === $post) {
             return null;
         }
-
-        if ((int)$post->user_id !== $userId) {
+        if ((int) $post->user_id !== $userId) {
             return null;
         }
 
@@ -80,66 +83,82 @@ class PostService
     }
 
     /**
-     * del
+     * del.
      *
-     * @param integer $id
-     * @param integer $userId
+     * @param int $id
+     * @param int $userId
+     *
      * @return bool
      */
     public function del(int $id, int $userId)
     {
         $post = $this->find($id);
         if (null === $post) {
-            return true;
-        }
-
-        if ((int)$post->user_id !== $userId) {
             return false;
         }
-        $this->postRepository->del($id);
+        if ((int) $post->user_id !== $userId) {
+            return false;
+        }
+        if (0 === $this->postRepository->del($id)) {
+            return false;
+        }
 
         return true;
     }
 
     /**
-     * like
+     * like.
      *
-     * @param integer $postId
-     * @param integer $userId
+     * @param int $id
+     * @param int $userId
+     *
      * @return bool
      */
-    public function like(int $postId, int $userId)
+    public function like(int $id, int $userId)
     {
-        $post = $this->find($postId);
+        $post = $this->find($id);
         if (null === $post || $post->user_id === $userId) {
             return false;
         }
+        // if (null === $post->likedUsers()->where('user_id', $userId)->first()) {
+        //     $post->likedUsers()->attach($userId, [
+        //         'liked' => PostLike::LIKED_LIKE,
+        //     ]);
+        // } else {
+        //     $post->likedUsers()->updateExistingPivot($userId, [
+        //         'liked' => PostLike::LIKED_LIKE,
+        //     ]);
+        // }
+        $post->likedUsers()->syncWithoutDetaching((array) $userId);
 
-        $postLike = $this->postLikeRepository->like($postId, $userId);
-        if (null === $postLike) {
-            return false;
-        }
         return true;
     }
 
     /**
-     * dislike
+     * dislike.
      *
-     * @param integer $postId
-     * @param integer $userId
+     * @param int $id
+     * @param int $userId
+     *
      * @return bool
      */
-    public function dislike(int $postId, int $userId)
+    public function dislike(int $id, int $userId)
     {
-        $post = $this->find($postId);
+        $post = $this->find($id);
         if (null === $post || $post->user_id === $userId) {
             return false;
         }
+        // if (null === $post->likedUsers()->where('user_id', $userId)->first()) {
+        //     $post->likedUsers()->attach($userId, [
+        //         'liked' => PostLike::LIKED_DISLIKE,
+        //     ]);
+        // } else {
+        //     $post->likedUsers()->updateExistingPivot($userId, [
+        //         'liked' => PostLike::LIKED_DISLIKE,
+        //     ]);
+        // }
+        $post->likedUsers()->detach((array) $userId);
 
-        $postLike = $this->postLikeRepository->dislike($postId, $userId);
-        if (null === $postLike) {
-            return false;
-        }
         return true;
     }
 }
