@@ -29,16 +29,4 @@ class Post extends Model
             ->where('liked', PostLike::LIKED_LIKE)
             ->withTimestamps();
     }
-
-    /**
-     * disliked users.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function dislikedUsers()
-    {
-        return $this->belongsToMany(User::class, PostLike::class)
-            ->where('liked', PostLike::LIKED_DISLIKE)
-            ->withTimestamps();
-    }
 }

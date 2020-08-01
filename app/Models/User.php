@@ -88,16 +88,4 @@ class User extends Authenticatable
             ->where('liked', PostLike::LIKED_LIKE)
             ->withTimestamps();
     }
-
-    /**
-     * disliked posts.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function dislikedPosts()
-    {
-        return $this->belongsToMany(Post::class, PostLike::class)
-            ->where('liked', PostLike::LIKED_DISLIKE)
-            ->withTimestamps();
-    }
 }
