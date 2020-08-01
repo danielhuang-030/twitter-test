@@ -17,7 +17,9 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name',
+        'email',
+        'password',
     ];
 
     /**
@@ -26,7 +28,8 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'api_token', 'remember_token',
+        'password',
+        'remember_token',
     ];
 
     /**
@@ -45,13 +48,13 @@ class User extends Authenticatable
      */
     public function posts()
     {
-        return $this->hasMany(Posts::class);
+        return $this->hasMany(Post::class);
     }
 
     /**
      * following.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function following()
     {
@@ -64,7 +67,7 @@ class User extends Authenticatable
     /**
      * followers.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function followers()
     {
@@ -72,17 +75,29 @@ class User extends Authenticatable
             ->withPivot([
                 'created_at',
             ]);
-
-        return $this->hasMany(UserFollow::class, 'follow_id');
     }
 
     /**
      * like posts.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function likePosts()
     {
-        return $this->hasManyThrough(Post::class, PostLike::class, 'user_id', 'id', null, 'post_id');
+        return $this->belongsToMany(Post::class, PostLike::class)
+            ->where('liked', PostLike::LIKED_LIKE)
+            ->withTimestamps();
+    }
+
+    /**
+     * disliked posts.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function dislikedPosts()
+    {
+        return $this->belongsToMany(Post::class, PostLike::class)
+            ->where('liked', PostLike::LIKED_DISLIKE)
+            ->withTimestamps();
     }
 }

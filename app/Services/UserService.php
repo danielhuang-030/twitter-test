@@ -75,4 +75,16 @@ class UserService
 
         return $user;
     }
+
+    /**
+     * get user.
+     *
+     * @param int $id
+     *
+     * @return User
+     */
+    public function getUser(int $id)
+    {
+        return $this->userRepository->find($id);
+    }
 }
