@@ -109,24 +109,4 @@ class UserController extends Controller
             $query->orderBy('updated_at', 'desc');
         }])->likePosts->all());
     }
-
-    /**
-     * disliked posts.
-     *
-     * @param Request $request
-     * @param int     $id
-     */
-    public function dislikedPosts(Request $request, $id)
-    {
-        $user = (empty($id) ? Auth::user() : $this->userService->getUser($id));
-        if (null === $user) {
-            return response()->json([
-                'message' => 'error',
-            ], Response::HTTP_BAD_REQUEST);
-        }
-
-        return response()->json($user->load(['dislikedPosts' => function ($query) {
-            $query->orderBy('updated_at', 'desc');
-        }])->dislikedPosts->all());
-    }
 }
