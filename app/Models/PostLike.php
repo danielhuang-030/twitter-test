@@ -2,23 +2,21 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class PostLike extends Model
+class PostLike extends Pivot
 {
     /**
-     * IS LIKED LIKE
+     * IS LIKED DISLIKE.
      *
      * @var int
      */
-    const IS_LIKED_LIKE = 1;
+    const LIKED_DISLIKE = 0;
 
     /**
-     * IS LIKED DISLIKE
+     * IS LIKED LIKE.
      *
      * @var int
      */
-    const IS_LIKED_DISLIKE = 0;
-
-    protected $guarded = [];
+    const LIKED_LIKE = 1;
 }

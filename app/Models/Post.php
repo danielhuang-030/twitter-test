@@ -9,7 +9,7 @@ class Post extends Model
     protected $guarded = [];
 
     /**
-     * user
+     * user.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
@@ -19,12 +19,26 @@ class Post extends Model
     }
 
     /**
-     * liked users
+     * liked users.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function likedUsers()
     {
-        return $this->hasManyThrough(User::class, PostLike::class, 'post_id', 'id', null, 'user_id');
+        return $this->belongsToMany(User::class, PostLike::class)
+            ->where('liked', PostLike::LIKED_LIKE)
+            ->withTimestamps();
+    }
+
+    /**
+     * disliked users.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function dislikedUsers()
+    {
+        return $this->belongsToMany(User::class, PostLike::class)
+            ->where('liked', PostLike::LIKED_DISLIKE)
+            ->withTimestamps();
     }
 }
