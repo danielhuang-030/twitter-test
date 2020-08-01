@@ -8,14 +8,14 @@ use App\Repositories\UserFollowRepository;
 class FollowService
 {
     /**
-     * UserFollowRepository
+     * UserFollowRepository.
      *
      * @var UserFollowRepository
      */
     protected $userFollowRepository;
 
     /**
-     * construct
+     * construct.
      *
      * @param UserFollowRepository $userFollowRepository
      */
@@ -25,10 +25,11 @@ class FollowService
     }
 
     /**
-     * add
+     * add.
      *
-     * @param integer $followId
-     * @param integer $userId
+     * @param int $followId
+     * @param int $userId
+     *
      * @return UserFollow
      */
     public function add(int $followId, int $userId)
@@ -37,15 +38,18 @@ class FollowService
     }
 
     /**
-     * del
+     * del.
      *
-     * @param integer $followId
-     * @param integer $userId
+     * @param int $followId
+     * @param int $userId
+     *
      * @return bool
      */
     public function del(int $followId, int $userId)
     {
-        $this->userFollowRepository->del($followId, $userId);
+        if (0 === $this->userFollowRepository->del($followId, $userId)) {
+            return false;
+        }
 
         return true;
     }
