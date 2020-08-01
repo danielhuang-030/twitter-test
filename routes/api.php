@@ -11,48 +11,39 @@
 |
 */
 
-Route::group([
-], function () {
-    Route::post('login', 'AuthController@login');
-    Route::post('signup', 'AuthController@signup');
-});
+// auth
+Route::post('login', 'AuthController@login');
+Route::post('signup', 'AuthController@signup');
 
 Route::group([
     'middleware' => 'auth:api',
 ], function () {
-    // user
-    Route::group([
-    ], function () {
-        Route::get('logout', 'AuthController@logout');
-        Route::get('user', 'AuthController@user');
-    });
+    // auth
+    Route::get('logout', 'AuthController@logout');
 
     // follow
-    Route::group([
-        'prefix' => 'follow',
-    ], function () {
-        Route::get('/', 'FollowController@index');
-        Route::post('/{id}', 'FollowController@store');
-        Route::delete('/{id}', 'FollowController@destroy');
-    });
+    Route::resource('following', 'FollowController')->only([
+        'store',
+        'destroy',
+    ]);
 
     // post
     Route::resource('post', 'PostController');
     Route::group([
         'prefix' => 'post',
     ], function () {
-        Route::patch('/{id}/like', 'PostController@like');
-        Route::patch('/{id}/dislike', 'PostController@dislike');
-        Route::get('/{id}/liked_users', 'PostController@likedUsers');
+        Route::patch('{id}/like', 'PostController@like');
+        Route::patch('{id}/dislike', 'PostController@dislike');
+        Route::get('{id}/liked_users', 'PostController@likedUsers');
     });
 
     // user
     Route::group([
-        'prefix' => 'user',
+        'prefix' => 'users',
     ], function () {
-        Route::get('/info', 'UserController@info');
-        Route::get('/follow', 'UserController@follow');
-        Route::get('/follow_me', 'UserController@followMe');
-        Route::get('/liked_posts', 'UserController@likedPosts');
+        Route::get('{id}/info', 'UserController@info');
+        Route::get('{id}/following', 'UserController@follow');
+        Route::get('{id}/followers', 'UserController@followMe');
+        Route::get('{id}/liked_posts', 'UserController@likedPosts');
     });
 });

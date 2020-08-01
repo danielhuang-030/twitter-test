@@ -2,15 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Str;
 use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, Notifiable;
+    use HasApiTokens;
+    use Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -40,7 +39,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * posts
+     * posts.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
@@ -50,7 +49,7 @@ class User extends Authenticatable
     }
 
     /**
-     * follows
+     * follows.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
      */
@@ -60,7 +59,7 @@ class User extends Authenticatable
     }
 
     /**
-     * follow me
+     * follow me.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
      */
@@ -70,7 +69,7 @@ class User extends Authenticatable
     }
 
     /**
-     * like posts
+     * like posts.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
      */
