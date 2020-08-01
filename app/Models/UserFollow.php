@@ -2,15 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class UserFollow extends Model
+class UserFollow extends Pivot
 {
     const UPDATED_AT = null;
-
-    protected $primaryKey = ['user_id', 'follow_id'];
-
-    protected $guarded = [];
-
-    public $incrementing = false;
 }
