@@ -16,7 +16,7 @@ git clone https://github.com/danielhuang-030/twitter-test.git
 # composer install
 composer install
 
-# copy .env and setting db
+# copy .env and setting db/redis
 cp .env.example .env
 vi .env
 

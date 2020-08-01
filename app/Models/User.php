@@ -49,23 +49,31 @@ class User extends Authenticatable
     }
 
     /**
-     * follows.
+     * following.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function follows()
+    public function following()
     {
-        return $this->hasManyThrough(User::class, UserFollow::class, 'user_id', 'id', null, 'follow_id');
+        return $this->belongsToMany(User::class, UserFollow::class, 'user_id', 'follow_id')
+            ->withPivot([
+                'created_at',
+            ]);
     }
 
     /**
-     * follow me.
+     * followers.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function followMes()
+    public function followers()
     {
-        return $this->hasManyThrough(User::class, UserFollow::class, 'follow_id', 'id', null, 'user_id');
+        return $this->belongsToMany(User::class, UserFollow::class, 'follow_id', 'user_id')
+            ->withPivot([
+                'created_at',
+            ]);
+
+        return $this->hasMany(UserFollow::class, 'follow_id');
     }
 
     /**

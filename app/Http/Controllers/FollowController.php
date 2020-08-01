@@ -33,11 +33,10 @@ class FollowController extends Controller
      */
     public function store(Request $request)
     {
-        $userFollow = $this->followService->add(
+        if (!$this->followService->follow(
             $request->input('user_id', 0),
             data_get(Auth::user(), 'id', 0)
-        );
-        if (null === $userFollow) {
+        )) {
             return response()->json([
                 'message' => 'error',
             ], Response::HTTP_BAD_REQUEST);
@@ -55,7 +54,7 @@ class FollowController extends Controller
      */
     public function destroy(int $id = 0)
     {
-        if (!$this->followService->del($id, data_get(Auth::user(), 'id', 0))) {
+        if (!$this->followService->unfollow($id, data_get(Auth::user(), 'id', 0))) {
             return response()->json([
                 'message' => 'error',
             ], Response::HTTP_BAD_REQUEST);
