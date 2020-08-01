@@ -52,7 +52,7 @@ class FollowController extends Controller
      *
      * @param int $id
      */
-    public function destroy(int $id = 0)
+    public function destroy($id)
     {
         if (!$this->followService->unfollow($id, data_get(Auth::user(), 'id', 0))) {
             return response()->json([

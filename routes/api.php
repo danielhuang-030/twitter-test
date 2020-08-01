@@ -28,22 +28,28 @@ Route::group([
     ]);
 
     // post
-    Route::resource('post', 'PostController');
     Route::group([
-        'prefix' => 'post',
+        'prefix' => 'posts',
     ], function () {
         Route::patch('{id}/like', 'PostController@like');
         Route::patch('{id}/dislike', 'PostController@dislike');
-        Route::get('{id}/liked_users', 'PostController@likedUsers');
+        Route::patch('{id}/liked_users', 'PostController@likedUsers');
+        Route::patch('{id}/disliked_users', 'PostController@dislikedUsers');
     });
+    Route::resource('posts', 'PostController')->only([
+        'store',
+        'destroy',
+    ]);
 
     // user
     Route::group([
         'prefix' => 'users',
     ], function () {
         Route::get('{id}/info', 'UserController@info');
-        Route::get('{id}/following', 'UserController@follow');
-        Route::get('{id}/followers', 'UserController@followMe');
+        Route::get('{id}/following', 'UserController@following');
+        Route::get('{id}/followers', 'UserController@followers');
+        Route::get('{id}/posts', 'UserController@posts');
         Route::get('{id}/liked_posts', 'UserController@likedPosts');
+        Route::get('{id}/disliked_posts', 'UserController@dislikedPosts');
     });
 });
