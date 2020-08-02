@@ -18,8 +18,14 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+        'App\Events\UserFollowCreated' => [
+            'App\Listeners\NotifyFollowingToUser',
+        ],
+        'App\Events\UserFollowDeleted' => [
+            'App\Listeners\NotifyUnfollowToUser',
+        ],
         'App\Events\PostCreated' => [
-            'App\Listeners\NotifyFollowers',
+            'App\Listeners\NotifyNewPostToFollowers',
         ],
         'Laravel\Passport\Events\AccessTokenCreated' => [
             'App\Listeners\RevokeExistingTokens',
