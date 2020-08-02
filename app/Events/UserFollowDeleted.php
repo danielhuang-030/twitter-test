@@ -2,14 +2,14 @@
 
 namespace App\Events;
 
-use App\Models\Post;
+use App\Models\UserFollow;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class PostCreated implements ShouldBroadcast
+class UserFollowDeleted implements ShouldBroadcast
 {
     use Dispatchable;
     use InteractsWithSockets;
@@ -20,23 +20,31 @@ class PostCreated implements ShouldBroadcast
      *
      * @var string
      */
-    const CHANNEL_FORMAT = 'new-post-from-user-%d';
+    const CHANNEL_FORMAT = 'new-user-unfollow-uesr-%d';
 
     /**
-     * Post.
+     * user.
      *
-     * @var Post
+     * @var User
      */
-    public $post;
+    public $user;
+
+    /**
+     * following.
+     *
+     * @var User
+     */
+    public $following;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(Post $post)
+    public function __construct(UserFollow $userFollow)
     {
-        $this->post = $post;
+        $this->user = $userFollow->user;
+        $this->following = $userFollow->following;
     }
 
     /**
@@ -46,7 +54,7 @@ class PostCreated implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel(sprintf(static::CHANNEL_FORMAT, $this->post->user_id));
+        return new Channel(sprintf(static::CHANNEL_FORMAT, $this->following->id));
     }
 
     /**
@@ -56,6 +64,6 @@ class PostCreated implements ShouldBroadcast
      */
     public function broadcastWith()
     {
-        return $this->post->toArray();
+        return $this->user->toArray();
     }
 }
