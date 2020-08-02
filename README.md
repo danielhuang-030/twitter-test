@@ -50,14 +50,19 @@ php artisan horizon
     * Request JSON
     ```
     {
-      "email": "[email]",
-      "password": "[password]"
+      "email": "{{email}}",
+      "password": "{{password}}"
     }
     ```
     * Response JSON
     ```
     {
-      "token": "[token]"
+      "name": "test001",
+      "email": "test001@test.com",
+      "email_verified_at": null,
+      "created_at": "2020-07-31 15:54:28",
+      "updated_at": "2020-07-31 15:54:28",
+      "token": "{{token}}"
     }
     ```
 
@@ -70,8 +75,8 @@ php artisan horizon
     {
       "name": "test005",
       "email": "test005@test.com",
-      "password": "aaaaaaaa",
-      "password_confirmation": "aaaaaaaa"
+      "password": "aaaaaa",
+      "password_confirmation": "aaaaaa"
     }
     ```
     * Response JSON
@@ -83,37 +88,37 @@ php artisan horizon
 
 * logout
   * GET /api/logout
-    * Authorization: Bearer [token]
+    * Authorization: Bearer {{token}}
     * Content-Type: application/json
     * Accept: application/json
 
 * self user info
   * GET /api/users/:id/info
-    * Authorization: Bearer [token]
+    * Authorization: Bearer {{token}}
     * Content-Type: application/json
     * Accept: application/json
 
 * following user list
   * GET /api/users/:id/following
-    * Authorization: Bearer [token]
+    * Authorization: Bearer {{token}}
     * Content-Type: application/json
     * Accept: application/json
 
-* followers list
+* followers user list
   * GET /api/users/:id/followers
-    * Authorization: Bearer [token]
+    * Authorization: Bearer {{token}}
     * Content-Type: application/json
     * Accept: application/json
 
 * liked post list
   * GET /api/users/:id/liked_posts
-    * Authorization: Bearer [token]
+    * Authorization: Bearer {{token}}
     * Content-Type: application/json
     * Accept: application/json
 
 * follow user
   * POST /api/following
-    * Authorization: Bearer [token]
+    * Authorization: Bearer {{token}}
     * Content-Type: application/json
     * Accept: application/json
     * Request JSON
@@ -133,14 +138,14 @@ php artisan horizon
     ```
 
 * unfollow user
-  * DELETE /api/following/[user_id]
-    * Authorization: Bearer [token]
+  * DELETE /api/following/:id
+    * Authorization: Bearer {{token}}
     * Content-Type: application/json
     * Accept: application/json
 
 * add post
   * POST /api/post
-    * Authorization: Bearer [token]
+    * Authorization: Bearer {{token}}
     * Content-Type: application/json
     * Accept: application/json
     * Request JSON
@@ -151,20 +156,20 @@ php artisan horizon
     ```
 
 * get post
-  * GET /api/post/[post_id]
-    * Authorization: Bearer [token]
+  * GET /api/post/:id
+    * Authorization: Bearer {{token}}
     * Content-Type: application/json
     * Accept: application/json
 
 * liked users
-  * PATCH /api/post/[post_id]/liked_users
-    * Authorization: Bearer [token]
+  * GET /api/post/:id/liked_users
+    * Authorization: Bearer {{token}}
     * Content-Type: application/json
     * Accept: application/json
 
 * edit post
-  * PATCH /api/post/[post_id]
-    * Authorization: Bearer [token]
+  * PUT /api/post/:id
+    * Authorization: Bearer {{token}}
     * Content-Type: application/json
     * Accept: application/json
     * Request JSON
@@ -175,19 +180,19 @@ php artisan horizon
     ```
 
 * del post
-  * DELETE /api/post/[post_id]
-    * Authorization: Bearer [token]
+  * DELETE /api/post/:id
+    * Authorization: Bearer {{token}}
     * Content-Type: application/json
     * Accept: application/json
 
 * like post
-  * PATCH /api/post/[post_id]/like
-    * Authorization: Bearer [token]
+  * PATCH /api/post/:id/like
+    * Authorization: Bearer {{token}}
     * Content-Type: application/json
     * Accept: application/json
 
 * dislike post
-  * PATCH /api/post/[post_id]/dislike
-    * Authorization: Bearer [token]
+  * PATCH /api/post/:id/dislike
+    * Authorization: Bearer {{token}}
     * Content-Type: application/json
     * Accept: application/json

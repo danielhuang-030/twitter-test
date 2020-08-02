@@ -17,6 +17,13 @@ class UserController extends Controller
     protected $userService;
 
     /**
+     * User.
+     *
+     * @var User
+     */
+    protected $user;
+
+    /**
      * construct.
      *
      * @param UserService $userService
@@ -24,14 +31,30 @@ class UserController extends Controller
     public function __construct(UserService $userService)
     {
         $this->userService = $userService;
+
+        // get user
+        $this->middleware(function ($request, $next) {
+            $id = $request->route('id', 0);
+            $this->user = (empty($id) ? Auth::user() : $this->userService->getUser($id));
+            if (null === $this->user) {
+                return response()->json([
+                    'message' => 'error',
+                ], Response::HTTP_BAD_REQUEST);
+            }
+
+            return $next($request);
+        });
     }
 
     /**
      * info.
+     *
+     * @param Request $request
+     * @param int     $id
      */
-    public function info(Request $request)
+    public function info(Request $request, $id)
     {
-        return response()->json(Auth::user());
+        return response()->json($this->user);
     }
 
     /**
@@ -42,14 +65,7 @@ class UserController extends Controller
      */
     public function following(Request $request, $id)
     {
-        $user = (empty($id) ? Auth::user() : $this->userService->getUser($id));
-        if (null === $user) {
-            return response()->json([
-                'message' => 'error',
-            ], Response::HTTP_BAD_REQUEST);
-        }
-
-        return response()->json($user->following->all());
+        return response()->json($this->user->following);
     }
 
     /**
@@ -60,14 +76,7 @@ class UserController extends Controller
      */
     public function followers(Request $request, $id)
     {
-        $user = (empty($id) ? Auth::user() : $this->userService->getUser($id));
-        if (null === $user) {
-            return response()->json([
-                'message' => 'error',
-            ], Response::HTTP_BAD_REQUEST);
-        }
-
-        return response()->json($user->followers->all());
+        return response()->json($this->user->followers);
     }
 
     /**
@@ -78,16 +87,9 @@ class UserController extends Controller
      */
     public function posts(Request $request, $id)
     {
-        $user = (empty($id) ? Auth::user() : $this->userService->getUser($id));
-        if (null === $user) {
-            return response()->json([
-                'message' => 'error',
-            ], Response::HTTP_BAD_REQUEST);
-        }
-
-        return response()->json($user->load(['posts' => function ($query) {
+        return response()->json($this->user->load(['posts' => function ($query) {
             $query->orderBy('updated_at', 'desc');
-        }])->posts->all());
+        }])->posts);
     }
 
     /**
@@ -98,15 +100,8 @@ class UserController extends Controller
      */
     public function likedPosts(Request $request, $id)
     {
-        $user = (empty($id) ? Auth::user() : $this->userService->getUser($id));
-        if (null === $user) {
-            return response()->json([
-                'message' => 'error',
-            ], Response::HTTP_BAD_REQUEST);
-        }
-
-        return response()->json($user->load(['likePosts' => function ($query) {
+        return response()->json($this->user->load(['likePosts' => function ($query) {
             $query->orderBy('updated_at', 'desc');
-        }])->likePosts->all());
+        }])->likePosts);
     }
 }
