@@ -3,34 +3,60 @@
 namespace App\Repositories;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 
 class UserRepository
 {
     /**
-     * User
+     * User.
      *
      * @var User
      */
-    private $user;
+    private $model;
 
     /**
-     * construct
+     * construct.
      *
      * @param User $user
      */
     public function __construct(User $user)
     {
-        $this->user = $user;
+        $this->model = $user;
     }
 
     /**
-     * create
+     * create.
      *
      * @param array $data
+     *
      * @return User
      */
     public function create(array $data)
     {
-        return $this->user->create($data);
+        return $this->model->create($data);
+    }
+
+    /**
+     * find.
+     *
+     * @param int|array $id
+     *
+     * @return User|Collection
+     */
+    public function find($id)
+    {
+        return $this->model->find($id);
+    }
+
+    /**
+     * get by email.
+     *
+     * @param string $email
+     *
+     * @return User
+     */
+    public function getByEmail(string $email)
+    {
+        return $this->model->where('email', $email)->first();
     }
 }

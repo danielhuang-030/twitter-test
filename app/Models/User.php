@@ -2,15 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Str;
 use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, Notifiable;
+    use HasApiTokens;
+    use Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -18,7 +17,9 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name',
+        'email',
+        'password',
     ];
 
     /**
@@ -27,7 +28,8 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'api_token', 'remember_token',
+        'password',
+        'remember_token',
     ];
 
     /**
@@ -40,42 +42,50 @@ class User extends Authenticatable
     ];
 
     /**
-     * posts
+     * posts.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function posts()
     {
-        return $this->hasMany(Posts::class);
+        return $this->hasMany(Post::class);
     }
 
     /**
-     * follows
+     * following.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function follows()
+    public function following()
     {
-        return $this->hasManyThrough(User::class, UserFollow::class, 'user_id', 'id', null, 'follow_id');
+        return $this->belongsToMany(User::class, UserFollow::class, 'user_id', 'follow_id')
+            ->withPivot([
+                'created_at',
+            ]);
     }
 
     /**
-     * follow me
+     * followers.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function followMes()
+    public function followers()
     {
-        return $this->hasManyThrough(User::class, UserFollow::class, 'follow_id', 'id', null, 'user_id');
+        return $this->belongsToMany(User::class, UserFollow::class, 'follow_id', 'user_id')
+            ->withPivot([
+                'created_at',
+            ]);
     }
 
     /**
-     * like posts
+     * like posts.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function likePosts()
     {
-        return $this->hasManyThrough(Post::class, PostLike::class, 'user_id', 'id', null, 'post_id');
+        return $this->belongsToMany(Post::class, PostLike::class)
+            ->where('liked', PostLike::LIKED_LIKE)
+            ->withTimestamps();
     }
 }

@@ -3,19 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Services\PostService;
+use Auth;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class PostController extends Controller
 {
     /**
-     * PostService
+     * PostService.
      *
      * @var PostService
      */
     protected $postService;
 
     /**
-     * construct
+     * construct.
      *
      * @param PostService $postService
      */
@@ -25,39 +27,29 @@ class PostController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        $this->postService->list();
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
+     *
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        $post = $this->postService->add($request->all(), auth()->user()->id);
+        $post = $this->postService->add($request->all(), data_get(Auth::user(), 'id', 0));
         if (null === $post) {
             return response()->json([
-                'message' => 'error'
-            ], 403);
+                'message' => 'error',
+            ], Response::HTTP_BAD_REQUEST);
         }
 
-        return response()->json([
-            'message' => 'Successfully add post!'
-        ]);
+        return response()->json($post);
     }
 
     /**
      * Display the specified resource.
      *
      * @param int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function show(int $id)
@@ -68,17 +60,18 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int                      $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
-        $post = $this->postService->edit($request->all(), $id, auth()->user()->id);
+        $post = $this->postService->edit($request->all(), $id, data_get(Auth::user(), 'id', 0));
         if (null === $post) {
             return response()->json([
-                'message' => 'error'
-            ], 403);
+                'message' => 'error',
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         return response()->json($post);
@@ -87,60 +80,61 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        if (!$this->postService->del($id, auth()->user()->id)) {
+        if (!$this->postService->del($id, data_get(Auth::user(), 'id', 0))) {
             return response()->json([
-                'message' => 'error'
-            ], 403);
+                'message' => 'error',
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         return response()->json([
-            'message' => 'Successfully deleted post!'
+            'message' => 'Successfully deleted post!',
         ]);
     }
 
     /**
-     * like
+     * like.
      *
      * @param int $id
      */
     public function like($id)
     {
-        if (!$this->postService->like($id, auth()->user()->id)) {
+        if (!$this->postService->like($id, data_get(Auth::user(), 'id', 0))) {
             return response()->json([
-                'message' => 'error'
-            ], 403);
+                'message' => 'error',
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         return response()->json([
-            'message' => 'Successfully liked post!'
+            'message' => 'Successfully liked post!',
         ]);
     }
 
     /**
-     * dislike
+     * dislike.
      *
      * @param int $id
      */
     public function dislike($id)
     {
-        if (!$this->postService->dislike($id, auth()->user()->id)) {
+        if (!$this->postService->dislike($id, data_get(Auth::user(), 'id', 0))) {
             return response()->json([
-                'message' => 'error'
-            ], 403);
+                'message' => 'error',
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         return response()->json([
-            'message' => 'Successfully disliked post!'
+            'message' => 'Successfully disliked post!',
         ]);
     }
 
     /**
-     * liked users
+     * liked users.
      *
      * @param int $id
      */
@@ -149,14 +143,12 @@ class PostController extends Controller
         $post = $this->postService->find($id);
         if (null === $post) {
             return response()->json([
-                'message' => 'error'
-            ], 403);
+                'message' => 'error',
+            ], Response::HTTP_BAD_REQUEST);
         }
 
-        $users = $post->load(['likedUsers' => function ($query) {
-            $query->where('is_liked', \App\Models\PostLike::IS_LIKED_LIKE)
-                ->orderBy('updated_at', 'desc');
-        }])->likedUsers->all();
-        return response()->json($users);
+        return response()->json($post->load(['likedUsers' => function ($query) {
+            $query->orderBy('updated_at', 'desc');
+        }])->likedUsers);
     }
 }

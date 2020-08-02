@@ -3,19 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Services\FollowService;
+use Auth;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class FollowController extends Controller
 {
     /**
-     * FollowService
+     * FollowService.
      *
      * @var FollowService
      */
     protected $followService;
 
     /**
-     * construct
+     * construct.
      *
      * @param FollowService $followService
      */
@@ -25,40 +27,41 @@ class FollowController extends Controller
     }
 
     /**
-     * store
+     * store.
      *
      * @param Request $request
-     * @param integer $id
      */
-    public function store(Request $request, int $id)
+    public function store(Request $request)
     {
-        $userFollow = $this->followService->add($id, auth()->user()->id);
-        if (null === $userFollow) {
+        if (!$this->followService->follow(
+            $request->input('user_id', 0),
+            data_get(Auth::user(), 'id', 0)
+        )) {
             return response()->json([
-                'message' => 'error'
-            ], 403);
+                'message' => 'error',
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         return response()->json([
-            'message' => 'Successfully followed user!'
+            'message' => 'Successfully followed user!',
         ]);
     }
 
     /**
-     * destroy
+     * destroy.
      *
      * @param int $id
      */
-    public function destroy(int $id)
+    public function destroy($id)
     {
-        if (!$this->followService->del($id, auth()->user()->id)) {
+        if (!$this->followService->unfollow($id, data_get(Auth::user(), 'id', 0))) {
             return response()->json([
-                'message' => 'error'
-            ], 403);
+                'message' => 'error',
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         return response()->json([
-            'message' => 'Successfully unfollowed user!'
+            'message' => 'Successfully unfollowed user!',
         ]);
     }
 }

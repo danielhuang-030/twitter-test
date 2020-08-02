@@ -2,50 +2,63 @@
 
 namespace App\Services;
 
-use App\Models\UserFollow;
-use App\Repositories\UserFollowRepository;
+use App\Repositories\UserRepository;
 
 class FollowService
 {
     /**
-     * UserFollowRepository
+     * UserRepository.
      *
-     * @var UserFollowRepository
+     * @var UserRepository
      */
-    protected $userFollowRepository;
+    protected $userRepository;
 
     /**
-     * construct
+     * construct.
      *
-     * @param UserFollowRepository $userFollowRepository
+     * @param UserRepository $userRepository
      */
-    public function __construct(UserFollowRepository $userFollowRepository)
+    public function __construct(UserRepository $userRepository)
     {
-        $this->userFollowRepository = $userFollowRepository;
+        $this->userRepository = $userRepository;
     }
 
     /**
-     * add
+     * follow.
      *
-     * @param integer $followId
-     * @param integer $userId
-     * @return UserFollow
-     */
-    public function add(int $followId, int $userId)
-    {
-        return $this->userFollowRepository->add($followId, $userId);
-    }
-
-    /**
-     * del
+     * @param int $followId
+     * @param int $userId
      *
-     * @param integer $followId
-     * @param integer $userId
      * @return bool
      */
-    public function del(int $followId, int $userId)
+    public function follow(int $followId, int $userId)
     {
-        $this->userFollowRepository->del($followId, $userId);
+        $user = $this->userRepository->find($userId);
+        if (null === $user) {
+            return false;
+        }
+        $user->following()->syncWithoutDetaching((array) $followId);
+
+        return true;
+    }
+
+    /**
+     * unfollow.
+     *
+     * @param int $followId
+     * @param int $userId
+     *
+     * @return bool
+     */
+    public function unfollow(int $followId, int $userId)
+    {
+        $user = $this->userRepository->find($userId);
+        if (null === $user) {
+            return false;
+        }
+        if (0 === $user->following()->detach((array) $followId)) {
+            return false;
+        }
 
         return true;
     }

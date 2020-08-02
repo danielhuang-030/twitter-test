@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Log;
 
-class NotifyFollowers implements ShouldQueue
+class NotifyNewPostToFollowers implements ShouldQueue
 {
     use InteractsWithQueue;
 
@@ -15,19 +15,18 @@ class NotifyFollowers implements ShouldQueue
      * Handle the event.
      *
      * @param PostCreated $event
+     *
      * @return void
      */
     public function handle(PostCreated $event)
     {
-        $post      = $event->post;
-        $user      = $post->user;
-        $followers = $user->followMes;
-        if (0 === $followers->count()) {
+        $followers = data_get($event, 'post.user.followers', collect());
+        if ($followers->isEmpty()) {
             return;
         }
-        foreach ($followers as $follower) {
-            Log::info(sprintf('%s add a new post, notify %s', $user->name, $follower->name));
-        }
+        $followers->each(function ($user) use ($event) {
+            Log::info(sprintf('%s add a new post, notify %s', data_get($event, 'post.user.name', ''), $user->name));
+        });
 
         return;
     }

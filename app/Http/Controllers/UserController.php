@@ -2,43 +2,106 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\UserService;
+use Auth;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class UserController extends Controller
 {
     /**
-     * info
+     * UserService.
+     *
+     * @var UserService
      */
-    public function info(Request $request)
+    protected $userService;
+
+    /**
+     * User.
+     *
+     * @var User
+     */
+    protected $user;
+
+    /**
+     * construct.
+     *
+     * @param UserService $userService
+     */
+    public function __construct(UserService $userService)
     {
-        return response()->json(auth()->user());
+        $this->userService = $userService;
+
+        // get user
+        $this->middleware(function ($request, $next) {
+            $id = $request->route('id', 0);
+            $this->user = (empty($id) ? Auth::user() : $this->userService->getUser($id));
+            if (null === $this->user) {
+                return response()->json([
+                    'message' => 'error',
+                ], Response::HTTP_BAD_REQUEST);
+            }
+
+            return $next($request);
+        });
     }
 
     /**
-     * follow
+     * info.
+     *
+     * @param Request $request
+     * @param int     $id
      */
-    public function follow(Request $request)
+    public function info(Request $request, $id)
     {
-        return response()->json(auth()->user()->follows->all());
+        return response()->json($this->user);
     }
 
     /**
-     * follow
+     * following.
+     *
+     * @param Request $request
+     * @param int     $id
      */
-    public function followMe(Request $request)
+    public function following(Request $request, $id)
     {
-        return response()->json(auth()->user()->followMes->all());
+        return response()->json($this->user->following);
     }
 
     /**
-     * liked posts
+     * followers.
+     *
+     * @param Request $request
+     * @param int     $id
      */
-    public function likedPosts(Request $request)
+    public function followers(Request $request, $id)
     {
-        $posts = auth()->user()->load(['likePosts' => function ($query) {
-            $query->where('is_liked', \App\Models\PostLike::IS_LIKED_LIKE)
-                ->orderBy('updated_at', 'desc');
-        }])->likePosts->all();
-        return response()->json($posts);
+        return response()->json($this->user->followers);
+    }
+
+    /**
+     * posts.
+     *
+     * @param Request $request
+     * @param int     $id
+     */
+    public function posts(Request $request, $id)
+    {
+        return response()->json($this->user->load(['posts' => function ($query) {
+            $query->orderBy('updated_at', 'desc');
+        }])->posts);
+    }
+
+    /**
+     * liked posts.
+     *
+     * @param Request $request
+     * @param int     $id
+     */
+    public function likedPosts(Request $request, $id)
+    {
+        return response()->json($this->user->load(['likePosts' => function ($query) {
+            $query->orderBy('updated_at', 'desc');
+        }])->likePosts);
     }
 }

@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -13,50 +11,45 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::group([
-    'prefix' => 'auth'
-], function () {
-    Route::post('login', 'AuthController@login');
-    Route::post('signup', 'AuthController@signup');
-});
+// auth
+Route::post('login', 'AuthController@login');
+Route::post('signup', 'AuthController@signup');
 
 Route::group([
-    'middleware' => 'auth:api'
+    'middleware' => 'auth:api',
 ], function () {
     // auth
-    Route::group([
-        'prefix' => 'auth'
-    ], function () {
-        Route::get('logout', 'AuthController@logout');
-        Route::get('user', 'AuthController@user');
-    });
+    Route::get('logout', 'AuthController@logout');
 
     // follow
-    Route::group([
-        'prefix' => 'follow'
-    ], function () {
-        Route::get('/', 'FollowController@index');
-        Route::post('/{id}', 'FollowController@store');
-        Route::delete('/{id}', 'FollowController@destroy');
-    });
+    Route::resource('following', 'FollowController')->only([
+        'store',
+        'destroy',
+    ]);
 
     // post
-    Route::resource('post', 'PostController');
     Route::group([
-        'prefix' => 'post'
+        'prefix' => 'posts',
     ], function () {
-        Route::patch('/{id}/like', 'PostController@like');
-        Route::patch('/{id}/dislike', 'PostController@dislike');
-        Route::get('/{id}/liked_users', 'PostController@likedUsers');
+        Route::patch('{id}/like', 'PostController@like');
+        Route::patch('{id}/dislike', 'PostController@dislike');
+        Route::get('{id}/liked_users', 'PostController@likedUsers');
     });
+    Route::resource('posts', 'PostController')->only([
+        'show',
+        'store',
+        'update',
+        'destroy',
+    ]);
 
     // user
     Route::group([
-        'prefix' => 'user'
+        'prefix' => 'users',
     ], function () {
-        Route::get('/info', 'UserController@info');
-        Route::get('/follow', 'UserController@follow');
-        Route::get('/follow_me', 'UserController@followMe');
-        Route::get('/liked_posts', 'UserController@likedPosts');
+        Route::get('{id}/info', 'UserController@info');
+        Route::get('{id}/following', 'UserController@following');
+        Route::get('{id}/followers', 'UserController@followers');
+        Route::get('{id}/posts', 'UserController@posts');
+        Route::get('{id}/liked_posts', 'UserController@likedPosts');
     });
 });

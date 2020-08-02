@@ -2,22 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\SignupRequest;
 use App\Services\UserService;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
 {
     /**
-     * UserService
+     * UserService.
      *
      * @var UserService
      */
     protected $userService;
 
     /**
-     * construct
+     * construct.
      *
      * @param UserService $userService
      */
@@ -27,79 +28,58 @@ class AuthController extends Controller
     }
 
     /**
-     * signup
+     * signup.
      *
-     * @param Request $request
+     * @param SignupRequest $request
      */
-    public function signup(Request $request)
+    public function signup(SignupRequest $request)
     {
-        $r = $request->validate([
-            'name'     => 'required|string',
-            'email'    => 'required|string|email|unique:users',
-            'password' => 'required|string|confirmed'
-        ]);
-
-        $user = $this->userService->create([
-            'name'     => $request->input('name'),
-            'email'    => $request->input('email'),
-            'password' => $request->input('password'),
-        ]);
-
-        return response()->json([
-            'message' => 'Successfully created user!'
-        ], 201);
-    }
-
-    /**
-     * login
-     *
-     * @param Request $request
-     * @return void
-     */
-    public function login(Request $request)
-    {
-        $request->validate([
-            'email'       => 'required|string|email',
-            'password'    => 'required|string',
-            'remember_me' => 'boolean'
-        ]);
-
-        $credentials = request(['email', 'password']);
-        if (!Auth::attempt($credentials)) {
+        if (null === $this->userService->create($request->only([
+            'name',
+            'email',
+            'password',
+        ]))) {
             return response()->json([
-                'message' => 'Unauthorized'
-            ], 401);
+                'message' => 'Failed to create user!',
+            ], Response::HTTP_BAD_REQUEST);
         }
-
-        $user = $request->user();
-
-        $tokenResult = $user->createToken('Personal Access Token');
-        $token       = $tokenResult->token;
-        if ($request->remember_me) {
-            $token->expires_at = Carbon::now()->addWeeks(1);
-        }
-        $token->save();
 
         return response()->json([
-            'access_token' => $tokenResult->accessToken,
-            'token_type'   => 'Bearer',
-            'expires_at'   => Carbon::parse(
-                $tokenResult->token->expires_at
-            )->toDateTimeString()
+            'message' => 'Successfully created user!',
         ]);
     }
 
     /**
-     * Logout user (Revoke the token)
+     * login.
      *
-     * @return [string] message
+     * @param LoginRequest $request
+     */
+    public function login(LoginRequest $request)
+    {
+        $user = $this->userService->attempt($request->only([
+            'email',
+            'password',
+        ]));
+        if (null === $user) {
+            return response()->json([
+                'message' => 'Unauthorized',
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
+        return response()->json(array_merge($user->toArray(), [
+            'token' => $user->token(),
+        ]));
+    }
+
+    /**
+     * Logout user (Revoke the token).
      */
     public function logout(Request $request)
     {
-        $request->user()->token()->revoke();
+        $request->user()->token()->delete();
 
         return response()->json([
-            'message' => 'Successfully logged out'
+            'message' => 'Successfully logged out',
         ]);
     }
 }

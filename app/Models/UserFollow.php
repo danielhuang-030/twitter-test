@@ -2,15 +2,29 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class UserFollow extends Model
+class UserFollow extends Pivot
 {
     const UPDATED_AT = null;
 
-    protected $primaryKey = ['user_id', 'follow_id'];
+    /**
+     * user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
-    protected $guarded = [];
-
-    public $incrementing = false;
+    /**
+     * following.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function following()
+    {
+        return $this->belongsTo(User::class, 'follow_id');
+    }
 }
