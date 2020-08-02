@@ -149,6 +149,6 @@ class PostController extends Controller
 
         return response()->json($post->load(['likedUsers' => function ($query) {
             $query->orderBy('updated_at', 'desc');
-        }])->likedUsers->all());
+        }])->likedUsers);
     }
 }

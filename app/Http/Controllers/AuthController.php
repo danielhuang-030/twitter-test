@@ -41,20 +41,18 @@ class AuthController extends Controller
         ]))) {
             return response()->json([
                 'message' => 'Failed to create user!',
-            ], 201);
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         return response()->json([
             'message' => 'Successfully created user!',
-        ], 201);
+        ]);
     }
 
     /**
      * login.
      *
      * @param LoginRequest $request
-     *
-     * @return void
      */
     public function login(LoginRequest $request)
     {
@@ -68,15 +66,13 @@ class AuthController extends Controller
             ], Response::HTTP_UNAUTHORIZED);
         }
 
-        return response()->json([
+        return response()->json(array_merge($user->toArray(), [
             'token' => $user->token(),
-        ]);
+        ]));
     }
 
     /**
      * Logout user (Revoke the token).
-     *
-     * @return [string] message
      */
     public function logout(Request $request)
     {
