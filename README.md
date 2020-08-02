@@ -124,10 +124,7 @@ php artisan horizon
     * Request JSON
     ```
     {
-      "name": "test005",
-      "email": "test005@test.com",
-      "password": "aaaaaaaa",
-      "password_confirmation": "aaaaaaaa"
+      "user_id": 3,
     }
     ```
     * Response JSON
