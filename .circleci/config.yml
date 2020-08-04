@@ -8,9 +8,9 @@ jobs:
         command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --innodb-use-native-aio=0 --server-id=1 --log_bin=ON
         environment:
             MYSQL_HOST: 127.0.0.1
-            MYSQL_DB: testing
-            MYSQL_USER: root
-            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DB: circleci
+            MYSQL_USER: circleci
+            MYSQL_ROOT_PASSWORD: circleci
 
     working_directory: ~/app
 
@@ -19,7 +19,8 @@ jobs:
       - run: sudo apt install -y libsqlite3-dev zlib1g-dev
       - run: sudo apt install -y mariadb-client
       - run: sudo docker-php-ext-install zip
-      - run: sudo docker-php-ext-install pdo_mysql
+      - run: sudo docker-php-ext-install gd
+      - run: sudo docker-php-ext-install pdo_mysql bcmath pcntl mbstring
       - run: sudo composer self-update
       - restore_cache:
           keys:
@@ -44,7 +45,7 @@ jobs:
       #- run: npm run production
       - run:
           name: Mysql database
-          command: mysql -h 127.0.0.1 -uroot -proot -e "CREATE DATABASE testing;"
+          command: mysql -h 127.0.0.1 -uroot -proot -e "CREATE DATABASE circleci;"
       - run: php artisan key:generate
       - run: php artisan migrate --env=circleci
       - run: php artisan horizon:install
