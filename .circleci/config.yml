@@ -61,3 +61,12 @@ jobs:
       # - run:
       #     name: Run Laravel Dusk Tests
       #     command: php artisan dusk
+
+workflows:
+  version: 2
+  main:
+    jobs:
+    - build:
+        filters:
+          branches:
+            only: master
