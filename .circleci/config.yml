@@ -7,11 +7,10 @@ jobs:
       - image: mysql:5.7
         command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --innodb-use-native-aio=0 --server-id=1 --log_bin=ON
         environment:
-            MYSQL_HOST: 127.0.0.1
+            MYSQL_HOST: app-db
             MYSQL_DB: testing
             MYSQL_USER: root
             MYSQL_ROOT_PASSWORD: root
-      - image: redis
 
     working_directory: ~/app
 
@@ -45,7 +44,7 @@ jobs:
       #- run: npm run production
       - run:
           name: Mysql database
-          command: mysql -h 127.0.0.1 -uroot -proot -e "CREATE DATABASE testing;"
+          command: mysql -h app-db -uroot -proot -e "CREATE DATABASE testing;"
       - run: php artisan key:generate
       - run: php artisan migrate
       - run: php artisan horizon:install
