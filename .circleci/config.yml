@@ -7,7 +7,7 @@ jobs:
       - image: mysql:5.7
         command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --innodb-use-native-aio=0 --server-id=1 --log_bin=ON
         environment:
-            MYSQL_HOST: app-db
+            MYSQL_HOST: 127.0.0.1
             MYSQL_DB: testing
             MYSQL_USER: root
             MYSQL_ROOT_PASSWORD: root
@@ -25,7 +25,7 @@ jobs:
           keys:
               - composer-v1-{{ checksum "composer.lock" }}
               - composer-v1-
-      - run: cp .env.testing .env
+      - run: cp .env.circleci .env
       - run: composer install -n --ignore-platform-reqs
       - save_cache:
           key: composer-v1-{{ checksum "composer.lock" }}
@@ -44,7 +44,7 @@ jobs:
       #- run: npm run production
       - run:
           name: Mysql database
-          command: mysql -h app-db -uroot -proot -e "CREATE DATABASE testing;"
+          command: mysql -h 127.0.0.1 -uroot -proot -e "CREATE DATABASE testing;"
       - run: php artisan key:generate
       - run: php artisan migrate
       - run: php artisan horizon:install
