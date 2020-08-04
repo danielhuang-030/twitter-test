@@ -4,59 +4,56 @@ jobs:
   build:
     docker:
       - image: circleci/php:7.3-node-browsers
-        environment:
-            MYSQL_HOST: 127.0.0.1
-            MYSQL_DB: testing
-            # MYSQL_USER: root
-            # MYSQL_ROOT_PASSWORD: root
       - image: mysql:5.7
         command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --innodb-use-native-aio=0 --server-id=1 --log_bin=ON
         environment:
+            MYSQL_HOST: 127.0.0.1
+            MYSQL_DB: circleci
             MYSQL_USER: root
             MYSQL_ROOT_PASSWORD: root
 
-    working_directory: ~/myapp
+    working_directory: ~/app
 
     steps:
       - checkout
       - run: sudo apt install -y libsqlite3-dev zlib1g-dev
       - run: sudo apt install -y mariadb-client
       - run: sudo docker-php-ext-install zip
-      - run: sudo docker-php-ext-install pdo_mysql
+      - run: sudo docker-php-ext-install pdo_mysql bcmath pcntl mbstring
       - run: sudo composer self-update
       - restore_cache:
           keys:
               - composer-v1-{{ checksum "composer.lock" }}
               - composer-v1-
-      - run: cp .env.testing .env
+      - run: cp .env.circleci .env
       - run: composer install -n --ignore-platform-reqs
       - save_cache:
           key: composer-v1-{{ checksum "composer.lock" }}
           paths:
               - vendor
-      - restore_cache: # special step to restore the dependency cache if `package.json` does not change
-          keys:
-              - node-v1-{{ checksum "package.json" }}
-              # fallback to using the latest cache if no exact match is found (See https://circleci.com/docs/2.0/caching/)
-              - node-v1-
-      - run: npm install
-      - save_cache: # special step to save the dependency cache with the `package.json` cache key template
-          key: node-v1-{{ checksum "package.json" }}
-          paths:
-              - node_modules
-      - run: npm run production
+      #- restore_cache: # special step to restore the dependency cache if `package.json` does not change
+      #    keys:
+      #        - node-v1-{{ checksum "package.json" }}
+      #        # fallback to using the latest cache if no exact match is found (See https://circleci.com/docs/2.0/caching/)
+      #        - node-v1-
+      #- run: npm install
+      #- save_cache: # special step to save the dependency cache with the `package.json` cache key template
+      #    key: node-v1-{{ checksum "package.json" }}
+      #    paths:
+      #        - node_modules
+      #- run: npm run production
       - run:
           name: Mysql database
-          command: mysql -h 127.0.0.1 -uroot -proot -e "CREATE DATABASE testing;"
+          command: mysql -h 127.0.0.1 -uroot -proot -e "CREATE DATABASE circleci;"
       - run: php artisan key:generate
-      - run: php artisan migrate
+      - run: php artisan migrate --env=circleci
       - run: php artisan horizon:install
       - run: php artisan passport:install
       - run:
           name: Run Laravel Server
           command: php artisan serve
           background: true
-      - run: vendor/bin/phpunit
+      - run: vendor/bin/phpunit -c phpunit.xml.circleci
       # - run:
       #     name: Start Chrome Driver
       #     command: ./vendor/laravel/dusk/bin/chromedriver-linux
@@ -64,3 +61,12 @@ jobs:
       # - run:
       #     name: Run Laravel Dusk Tests
       #     command: php artisan dusk
+
+workflows:
+  version: 2
+  main:
+    jobs:
+    - build:
+        filters:
+          branches:
+            only: master
