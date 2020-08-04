@@ -18,6 +18,14 @@ jobs:
       - checkout
       - run: sudo apt install -y libsqlite3-dev zlib1g-dev
       - run: sudo apt install -y mariadb-client
+      - run: sudo apt install -y freetype libpng libjpeg-turbo freetype-dev libpng-dev libjpeg-turbo-dev libzip-dev curl && \
+              docker-php-ext-configure gd \
+                --with-gd \
+                --with-freetype-dir=/usr/include/ \
+                --with-png-dir=/usr/include/ \
+                --with-jpeg-dir=/usr/include/ \
+                --with-zlib-dir=/usr && \
+              NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1)
       - run: sudo docker-php-ext-install zip
       - run: sudo docker-php-ext-install gd
       - run: sudo docker-php-ext-install pdo_mysql bcmath pcntl mbstring
