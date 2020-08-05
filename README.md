@@ -1,4 +1,5 @@
 # twitter test
+[![CircleCI](https://circleci.com/gh/danielhuang-030/twitter-test/tree/master.svg?style=svg)](https://circleci.com/gh/danielhuang-030/twitter-test/tree/master)
 
 ### Introduction
 Simple implementation of the basic functions of twitter: including member login/logout, post, follow and like.
