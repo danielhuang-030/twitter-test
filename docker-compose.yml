@@ -118,6 +118,5 @@ services:
             - ./dockerize/log/nginx/:/var/log/nginx
         ports:
             - "12001:12001"
-            - "12002:12002"
         networks:
             - app-network

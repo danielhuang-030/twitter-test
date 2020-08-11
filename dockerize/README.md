@@ -33,10 +33,10 @@ refer to the project [README.md](https://github.com/danielhuang-030/twitter-test
 ### Port
 | service  | port-inside | port-outside  | description |
 |---|---|---|---|
-| web-server  | 12001, 12002 | 12001, 12002 | 12001: [twitter-test](http://localhost:12001/api), 12002: [Laravel Echo Server(WebSocket)](http://localhost:12002) |
+| web-server  | 12001 | 12001 | 12001: [twitter-test](http://localhost:12001/api), [Laravel Echo Server(WebSocket)](http://localhost:12001/ws/) |
 | app-redis | 6379 | - | Redis |
 | app-db | 3306, 33060 | 12006 | MySQL |
-| laravel-echo-server | 6001 | - | WebSocket |
+| laravel-echo-server | 6001 | - | Laravel Echo Server(WebSocket) |
 | twitter-test | 9000 | - | [twitter-test](https://github.com/danielhuang-030/twitter-test) |
 | app-pma | 80 | 12010 | [phpMyAdmin](http://localhost:12010) |
 | app-pra | 80 | 12011 | [phpRedisAdmin](http://localhost:12011) |
