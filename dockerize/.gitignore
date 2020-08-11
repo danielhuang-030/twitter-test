@@ -1,0 +1,8 @@
+# Ignore folders
+log/nginx/*
+log/laravel_echo_server/*
+data/mysql/*
+data/redis/*
+
+# others
+*.DS_Store

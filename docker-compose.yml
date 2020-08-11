@@ -1,0 +1,123 @@
+version: '3'
+
+networks:
+    app-network:
+        driver: bridge
+
+services:
+
+#app-db
+    app-db:
+        image: mysql:5.7
+        container_name: app-db
+        restart: always
+        ports:
+            - "12006:3306"
+        environment:
+            MYSQL_DATABASE: twitter_test
+            MYSQL_ROOT_PASSWORD: root
+            TZ: Asia/Taipei
+        command: [
+            "--character-set-server=utf8mb4",
+            "--collation-server=utf8mb4_unicode_ci",
+            "--innodb-use-native-aio=0",
+            "--server-id=1",
+            "--log_bin=ON",
+            "--default-authentication-plugin=mysql_native_password"
+        ]
+        volumes:
+            - ./dockerize/data/mysql:/var/lib/mysql
+        networks:
+            - app-network
+
+#app-redis
+    app-redis:
+        build:
+            context: .
+            dockerfile: ./dockerize/dockerfile/redis.dockerfile
+        image: danielhuang-030/app-redis:0.0.1
+        container_name: app-redis
+        restart: always
+        volumes:
+            - ./dockerize/data/redis:/data
+        networks:
+            - app-network
+
+#phpMyAdmin
+    pma:
+        image: phpmyadmin/phpmyadmin:latest
+        container_name: app-pma
+        restart: always
+        volumes:
+            - ./dockerize/conf/phpMyAdmin/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php
+        ports:
+            - "12010:80"
+        environment:
+            SESSION_TIMEOUT: 86400
+            PMA_HOST: app-db
+        networks:
+            - app-network
+        depends_on:
+            - app-db
+
+#phpRedisAdmin
+    pra:
+        image: erikdubbelboer/phpredisadmin:latest
+        container_name: app-pra
+        restart: always
+        ports:
+            - "12011:80"
+        environment:
+            REDIS_1_HOST: app-redis
+            REDIS_1_NAME: app-redis
+        networks:
+            - app-network
+        depends_on:
+            - app-redis
+
+#twitter-test
+    twitter-test:
+        build:
+            context: .
+            dockerfile: ./dockerize/dockerfile/app.dockerfile
+        image: danielhuang-030/twitter-test:0.0.1
+        container_name: twitter-test
+        restart: always
+        volumes:
+            - ./:/var/www/html/
+            - ./dockerize/conf/supervisord/supervisord.conf:/etc/supervisord.conf
+            - ./dockerize/conf/php/php.ini:/usr/local/etc/php/conf.d/php-custom.ini
+            - ./dockerize/conf/cron/root:/etc/crontabs/root
+        networks:
+            - app-network
+        depends_on:
+            - app-db
+            - app-redis
+
+#laravel-echo-server
+    laravel-echo-server:
+        build:
+            context: .
+            dockerfile: ./dockerize/dockerfile/laravel-echo-server.dockerfile
+        image: danielhuang-030/laravel-echo-server:0.0.1
+        container_name: laravel-echo-server
+        restart: always
+        links:
+            - app-redis
+        networks:
+            - app-network
+
+#web-server
+    web-server:
+        image: nginx:alpine
+        container_name: web-server
+        restart: always
+        volumes:
+            - ./:/var/www/html
+            - ./dockerize/conf/nginx/default.conf:/etc/nginx/conf.d/default.conf
+            - ./dockerize/log/nginx/:/var/log/nginx
+        ports:
+            - "12001:12001"
+            - "12002:12002"
+        networks:
+            - app-network
