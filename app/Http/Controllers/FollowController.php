@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Follow\StoreRequest;
+use App\Http\Requests\Follow\FollowingRequest;
+use App\Http\Requests\Follow\UnfollowingRequest;
 use App\Services\FollowService;
 use Auth;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class FollowController extends Controller
@@ -28,10 +28,10 @@ class FollowController extends Controller
     }
 
     /**
-     * store.
+     * following.
      *
-     * @OA\Post(
-     *     path="/api/following",
+     * @OA\Patch(
+     *     path="/api/following/{id}",
      *     summary="User Following",
      *     description="User following",
      *     tags={"User"},
@@ -40,19 +40,15 @@ class FollowController extends Controller
      *             "passport": {},
      *         },
      *     },
-     *     @OA\RequestBody(
-     *         @OA\MediaType(
-     *             mediaType="application/json",
-     *             @OA\Schema(
-     *                 required={"user_id"},
-     *                 @OA\Property(
-     *                     property="user_id",
-     *                     type="integer",
-     *                     format="int64",
-     *                     description="user id",
-     *                     example="2",
-     *                 ),
-     *             ),
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="id",
+     *         @OA\Schema(
+     *             type="integer",
+     *             format="int64",
+     *             example=1,
      *         )
      *     ),
      *     @OA\Response(
@@ -103,7 +99,25 @@ class FollowController extends Controller
      *                         type="string",
      *                         format="string",
      *                         description="message",
-     *                         example="The user id field is required.",
+     *                         example="The selected id is invalid.",
+     *                     ),
+     *                 ),
+     *             ),
+     *         },
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Unauthorized.",
+     *         content={
+     *             @OA\MediaType(
+     *                 mediaType="application/json",
+     *                 @OA\Schema(
+     *                     @OA\Property(
+     *                         property="message",
+     *                         type="string",
+     *                         format="string",
+     *                         description="message",
+     *                         example="Unauthorized",
      *                     ),
      *                 ),
      *             ),
@@ -111,14 +125,11 @@ class FollowController extends Controller
      *     ),
      * )
      *
-     * @param Request $request
+     * @param FollowingRequest $request
      */
-    public function store(StoreRequest $request)
+    public function following(FollowingRequest $request, $id)
     {
-        if (!$this->followService->follow(
-            $request->input('user_id', 0),
-            data_get(Auth::user(), 'id', 0)
-        )) {
+        if (!$this->followService->follow($id, data_get(Auth::user(), 'id', 0))) {
             return response()->json([
                 'message' => 'error',
             ], Response::HTTP_BAD_REQUEST);
@@ -130,12 +141,12 @@ class FollowController extends Controller
     }
 
     /**
-     * destroy.
+     * unfollow.
      *
      * @OA\Delete(
      *     path="/api/following/{id}",
-     *     summary="User Unfollowing",
-     *     description="User unfollowing",
+     *     summary="User Unfollow",
+     *     description="User unfollow",
      *     tags={"User"},
      *     security={
      *         {
@@ -189,11 +200,30 @@ class FollowController extends Controller
      *             ),
      *         },
      *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Unauthorized.",
+     *         content={
+     *             @OA\MediaType(
+     *                 mediaType="application/json",
+     *                 @OA\Schema(
+     *                     @OA\Property(
+     *                         property="message",
+     *                         type="string",
+     *                         format="string",
+     *                         description="message",
+     *                         example="Unauthorized",
+     *                     ),
+     *                 ),
+     *             ),
+     *         },
+     *     ),
      * )
      *
-     * @param int $id
+     * @param UnfollowingRequest $request
+     * @param int                $id
      */
-    public function destroy($id)
+    public function unfollow(UnfollowingRequest $request, $id)
     {
         if (!$this->followService->unfollow($id, data_get(Auth::user(), 'id', 0))) {
             return response()->json([

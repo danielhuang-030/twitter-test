@@ -24,27 +24,6 @@ Route::group([
     // auth
     Route::get('logout', 'AuthController@logout');
 
-    // follow
-    Route::resource('following', 'FollowController')->only([
-        'store',
-        'destroy',
-    ]);
-
-    // post
-    Route::group([
-        'prefix' => 'posts',
-    ], function () {
-        Route::patch('{id}/like', 'PostController@like');
-        Route::patch('{id}/dislike', 'PostController@dislike');
-        Route::get('{id}/liked_users', 'PostController@likedUsers');
-    });
-    Route::resource('posts', 'PostController')->only([
-        'show',
-        'store',
-        'update',
-        'destroy',
-    ]);
-
     // user
     Route::group([
         'prefix' => 'users',
@@ -55,4 +34,29 @@ Route::group([
         Route::get('{id}/posts', 'UserController@posts');
         Route::get('{id}/liked_posts', 'UserController@likedPosts');
     });
+
+    // follow
+    Route::group([
+        'prefix' => 'following',
+    ], function () {
+        Route::patch('{id}', 'FollowController@following');
+        Route::delete('{id}', 'FollowController@unfollow');
+    });
+
+    // post
+    Route::group([
+        'prefix' => 'posts',
+    ], function () {
+        Route::patch('{id}/like', 'PostController@like');
+        Route::delete('{id}/like', 'PostController@dislike');
+        Route::get('{id}/liked_users', 'PostController@likedUsers');
+    });
+    Route::resource('posts', 'PostController', [
+        'parameters' => ['posts' => 'id'],
+    ])->only([
+        'show',
+        'store',
+        'update',
+        'destroy',
+    ]);
 });

@@ -4,7 +4,7 @@ namespace App\Http\Requests\Follow;
 
 use App\Http\Requests\JsonRequest;
 
-class StoreRequest extends JsonRequest
+class UnfollowingRequest extends JsonRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -14,10 +14,20 @@ class StoreRequest extends JsonRequest
     public function rules()
     {
         return [
-            'user_id' => [
+            'id' => [
                 'required',
                 'exists:users',
             ],
         ];
+    }
+
+    /**
+     * validation data.
+     *
+     * @return array
+     */
+    public function validationData()
+    {
+        return array_merge($this->route()->parameters, parent::validationData());
     }
 }
