@@ -41,6 +41,9 @@ php artisan passport:install
 php artisan horizon
 
 ```
+### Tools
+ - [Laravel Horizon](http://localhost:12001/horizon/dashboard)
+ - [Swagger UI](http://localhost:12001/api-docs/)
 
 ### API info
 
@@ -93,7 +96,7 @@ php artisan horizon
     * Content-Type: application/json
     * Accept: application/json
 
-* self user info
+* user info
   * GET /api/users/:id/info
     * Authorization: Bearer {{token}}
     * Content-Type: application/json
