@@ -10,6 +10,19 @@ use Symfony\Component\HttpFoundation\Response;
 class UserController extends Controller
 {
     /**
+     * @OA\Schema(
+     *     schema="UserResponse",
+     *     type="object",
+     *     title="User Response",
+     *     @OA\Property(property="id", type="integer" ,format="int64", example=1),
+     *     @OA\Property(property="name", type="string", format="string", example="test001"),
+     *     @OA\Property(property="email", type="string", format="string", example="test001@test.com"),
+     *     @OA\Property(property="created_at", type="string", format="date-time", example="2020-07-31 23:54:28"),
+     *     @OA\Property(property="updated_at", type="string", format="date-time", example="2020-07-31 23:54:28"),
+     * )
+     */
+
+    /**
      * UserService.
      *
      * @var UserService
