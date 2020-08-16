@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Follow\DislikeRequest;
+use App\Http\Requests\Follow\LikeRequest;
+use App\Http\Requests\Post\ShowRequest;
+use App\Http\Requests\Post\StoreRequest;
+use App\Http\Requests\Post\UpdateRequest;
 use App\Services\PostService;
 use Auth;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class PostController extends Controller
@@ -42,11 +46,79 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      *
+     * @OA\Post(
+     *     path="/api/posts",
+     *     summary="Post Store",
+     *     description="Post store",
+     *     tags={"Post"},
+     *     security={
+     *         {
+     *             "passport": {},
+     *         },
+     *     },
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 required={"content"},
+     *                 @OA\Property(
+     *                     property="content",
+     *                     type="string",
+     *                     format="string",
+     *                     description="content",
+     *                     example="test\ntesttest",
+     *                 ),
+     *             ),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="Successfully.",
+     *         @OA\JsonContent(ref="#/components/schemas/PostResponse")
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Failed.",
+     *         content={
+     *             @OA\MediaType(
+     *                 mediaType="application/json",
+     *                 @OA\Schema(
+     *                     @OA\Property(
+     *                         property="message",
+     *                         type="string",
+     *                         format="string",
+     *                         description="message",
+     *                         example="error",
+     *                     ),
+     *                 ),
+     *             ),
+     *         },
+     *     ),
+     *     @OA\Response(
+     *         response="422",
+     *         description="Validation error.",
+     *         content={
+     *             @OA\MediaType(
+     *                 mediaType="application/json",
+     *                 @OA\Schema(
+     *                     @OA\Property(
+     *                         property="message",
+     *                         type="string",
+     *                         format="string",
+     *                         description="message",
+     *                         example="The content field is required.",
+     *                     ),
+     *                 ),
+     *             ),
+     *         },
+     *     ),
+     * )
+     *
      * @param \Illuminate\Http\Request $request
      *
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
         $post = $this->postService->add($request->all(), data_get(Auth::user(), 'id', 0));
         if (null === $post) {
@@ -61,11 +133,76 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param int $id
+     * @OA\Get(
+     *     path="/api/posts/{id}",
+     *     summary="Post Show",
+     *     description="Post show",
+     *     tags={"Post"},
+     *     security={
+     *         {
+     *             "passport": {},
+     *         },
+     *     },
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="id",
+     *         @OA\Schema(
+     *             type="integer",
+     *             format="int64",
+     *             example=1,
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="Successfully.",
+     *         @OA\JsonContent(ref="#/components/schemas/PostResponse")
+     *     ),
+     *     @OA\Response(
+     *         response="422",
+     *         description="Failed.",
+     *         content={
+     *             @OA\MediaType(
+     *                 mediaType="application/json",
+     *                 @OA\Schema(
+     *                     @OA\Property(
+     *                         property="message",
+     *                         type="string",
+     *                         format="string",
+     *                         description="message",
+     *                         example="The selected id is invalid.",
+     *                     ),
+     *                 ),
+     *             ),
+     *         },
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Unauthorized.",
+     *         content={
+     *             @OA\MediaType(
+     *                 mediaType="application/json",
+     *                 @OA\Schema(
+     *                     @OA\Property(
+     *                         property="message",
+     *                         type="string",
+     *                         format="string",
+     *                         description="message",
+     *                         example="Unauthorized",
+     *                     ),
+     *                 ),
+     *             ),
+     *         },
+     *     ),
+     * )
+     *
+     * @param int         $id
+     * @param ShowRequest $request
      *
      * @return \Illuminate\Http\Response
      */
-    public function show(int $id)
+    public function show(ShowRequest $request, int $id)
     {
         return response()->json($this->postService->find($id));
     }
@@ -73,12 +210,91 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param int                      $id
+     * @OA\Put(
+     *     path="/api/posts/{id}",
+     *     summary="Post Update",
+     *     description="Post update",
+     *     tags={"Post"},
+     *     security={
+     *         {
+     *             "passport": {},
+     *         },
+     *     },
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="id",
+     *         @OA\Schema(
+     *             type="integer",
+     *             format="int64",
+     *             example=1,
+     *         )
+     *     ),
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 required={"content"},
+     *                 @OA\Property(
+     *                     property="content",
+     *                     type="string",
+     *                     format="string",
+     *                     description="content",
+     *                     example="test\ntesttest",
+     *                 ),
+     *             ),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="Successfully.",
+     *         @OA\JsonContent(ref="#/components/schemas/PostResponse")
+     *     ),
+     *     @OA\Response(
+     *         response="422",
+     *         description="Failed.",
+     *         content={
+     *             @OA\MediaType(
+     *                 mediaType="application/json",
+     *                 @OA\Schema(
+     *                     @OA\Property(
+     *                         property="message",
+     *                         type="string",
+     *                         format="string",
+     *                         description="message",
+     *                         example="The selected id is invalid.",
+     *                     ),
+     *                 ),
+     *             ),
+     *         },
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Unauthorized.",
+     *         content={
+     *             @OA\MediaType(
+     *                 mediaType="application/json",
+     *                 @OA\Schema(
+     *                     @OA\Property(
+     *                         property="message",
+     *                         type="string",
+     *                         format="string",
+     *                         description="message",
+     *                         example="Unauthorized",
+     *                     ),
+     *                 ),
+     *             ),
+     *         },
+     *     ),
+     * )
+     *
+     * @param UpdateRequest $request
+     * @param int           $id
      *
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateRequest $request, $id)
     {
         $post = $this->postService->edit($request->all(), $id, data_get(Auth::user(), 'id', 0));
         if (null === $post) {
@@ -92,6 +308,83 @@ class PostController extends Controller
 
     /**
      * Remove the specified resource from storage.
+     *
+     * @OA\Delete(
+     *     path="/api/posts/{id}",
+     *     summary="Post Delete",
+     *     description="Post delete",
+     *     tags={"Post"},
+     *     security={
+     *         {
+     *             "passport": {},
+     *         },
+     *     },
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="id",
+     *         @OA\Schema(
+     *             type="integer",
+     *             format="int64",
+     *             example=1,
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="Successfully.",
+     *         content={
+     *             @OA\MediaType(
+     *                 mediaType="application/json",
+     *                 @OA\Schema(
+     *                     @OA\Property(
+     *                         property="message",
+     *                         type="string",
+     *                         format="string",
+     *                         description="message",
+     *                         example="Successfully deleted post!",
+     *                     ),
+     *                 ),
+     *             ),
+     *         },
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Failed.",
+     *         content={
+     *             @OA\MediaType(
+     *                 mediaType="application/json",
+     *                 @OA\Schema(
+     *                     @OA\Property(
+     *                         property="message",
+     *                         type="string",
+     *                         format="string",
+     *                         description="message",
+     *                         example="error",
+     *                     ),
+     *                 ),
+     *             ),
+     *         },
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Unauthorized.",
+     *         content={
+     *             @OA\MediaType(
+     *                 mediaType="application/json",
+     *                 @OA\Schema(
+     *                     @OA\Property(
+     *                         property="message",
+     *                         type="string",
+     *                         format="string",
+     *                         description="message",
+     *                         example="Unauthorized",
+     *                     ),
+     *                 ),
+     *             ),
+     *         },
+     *     ),
+     * )
      *
      * @param int $id
      *
@@ -113,9 +406,105 @@ class PostController extends Controller
     /**
      * like.
      *
-     * @param int $id
+     * @OA\Patch(
+     *     path="/api/posts/{id}/like",
+     *     summary="Post Like",
+     *     description="Post like",
+     *     tags={"Post"},
+     *     security={
+     *         {
+     *             "passport": {},
+     *         },
+     *     },
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="id",
+     *         @OA\Schema(
+     *             type="integer",
+     *             format="int64",
+     *             example=1,
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="Successfully.",
+     *         content={
+     *             @OA\MediaType(
+     *                 mediaType="application/json",
+     *                 @OA\Schema(
+     *                     @OA\Property(
+     *                         property="message",
+     *                         type="string",
+     *                         format="string",
+     *                         description="message",
+     *                         example="Successfully liked post!",
+     *                     ),
+     *                 ),
+     *             ),
+     *         },
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Failed.",
+     *         content={
+     *             @OA\MediaType(
+     *                 mediaType="application/json",
+     *                 @OA\Schema(
+     *                     @OA\Property(
+     *                         property="message",
+     *                         type="string",
+     *                         format="string",
+     *                         description="message",
+     *                         example="error",
+     *                     ),
+     *                 ),
+     *             ),
+     *         },
+     *     ),
+     *     @OA\Response(
+     *         response="422",
+     *         description="Validation error.",
+     *         content={
+     *             @OA\MediaType(
+     *                 mediaType="application/json",
+     *                 @OA\Schema(
+     *                     @OA\Property(
+     *                         property="message",
+     *                         type="string",
+     *                         format="string",
+     *                         description="message",
+     *                         example="The selected id is invalid.",
+     *                     ),
+     *                 ),
+     *             ),
+     *         },
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Unauthorized.",
+     *         content={
+     *             @OA\MediaType(
+     *                 mediaType="application/json",
+     *                 @OA\Schema(
+     *                     @OA\Property(
+     *                         property="message",
+     *                         type="string",
+     *                         format="string",
+     *                         description="message",
+     *                         example="Unauthorized",
+     *                     ),
+     *                 ),
+     *             ),
+     *         },
+     *     ),
+     * )
+     *
+     * @param LikeRequest $request
+     * @param int         $id
      */
-    public function like($id)
+    public function like(LikeRequest $request, $id)
     {
         if (!$this->postService->like($id, data_get(Auth::user(), 'id', 0))) {
             return response()->json([
@@ -131,9 +520,105 @@ class PostController extends Controller
     /**
      * dislike.
      *
-     * @param int $id
+     * @OA\Delete(
+     *     path="/api/posts/{id}/like",
+     *     summary="Post Dislike",
+     *     description="Post dislike",
+     *     tags={"Post"},
+     *     security={
+     *         {
+     *             "passport": {},
+     *         },
+     *     },
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="id",
+     *         @OA\Schema(
+     *             type="integer",
+     *             format="int64",
+     *             example=1,
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="Successfully.",
+     *         content={
+     *             @OA\MediaType(
+     *                 mediaType="application/json",
+     *                 @OA\Schema(
+     *                     @OA\Property(
+     *                         property="message",
+     *                         type="string",
+     *                         format="string",
+     *                         description="message",
+     *                         example="Successfully disliked post!",
+     *                     ),
+     *                 ),
+     *             ),
+     *         },
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Failed.",
+     *         content={
+     *             @OA\MediaType(
+     *                 mediaType="application/json",
+     *                 @OA\Schema(
+     *                     @OA\Property(
+     *                         property="message",
+     *                         type="string",
+     *                         format="string",
+     *                         description="message",
+     *                         example="error",
+     *                     ),
+     *                 ),
+     *             ),
+     *         },
+     *     ),
+     *     @OA\Response(
+     *         response="422",
+     *         description="Validation error.",
+     *         content={
+     *             @OA\MediaType(
+     *                 mediaType="application/json",
+     *                 @OA\Schema(
+     *                     @OA\Property(
+     *                         property="message",
+     *                         type="string",
+     *                         format="string",
+     *                         description="message",
+     *                         example="The selected id is invalid.",
+     *                     ),
+     *                 ),
+     *             ),
+     *         },
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Unauthorized.",
+     *         content={
+     *             @OA\MediaType(
+     *                 mediaType="application/json",
+     *                 @OA\Schema(
+     *                     @OA\Property(
+     *                         property="message",
+     *                         type="string",
+     *                         format="string",
+     *                         description="message",
+     *                         example="Unauthorized",
+     *                     ),
+     *                 ),
+     *             ),
+     *         },
+     *     ),
+     * )
+     *
+     * @param DislikeRequest $request
+     * @param int            $id
      */
-    public function dislike($id)
+    public function dislike(DislikeRequest $request, $id)
     {
         if (!$this->postService->dislike($id, data_get(Auth::user(), 'id', 0))) {
             return response()->json([
@@ -148,6 +633,78 @@ class PostController extends Controller
 
     /**
      * liked users.
+     *
+     * @OA\Get(
+     *     path="/api/posts/{id}/liked_users",
+     *     summary="Post Liked Users",
+     *     description="Post liked user list",
+     *     tags={"Post"},
+     *     security={
+     *         {
+     *             "passport": {},
+     *         },
+     *     },
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="id",
+     *         @OA\Schema(
+     *             type="integer",
+     *             format="int64",
+     *             example=1,
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="Successfully.",
+     *         content={
+     *             @OA\MediaType(
+     *                 mediaType="application/json",
+     *                 @OA\Schema(
+     *                     type="array",
+     *                     @OA\Items(ref="#/components/schemas/UserResponse"),
+     *                 ),
+     *             ),
+     *         },
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Failed.",
+     *         content={
+     *             @OA\MediaType(
+     *                 mediaType="application/json",
+     *                 @OA\Schema(
+     *                     @OA\Property(
+     *                         property="message",
+     *                         type="string",
+     *                         format="string",
+     *                         description="message",
+     *                         example="error",
+     *                     ),
+     *                 ),
+     *             ),
+     *         },
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Unauthorized.",
+     *         content={
+     *             @OA\MediaType(
+     *                 mediaType="application/json",
+     *                 @OA\Schema(
+     *                     @OA\Property(
+     *                         property="message",
+     *                         type="string",
+     *                         format="string",
+     *                         description="message",
+     *                         example="Unauthorized",
+     *                     ),
+     *                 ),
+     *             ),
+     *         },
+     *     ),
+     * )
      *
      * @param int $id
      */
