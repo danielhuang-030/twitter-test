@@ -11,6 +11,9 @@
 |
 */
 
+// swagger
+Route::get('docs', 'ApiController@getJSON');
+
 // auth
 Route::post('login', 'AuthController@login');
 Route::post('signup', 'AuthController@signup');
