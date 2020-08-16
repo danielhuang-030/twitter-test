@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Follow\FollowingRequest;
-use App\Http\Requests\Follow\UnfollowingRequest;
+use App\Http\Requests\Follow\UnfollowRequest;
 use App\Services\FollowService;
 use Auth;
 use Symfony\Component\HttpFoundation\Response;
@@ -201,6 +201,24 @@ class FollowController extends Controller
      *         },
      *     ),
      *     @OA\Response(
+     *         response="422",
+     *         description="Validation error.",
+     *         content={
+     *             @OA\MediaType(
+     *                 mediaType="application/json",
+     *                 @OA\Schema(
+     *                     @OA\Property(
+     *                         property="message",
+     *                         type="string",
+     *                         format="string",
+     *                         description="message",
+     *                         example="The selected id is invalid.",
+     *                     ),
+     *                 ),
+     *             ),
+     *         },
+     *     ),
+     *     @OA\Response(
      *         response="401",
      *         description="Unauthorized.",
      *         content={
@@ -220,10 +238,10 @@ class FollowController extends Controller
      *     ),
      * )
      *
-     * @param UnfollowingRequest $request
-     * @param int                $id
+     * @param UnfollowRequest $request
+     * @param int             $id
      */
-    public function unfollow(UnfollowingRequest $request, $id)
+    public function unfollow(UnfollowRequest $request, $id)
     {
         if (!$this->followService->unfollow($id, data_get(Auth::user(), 'id', 0))) {
             return response()->json([

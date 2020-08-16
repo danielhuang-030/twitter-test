@@ -4,7 +4,7 @@ namespace App\Http\Requests\Follow;
 
 use App\Http\Requests\JsonRequest;
 
-class UnfollowingRequest extends JsonRequest
+class UnfollowRequest extends JsonRequest
 {
     /**
      * Get the validation rules that apply to the request.
