@@ -7,6 +7,8 @@ Simple implementation of the basic functions of twitter: including member login/
 ### Packages
 - [laravel/passport](https://github.com/laravel/passport) - Laravel Passport
 - [laravel/horizon](https://github.com/laravel/horizon) - Laravel Horizon
+- [zircote/swagger-php](https://github.com/zircote/swagger-php) - swagger-php
+- [swagger-api/swagger-ui](https://github.com/swagger-api/swagger-ui) - Swagger UI
 
 ### Installation
 
