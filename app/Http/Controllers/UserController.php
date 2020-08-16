@@ -303,6 +303,78 @@ class UserController extends Controller
     /**
      * posts.
      *
+     * @OA\Get(
+     *     path="/api/users/{id}/posts",
+     *     summary="User Posts",
+     *     description="User post list",
+     *     tags={"User"},
+     *     security={
+     *         {
+     *             "passport": {},
+     *         },
+     *     },
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="id",
+     *         @OA\Schema(
+     *             type="integer",
+     *             format="int64",
+     *             example=1,
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="Successfully.",
+     *         content={
+     *             @OA\MediaType(
+     *                 mediaType="application/json",
+     *                 @OA\Schema(
+     *                     type="array",
+     *                     @OA\Items(ref="#/components/schemas/PostResponse"),
+     *                 ),
+     *             ),
+     *         },
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Failed.",
+     *         content={
+     *             @OA\MediaType(
+     *                 mediaType="application/json",
+     *                 @OA\Schema(
+     *                     @OA\Property(
+     *                         property="message",
+     *                         type="string",
+     *                         format="string",
+     *                         description="message",
+     *                         example="error",
+     *                     ),
+     *                 ),
+     *             ),
+     *         },
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Unauthorized.",
+     *         content={
+     *             @OA\MediaType(
+     *                 mediaType="application/json",
+     *                 @OA\Schema(
+     *                     @OA\Property(
+     *                         property="message",
+     *                         type="string",
+     *                         format="string",
+     *                         description="message",
+     *                         example="Unauthorized",
+     *                     ),
+     *                 ),
+     *             ),
+     *         },
+     *     ),
+     * )
+     *
      * @param Request $request
      * @param int     $id
      */
@@ -315,6 +387,78 @@ class UserController extends Controller
 
     /**
      * liked posts.
+     *
+     * @OA\Get(
+     *     path="/api/users/{id}/liked_posts",
+     *     summary="User Liked Posts",
+     *     description="User liked post list",
+     *     tags={"User"},
+     *     security={
+     *         {
+     *             "passport": {},
+     *         },
+     *     },
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="id",
+     *         @OA\Schema(
+     *             type="integer",
+     *             format="int64",
+     *             example=1,
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="Successfully.",
+     *         content={
+     *             @OA\MediaType(
+     *                 mediaType="application/json",
+     *                 @OA\Schema(
+     *                     type="array",
+     *                     @OA\Items(ref="#/components/schemas/PostResponse"),
+     *                 ),
+     *             ),
+     *         },
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Failed.",
+     *         content={
+     *             @OA\MediaType(
+     *                 mediaType="application/json",
+     *                 @OA\Schema(
+     *                     @OA\Property(
+     *                         property="message",
+     *                         type="string",
+     *                         format="string",
+     *                         description="message",
+     *                         example="error",
+     *                     ),
+     *                 ),
+     *             ),
+     *         },
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Unauthorized.",
+     *         content={
+     *             @OA\MediaType(
+     *                 mediaType="application/json",
+     *                 @OA\Schema(
+     *                     @OA\Property(
+     *                         property="message",
+     *                         type="string",
+     *                         format="string",
+     *                         description="message",
+     *                         example="Unauthorized",
+     *                     ),
+     *                 ),
+     *             ),
+     *         },
+     *     ),
+     * )
      *
      * @param Request $request
      * @param int     $id

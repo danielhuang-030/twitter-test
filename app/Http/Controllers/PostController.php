@@ -10,6 +10,19 @@ use Symfony\Component\HttpFoundation\Response;
 class PostController extends Controller
 {
     /**
+     * @OA\Schema(
+     *     schema="PostResponse",
+     *     type="object",
+     *     title="Post Response",
+     *     @OA\Property(property="id", type="integer" ,format="int64", example=1),
+     *     @OA\Property(property="user_id", type="integer", format="int64", example="1"),
+     *     @OA\Property(property="content", type="string", format="string", example="test\ntesttest"),
+     *     @OA\Property(property="created_at", type="string", format="date-time", example="2020-07-31 23:54:28"),
+     *     @OA\Property(property="updated_at", type="string", format="date-time", example="2020-07-31 23:54:28"),
+     * )
+     */
+
+    /**
      * PostService.
      *
      * @var PostService
