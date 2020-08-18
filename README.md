@@ -85,12 +85,6 @@ php artisan horizon
       "password_confirmation": "aaaaaa"
     }
     ```
-    * Response JSON
-    ```
-    {
-      "message": "Successfully created user!"
-    }
-    ```
 
 * logout
   * GET /api/logout
@@ -122,23 +116,11 @@ php artisan horizon
     * Content-Type: application/json
     * Accept: application/json
 
-* follow user
-  * POST /api/following
+* following user
+  * PATCH /api/following/:id
     * Authorization: Bearer {{token}}
     * Content-Type: application/json
     * Accept: application/json
-    * Request JSON
-    ```
-    {
-      "user_id": 3,
-    }
-    ```
-    * Response JSON
-    ```
-    {
-      "message": "Successfully followed user!"
-    }
-    ```
 
 * unfollow user
   * DELETE /api/following/:id
@@ -178,7 +160,7 @@ php artisan horizon
     * Request JSON
     ```
     {
-      "content": "test content updated!!!"
+      "content": "test content updated"
     }
     ```
 
@@ -195,7 +177,7 @@ php artisan horizon
     * Accept: application/json
 
 * dislike post
-  * PATCH /api/post/:id/dislike
+  * DELETE /api/post/:id/like
     * Authorization: Bearer {{token}}
     * Content-Type: application/json
     * Accept: application/json
