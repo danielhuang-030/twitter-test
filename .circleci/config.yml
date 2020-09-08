@@ -66,7 +66,7 @@ jobs:
     machine:
       image: circleci/classic:edge
     steps:
-      - run: ssh ${USER_NAME}@${HOST_NAME} 'cd /var/work/twitter-test/ && git pull origin master && ./.circleci/deploy'
+      - run: ssh ${USER_NAME}@${HOST_NAME} 'cd /var/work/twitter-test/ && git pull origin master && sh ./.circleci/deploy.sh'
 
 workflows:
   version: 2

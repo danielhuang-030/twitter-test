@@ -2,7 +2,7 @@
 
 # container name
 container=twitter-test
-docker_command="docker exec -it $container"
+docker_command="docker exec -i $container"
 
 # update source code
 git pull origin master
