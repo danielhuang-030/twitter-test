@@ -68,7 +68,7 @@ jobs:
     steps:
       - add_ssh_keys:
           fingerprints:
-            - "1b:86:77:f9:aa:0c:65:ed:9b:18:75:39:36:69:18:dc"
+            - "58:27:c7:b9:17:15:52:bf:a4:a2:9a:8e:2b:90:73:d2"
       - run: ssh ${USER_NAME}@${HOST_NAME} 'cd /var/work/twitter-test/ && git pull origin master'
 
 workflows:
