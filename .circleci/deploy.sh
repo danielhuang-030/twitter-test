@@ -1,11 +1,16 @@
 #!/bin/sh
 
+# Shutdown the laravel app
+php artisan down
+
 # container name
 container=twitter-test
 docker_command="docker exec -i $container"
 
-# update source code
-git pull origin master
+# cache boost configuration and routes
+php artisan cache:clear
+php artisan config:cache
+php artisan route:cache
 
 # update PHP dependencies
 $docker_command composer install  --no-interaction --no-dev --prefer-dist
@@ -21,3 +26,8 @@ $docker_command php artisan migrate --force
 $docker_command php artisan horizon:purge
 $docker_command php artisan horizon:terminate
 $docker_command php artisan queue:restart
+
+# Rise from the ashes
+php artisan up
+
+echo 'Deploy finished.'
