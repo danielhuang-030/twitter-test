@@ -3,6 +3,7 @@
 namespace App\Http\Requests\User;
 
 use App\Http\Requests\JsonRequest;
+use App\Http\Requests\Traits\MergeRouteParams;
 use App\Http\Requests\Traits\RulePagination;
 use App\Http\Requests\Traits\RuleSortBy;
 
@@ -10,6 +11,7 @@ class PostsRequest extends JsonRequest
 {
     use RulePagination;
     use RuleSortBy;
+    use MergeRouteParams;
 
     /**
      * Get the validation rules that apply to the request.
@@ -40,15 +42,5 @@ class PostsRequest extends JsonRequest
             $this->getPaginationMessages(),
             $this->getSortByMessages()
         );
-    }
-
-    /**
-     * validation data.
-     *
-     * @return array
-     */
-    public function validationData()
-    {
-        return array_merge($this->route()->parameters, parent::validationData());
     }
 }
