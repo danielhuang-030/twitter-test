@@ -226,4 +226,7 @@ return [
 
     // page size
     'page_size' => 2,
+
+    // max page size
+    'max_page_size' => 100,
 ];

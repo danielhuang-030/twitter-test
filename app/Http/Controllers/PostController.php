@@ -20,7 +20,7 @@ class PostController extends Controller
      *     title="Post Response",
      *     @OA\Property(property="id", type="integer" ,format="int64", example=1),
      *     @OA\Property(property="user_id", type="integer", format="int64", example="1"),
-     *     @OA\Property(property="content", type="string", format="string", example="test\ntesttest"),
+     *     @OA\Property(property="content", type="string", format="string", example="test"),
      *     @OA\Property(property="created_at", type="string", format="date-time", example="2020-07-31 23:54:28"),
      *     @OA\Property(property="updated_at", type="string", format="date-time", example="2020-07-31 23:54:28"),
      * )
@@ -66,7 +66,7 @@ class PostController extends Controller
      *                     type="string",
      *                     format="string",
      *                     description="content",
-     *                     example="test\ntesttest",
+     *                     example="test",
      *                 ),
      *             ),
      *         )
@@ -241,7 +241,7 @@ class PostController extends Controller
      *                     type="string",
      *                     format="string",
      *                     description="content",
-     *                     example="test\ntesttest",
+     *                     example="test",
      *                 ),
      *             ),
      *         )

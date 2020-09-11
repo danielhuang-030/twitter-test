@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\User\PostsRequest;
 use App\Params\PostParam;
 use App\Services\UserService;
 use Auth;
@@ -325,6 +326,28 @@ class UserController extends Controller
      *             example=1,
      *         )
      *     ),
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         required=false,
+     *         description="page",
+     *         @OA\Schema(
+     *             type="integer",
+     *             format="int64",
+     *             example=1,
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="page_size",
+     *         in="query",
+     *         required=false,
+     *         description="page size",
+     *         @OA\Schema(
+     *             type="integer",
+     *             format="int64",
+     *             example=10,
+     *         )
+     *     ),
      *     @OA\Response(
      *         response="200",
      *         description="Successfully.",
@@ -332,8 +355,37 @@ class UserController extends Controller
      *             @OA\MediaType(
      *                 mediaType="application/json",
      *                 @OA\Schema(
-     *                     type="array",
-     *                     @OA\Items(ref="#/components/schemas/PostResponse"),
+     *                     type="object",
+     *                     allOf={
+     *                         @OA\Schema(
+     *                             @OA\Property(
+     *                                 property="data",
+     *                                 type="array",
+     *                                 @OA\Items(ref="#/components/schemas/PostResponse"),
+     *                             ),
+     *                         ),
+     *                     },
+     *                     @OA\Property(
+     *                         property="page",
+     *                         type="integer",
+     *                         format="int64",
+     *                         description="page",
+     *                         example=1,
+     *                     ),
+     *                     @OA\Property(
+     *                         property="page_size",
+     *                         type="integer",
+     *                         format="int64",
+     *                         description="page size",
+     *                         example=10,
+     *                     ),
+     *                     @OA\Property(
+     *                         property="total",
+     *                         type="integer",
+     *                         format="int64",
+     *                         description="total",
+     *                         example=1,
+     *                     ),
      *                 ),
      *             ),
      *         },
@@ -351,6 +403,24 @@ class UserController extends Controller
      *                         format="string",
      *                         description="message",
      *                         example="error",
+     *                     ),
+     *                 ),
+     *             ),
+     *         },
+     *     ),
+     *     @OA\Response(
+     *         response="422",
+     *         description="Failed.",
+     *         content={
+     *             @OA\MediaType(
+     *                 mediaType="application/json",
+     *                 @OA\Schema(
+     *                     @OA\Property(
+     *                         property="message",
+     *                         type="string",
+     *                         format="string",
+     *                         description="message",
+     *                         example="The number of pages must be at least 1.",
      *                     ),
      *                 ),
      *             ),
@@ -376,10 +446,10 @@ class UserController extends Controller
      *     ),
      * )
      *
-     * @param Request $request
-     * @param int     $id
+     * @param PostsRequest $request
+     * @param int          $id
      */
-    public function posts(Request $request, $id)
+    public function posts(PostsRequest $request, $id)
     {
         $paginator = $this->userService->getPosts((new PostParam($request))->setUserId($id));
 
