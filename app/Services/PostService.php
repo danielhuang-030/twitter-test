@@ -3,8 +3,6 @@
 namespace App\Services;
 
 use App\Models\Post;
-use App\Models\PostLike;
-use App\Repositories\PostLikeRepository;
 use App\Repositories\PostRepository;
 
 class PostService
@@ -17,22 +15,13 @@ class PostService
     protected $postRepository;
 
     /**
-     * PostLikeRepository.
-     *
-     * @var PostLikeRepository
-     */
-    protected $postLikeRepository;
-
-    /**
      * construct.
      *
-     * @param PostRepository     $postRepository
-     * @param PostLikeRepository $postLikeRepository
+     * @param PostRepository $postRepository
      */
-    public function __construct(PostRepository $postRepository, PostLikeRepository $postLikeRepository)
+    public function __construct(PostRepository $postRepository)
     {
         $this->postRepository = $postRepository;
-        $this->postLikeRepository = $postLikeRepository;
     }
 
     /**
@@ -120,15 +109,6 @@ class PostService
         if (null === $post || $post->user_id === $userId) {
             return false;
         }
-        // if (null === $post->likedUsers()->where('user_id', $userId)->first()) {
-        //     $post->likedUsers()->attach($userId, [
-        //         'liked' => PostLike::LIKED_LIKE,
-        //     ]);
-        // } else {
-        //     $post->likedUsers()->updateExistingPivot($userId, [
-        //         'liked' => PostLike::LIKED_LIKE,
-        //     ]);
-        // }
         $post->likedUsers()->syncWithoutDetaching((array) $userId);
 
         return true;
@@ -148,15 +128,6 @@ class PostService
         if (null === $post || $post->user_id === $userId) {
             return false;
         }
-        // if (null === $post->likedUsers()->where('user_id', $userId)->first()) {
-        //     $post->likedUsers()->attach($userId, [
-        //         'liked' => PostLike::LIKED_DISLIKE,
-        //     ]);
-        // } else {
-        //     $post->likedUsers()->updateExistingPivot($userId, [
-        //         'liked' => PostLike::LIKED_DISLIKE,
-        //     ]);
-        // }
         $post->likedUsers()->detach((array) $userId);
 
         return true;
