@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Params\Permission;
+namespace App\Params;
 
-use App\Params\BaseParam;
 use App\Params\Traits\Pageable;
 use App\Params\Traits\Sortable;
 use App\Params\Traits\Withable;
@@ -33,8 +32,8 @@ class PostParam extends BaseParam
         }
 
         // 分頁
-        $this->setPage((int) $request->input('current_page', $this->getPage()))
-            ->setPerPage((int) $request->input('per_page', config('website.default_rows_per_page')));
+        $this->setPage((int) $request->input('page', $this->getPage()))
+            ->setPerPage((int) $request->input('page_size', config('app.page_size')));
 
         // 排序
         if (!$request->has('sort_by')) {

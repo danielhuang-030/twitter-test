@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Params\PostParam;
 use App\Services\UserService;
 use Auth;
 use Illuminate\Http\Request;
@@ -380,9 +381,14 @@ class UserController extends Controller
      */
     public function posts(Request $request, $id)
     {
-        return response()->json($this->user->load(['posts' => function ($query) {
-            $query->orderBy('updated_at', 'desc');
-        }])->posts);
+        $paginator = $this->userService->getPosts((new PostParam($request))->setUserId($id));
+
+        return response()->json([
+            'data'      => $paginator->getCollection(),
+            'page'      => $paginator->currentPage(),
+            'page_size' => $paginator->perPage(),
+            'total'     => $paginator->total(),
+        ]);
     }
 
     /**
