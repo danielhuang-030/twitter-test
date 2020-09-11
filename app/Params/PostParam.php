@@ -31,13 +31,13 @@ class PostParam extends BaseParam
             return;
         }
 
-        // 分頁
+        // pagination
         $this->setPage((int) $request->input('page', $this->getPage()))
             ->setPerPage((int) $request->input('page_size', config('app.page_size')));
 
-        // 排序
+        // sort
         if (!$request->has('sort_by')) {
-            // 預設更新時間新到舊
+            // default sort by updated_at DESC
             $this->setSortBy('updated_at', true);
         } else {
             $this->setSortBy($request->input('sort_by'), (bool) $request->input('is_desc'));
