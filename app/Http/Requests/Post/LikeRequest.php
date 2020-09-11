@@ -3,9 +3,12 @@
 namespace App\Http\Requests\Follow;
 
 use App\Http\Requests\JsonRequest;
+use App\Http\Requests\Traits\MergeRouteParams;
 
 class LikeRequest extends JsonRequest
 {
+    use MergeRouteParams;
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -19,15 +22,5 @@ class LikeRequest extends JsonRequest
                 'exists:posts',
             ],
         ];
-    }
-
-    /**
-     * validation data.
-     *
-     * @return array
-     */
-    public function validationData()
-    {
-        return array_merge($this->route()->parameters, parent::validationData());
     }
 }

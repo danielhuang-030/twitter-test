@@ -3,9 +3,12 @@
 namespace App\Http\Requests\Post;
 
 use App\Http\Requests\JsonRequest;
+use App\Http\Requests\Traits\MergeRouteParams;
 
 class ShowRequest extends JsonRequest
 {
+    use MergeRouteParams;
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -19,15 +22,5 @@ class ShowRequest extends JsonRequest
                 'exists:posts',
             ],
         ];
-    }
-
-    /**
-     * validation data.
-     *
-     * @return array
-     */
-    public function validationData()
-    {
-        return array_merge($this->route()->parameters, parent::validationData());
     }
 }
