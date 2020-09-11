@@ -3,7 +3,10 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Params\PostParam;
+use App\Repositories\PostRepository;
 use App\Repositories\UserRepository;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -24,13 +27,22 @@ class UserService
     protected $userRepository;
 
     /**
+     * PostRepository.
+     *
+     * @var PostRepository
+     */
+    protected $postRepository;
+
+    /**
      * construct.
      *
      * @param UserRepository $userRepository
+     * @param PostRepository $postRepository
      */
-    public function __construct(UserRepository $userRepository)
+    public function __construct(UserRepository $userRepository, PostRepository $postRepository)
     {
         $this->userRepository = $userRepository;
+        $this->postRepository = $postRepository;
     }
 
     /**
@@ -86,5 +98,17 @@ class UserService
     public function getUser(int $id)
     {
         return $this->userRepository->find($id);
+    }
+
+    /**
+     * get posts.
+     *
+     * @param PostParam $param
+     *
+     * @return LengthAwarePaginator
+     */
+    public function getPosts(PostParam $param)
+    {
+        return $this->postRepository->getByParam($param);
     }
 }

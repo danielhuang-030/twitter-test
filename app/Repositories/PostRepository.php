@@ -3,18 +3,20 @@
 namespace App\Repositories;
 
 use App\Models\Post;
+use App\Params\PostParam;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class PostRepository
 {
     /**
-     * Post
+     * Post.
      *
      * @var Post
      */
     private $post;
 
     /**
-     * construct
+     * construct.
      *
      * @param Post $post
      */
@@ -24,10 +26,11 @@ class PostRepository
     }
 
     /**
-     * add
+     * add.
      *
      * @param array $requestData
-     * @param integer $userId
+     * @param int   $userId
+     *
      * @return Post
      */
     public function add(array $requestData, int $userId)
@@ -38,10 +41,11 @@ class PostRepository
     }
 
     /**
-     * edit
+     * edit.
      *
      * @param array $requestData
-     * @param integer $id
+     * @param int   $id
+     *
      * @return Post
      */
     public function edit(array $requestData, int $id)
@@ -58,10 +62,11 @@ class PostRepository
     }
 
     /**
-     * find
+     * find.
      *
      * @param array $requestData
-     * @param integer $userId
+     * @param int   $userId
+     *
      * @return Post
      */
     public function find(int $id)
@@ -70,13 +75,49 @@ class PostRepository
     }
 
     /**
-     * del
+     * del.
      *
-     * @param integer $id
+     * @param int $id
+     *
      * @return int
      */
     public function del(int $id)
     {
         return $this->post->find($id)->delete();
+    }
+
+    /**
+     * get by param.
+     *
+     * @param PostParam $param
+     *
+     * @return LengthAwarePaginator
+     */
+    public function getByParam(PostParam $param)
+    {
+        // query
+        $query = $this->post->query();
+
+        // user id
+        $userId = $param->getUserId();
+        if (!empty($userId)) {
+            $query->where('user_id', $userId);
+        }
+
+        // withs
+        $withs = $param->getWiths();
+        if (!empty($withs)) {
+            $query->with($withs);
+        }
+
+        // sort
+        $sortBy = $param->getSortBy();
+        if (!empty($sortBy)) {
+            foreach ($sortBy as $sort => $isDesc) {
+                $query->orderBy($sort, $isDesc ? 'desc' : 'asc');
+            }
+        }
+
+        return $query->paginate($param->getPerPage(), ['*'], 'page', $param->getPage());
     }
 }
