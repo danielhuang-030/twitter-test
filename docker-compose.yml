@@ -35,7 +35,7 @@ services:
         build:
             context: .
             dockerfile: ./dockerize/dockerfile/redis.dockerfile
-        image: danielhuang-030/app-redis:0.0.1
+        image: danielhuang030/app-redis:0.0.1
         container_name: app-redis
         restart: always
         volumes:
@@ -80,7 +80,7 @@ services:
         build:
             context: .
             dockerfile: ./dockerize/dockerfile/app.dockerfile
-        image: danielhuang-030/twitter-test:0.0.1
+        image: danielhuang030/twitter-test:0.0.1
         container_name: twitter-test
         restart: always
         volumes:
@@ -99,7 +99,7 @@ services:
         build:
             context: .
             dockerfile: ./dockerize/dockerfile/laravel-echo-server.dockerfile
-        image: danielhuang-030/laravel-echo-server:0.0.1
+        image: danielhuang030/laravel-echo-server:0.0.1
         container_name: laravel-echo-server
         restart: always
         links:
