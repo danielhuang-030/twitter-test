@@ -6,8 +6,6 @@
     $app_dir = '/var/www/tt';
     $release = date('YmdHis');
     $new_release_dir = $releases_dir .'/'. $release;
-    $slack_url = 'https://hooks.slack.com/services/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';
-    $slack_channel = '#cicd-test';
 @endsetup
 
 @story('deploy')
@@ -64,7 +62,3 @@
     cd {{ $releases_dir }}
     ls -dt {{ $releases_dir }}/* | tail -n +6 | xargs -d "\n" rm -rf;
 @endtask
-
-@finished
-    @slack($slack_url, $slack_channel, 'Deploy finished')
-@endfinished
