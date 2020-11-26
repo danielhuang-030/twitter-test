@@ -31,6 +31,9 @@ chmod 777 -R bootstrap/cache
 # generate key
 php artisan key:generate
 
+# symbolic link
+php artisan storage:link
+
 # db migrate
 php artisan migrate
 
