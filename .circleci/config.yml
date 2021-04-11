@@ -9,8 +9,8 @@ jobs:
         environment:
             MYSQL_HOST: 127.0.0.1
             MYSQL_DB: circleci
-            MYSQL_USER: root
-            MYSQL_ROOT_PASSWORD: root
+            MYSQL_USER: circleci
+            MYSQL_ROOT_PASSWORD: circleci
 
     working_directory: ~/app
 
@@ -45,7 +45,7 @@ jobs:
       #- run: npm run production
       - run:
           name: Mysql database
-          command: mysql -h 127.0.0.1 -uroot -proot -e "CREATE DATABASE circleci;"
+          command: mysql -h 127.0.0.1 -ucircleci -pcircleci -e "CREATE DATABASE circleci;"
       - run: php artisan key:generate
       - run: php artisan migrate --env=circleci
       - run: php artisan horizon:install
