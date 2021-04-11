@@ -10,7 +10,8 @@ jobs:
             MYSQL_HOST: 127.0.0.1
             MYSQL_DB: circleci
             MYSQL_USER: circleci
-            MYSQL_ROOT_PASSWORD: circleci
+            MYSQL_PASSWORD: circleci
+            MYSQL_ROOT_PASSWORD: root
 
     working_directory: ~/app
 
