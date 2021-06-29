@@ -8,9 +8,9 @@ WORKDIR /usr/src/app
 COPY ./dockerize/conf/laravel-echo-server/package.json /usr/src/app/
 
 RUN apk add --update \
-    python \
-    python-dev \
-    py-pip \
+    python3 \
+    python3-dev \
+    py3-pip \
     build-base
 
 RUN npm install
