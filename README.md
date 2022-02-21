@@ -1,6 +1,6 @@
 # twitter test
 [![CircleCI](https://circleci.com/gh/danielhuang-030/twitter-test/tree/master.svg?style=svg)](https://circleci.com/gh/danielhuang-030/twitter-test/tree/master)
-[online Swagger UI demo](https://twitter-test.duckdns.org/api-docs/)
+[online Swagger UI demo](https://twitter-test.danielhuang030.ga/api-docs/)
 
 ### Introduction
 Simple implementation of the basic functions of twitter: including member login/logout, post, follow and like.
