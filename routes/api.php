@@ -11,47 +11,53 @@
 |
 */
 
+use App\Http\Controllers\ApiController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\FollowController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\UserController;
+
 // swagger
-Route::get('docs', 'ApiController@getJSON');
+Route::get('docs', [ApiController::class, 'getJSON']);
 
 // auth
-Route::post('login', 'AuthController@login');
-Route::post('signup', 'AuthController@signup');
+Route::post('login', [AuthController::class, 'login']);
+Route::post('signup', [AuthController::class, 'signup']);
 
 Route::group([
     'middleware' => 'auth:api',
 ], function () {
     // auth
-    Route::get('logout', 'AuthController@logout');
+    Route::get('logout', [AuthController::class, 'logout']);
 
     // user
-    Route::group([
-        'prefix' => 'users',
-    ], function () {
-        Route::get('{id}/info', 'UserController@info');
-        Route::get('{id}/following', 'UserController@following');
-        Route::get('{id}/followers', 'UserController@followers');
-        Route::get('{id}/posts', 'UserController@posts');
-        Route::get('{id}/liked_posts', 'UserController@likedPosts');
-    });
+    Route::controller(UserController::class)
+        ->prefix('users')
+        ->group(function () {
+            Route::get('{id}/info', 'info');
+            Route::get('{id}/following', 'following');
+            Route::get('{id}/followers', 'followers');
+            Route::get('{id}/posts', 'posts');
+            Route::get('{id}/liked_posts', 'likedPosts');
+        });
 
     // follow
-    Route::group([
-        'prefix' => 'following',
-    ], function () {
-        Route::patch('{id}', 'FollowController@following');
-        Route::delete('{id}', 'FollowController@unfollow');
-    });
+    Route::controller(FollowController::class)
+        ->prefix('users')
+        ->group(function () {
+            Route::patch('{id}', 'following');
+            Route::delete('{id}', 'unfollow');
+        });
 
     // post
-    Route::group([
-        'prefix' => 'posts',
-    ], function () {
-        Route::patch('{id}/like', 'PostController@like');
-        Route::delete('{id}/like', 'PostController@dislike');
-        Route::get('{id}/liked_users', 'PostController@likedUsers');
-    });
-    Route::resource('posts', 'PostController', [
+    Route::controller(PostController::class)
+        ->prefix('posts')
+        ->group(function () {
+            Route::patch('{id}/like', 'like');
+            Route::delete('{id}/like', 'dislike');
+            Route::get('{id}/liked_users', 'likedUsers');
+        });
+    Route::resource('posts', PostController::class, [
         'parameters' => ['posts' => 'id'],
     ])->only([
         'show',

@@ -1,26 +1,20 @@
-FROM php:7.3-fpm-alpine
+FROM php:8.0-fpm-alpine
 
 LABEL maintainer=""
 
 RUN apk update && apk upgrade && apk add bash git vim && \
   apk --update add supervisor
 
-RUN docker-php-ext-install pdo_mysql bcmath pcntl mbstring
+RUN docker-php-ext-install pdo_mysql bcmath pcntl
 
-RUN apk add --no-cache freetype libpng libjpeg-turbo freetype-dev libpng-dev libjpeg-turbo-dev libzip-dev curl && \
-              docker-php-ext-configure gd \
-                --with-gd \
-                --with-freetype-dir=/usr/include/ \
-                --with-png-dir=/usr/include/ \
-                --with-jpeg-dir=/usr/include/ \
-                --with-zlib-dir=/usr && \
-              NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1)
+RUN apk add --no-cache freetype libpng libjpeg-turbo freetype-dev libpng-dev libjpeg-turbo-dev libzip-dev libwebp-dev curl && \
+  docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg --with-webp
 
 ## 安裝PHP-GD
-RUN docker-php-ext-install -j$(nproc) gd
+RUN docker-php-ext-install gd
 
 ## 安裝PHP-ZIP
-RUN docker-php-ext-install -j$(nproc) zip
+RUN docker-php-ext-install zip
 
 RUN rm /var/cache/apk/* && \
     mkdir -p /var/www

@@ -82,7 +82,7 @@ services:
         build:
             context: .
             dockerfile: ./dockerize/dockerfile/app.dockerfile
-        image: danielhuang030/twitter-test:0.0.1
+        image: danielhuang030/twitter-test:0.0.2
         container_name: twitter-test
         restart: always
         volumes:
