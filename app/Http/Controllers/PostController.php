@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Follow\DislikeRequest;
-use App\Http\Requests\Follow\LikeRequest;
+use App\Http\Requests\Post\DislikeRequest;
+use App\Http\Requests\Post\LikeRequest;
 use App\Http\Requests\Post\ShowRequest;
 use App\Http\Requests\Post\StoreRequest;
 use App\Http\Requests\Post\UpdateRequest;
