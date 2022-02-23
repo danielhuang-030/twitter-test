@@ -2,8 +2,10 @@ FROM php:8.0-fpm-alpine
 
 LABEL maintainer=""
 
+
+
 RUN apk update && apk upgrade && apk add bash git vim && \
-  apk --update add supervisor
+  apk --update add supervisor npm
 
 RUN docker-php-ext-install pdo_mysql bcmath pcntl
 
