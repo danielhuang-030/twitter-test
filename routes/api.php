@@ -43,7 +43,7 @@ Route::group([
 
     // follow
     Route::controller(FollowController::class)
-        ->prefix('users')
+        ->prefix('following')
         ->group(function () {
             Route::patch('{id}', 'following');
             Route::delete('{id}', 'unfollow');
