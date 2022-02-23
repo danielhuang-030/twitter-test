@@ -82,7 +82,7 @@ services:
         build:
             context: .
             dockerfile: ./dockerize/dockerfile/app.dockerfile
-        image: danielhuang030/twitter-test:0.0.2
+        image: danielhuang030/twitter-test:0.0.3
         container_name: twitter-test
         restart: always
         volumes:
@@ -106,6 +106,8 @@ services:
         restart: always
         links:
             - app-redis
+        ports:
+            - "${WEBSOCKET_PORT:-12007}:6001"
         networks:
             - app-network
 
