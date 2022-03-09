@@ -90,6 +90,8 @@ services:
             - ./conf/supervisord/supervisord.conf:/etc/supervisord.conf
             - ./conf/php/php.ini:/usr/local/etc/php/conf.d/php-custom.ini
             - ./conf/cron/root:/etc/crontabs/root
+        ports:
+            - '${SUPERVISORD_PORT:-12008}:9001'
         networks:
             - app-network
         depends_on:
