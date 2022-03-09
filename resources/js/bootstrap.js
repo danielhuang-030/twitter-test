@@ -43,22 +43,29 @@ if (token) {
  * allows your team to easily build robust real-time web applications.
  */
 
+// laravel-echo-server
 // import Echo from 'laravel-echo'
 
-// window.Pusher = require('pusher-js');
-
+// window.io = require('socket.io-client');
 // window.Echo = new Echo({
-//     broadcaster: 'pusher',
-//     key: process.env.MIX_PUSHER_APP_KEY,
-//     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
-//     encrypted: true
+//     broadcaster: 'socket.io',
+//     host: window.location.hostname + ':' + window.location.port + '/ws'
 // });
 
-// laravel-echo-server
-import Echo from 'laravel-echo'
+// Soketi
+import Echo from 'laravel-echo';
 
-window.io = require('socket.io-client');
+window.Pusher = require('pusher-js');
 window.Echo = new Echo({
-    broadcaster: 'socket.io',
-    host: window.location.hostname + ':12007'
+    broadcaster: 'pusher',
+    key: process.env.MIX_PUSHER_APP_KEY,
+    wsHost: process.env.MIX_PUSHER_HOST,
+    wsPort: process.env.MIX_PUSHER_PORT,
+    // wsHost: window.location.hostname + ':' + window.location.port,
+    // wsPort: null,
+    // wsPath: '/ws',
+    forceTLS: false,
+    encrypted: true,
+    disableStats: true,
+    // nabledTransports: ['ws', 'wss'],
 });

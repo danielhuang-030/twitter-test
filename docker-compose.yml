@@ -82,7 +82,7 @@ services:
         build:
             context: .
             dockerfile: ./dockerize/dockerfile/app.dockerfile
-        image: danielhuang030/twitter-test:0.0.3
+        image: danielhuang030/twitter-test:0.0.4
         container_name: twitter-test
         restart: always
         volumes:
@@ -97,17 +97,33 @@ services:
             - app-redis
 
 #laravel-echo-server
-    laravel-echo-server:
-        build:
-            context: .
-            dockerfile: ./dockerize/dockerfile/laravel-echo-server.dockerfile
-        image: danielhuang030/laravel-echo-server:0.0.1
-        container_name: laravel-echo-server
+    # laravel-echo-server:
+    #     build:
+    #         context: .
+    #         dockerfile: ./dockerize/dockerfile/laravel-echo-server.dockerfile
+    #     image: danielhuang030/laravel-echo-server:0.0.1
+    #     container_name: laravel-echo-server
+    #     restart: always
+    #     links:
+    #         - app-redis
+    #     ports:
+    #         - "${WEBSOCKET_PORT:-12007}:6001"
+    #     networks:
+    #         - app-network
+
+#soketi
+    soketi:
+        image: 'quay.io/soketi/soketi:latest-16-alpine'
+        container_name: soketi
         restart: always
-        links:
-            - app-redis
+        environment:
+            DEBUG: '1'
+            DEFAULT_APP_ID: ${SOKETI_APP_ID:-app-id}
+            DEFAULT_APP_KEY: ${SOKETI_APP_KEY:-app-key}
+            DEFAULT_APP_SECRET: ${SOKETI_APP_SECRET:-app-secret}
+            PORT: ${SOKETI_PORT:-6001}
         ports:
-            - "${WEBSOCKET_PORT:-12007}:6001"
+            - '${SOKETI_EXPOSE_PORT:-12004}:${SOKETI_PORT:-6001}'
         networks:
             - app-network
 
