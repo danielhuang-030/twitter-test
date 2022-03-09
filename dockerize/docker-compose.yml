@@ -26,7 +26,7 @@ services:
             "--default-authentication-plugin=mysql_native_password"
         ]
         volumes:
-            - ./dockerize/data/mysql:/var/lib/mysql
+            - ./data/mysql:/var/lib/mysql
         networks:
             - app-network
 
@@ -34,14 +34,14 @@ services:
     app-redis:
         build:
             context: .
-            dockerfile: ./dockerize/dockerfile/redis.dockerfile
+            dockerfile: /dockerfile/redis.dockerfile
         image: danielhuang030/app-redis:0.0.1
         container_name: app-redis
         restart: always
         ports:
             - "${REDIS_PORT:-12009}:6379"
         volumes:
-            - ./dockerize/data/redis:/data
+            - ./data/redis:/data
         networks:
             - app-network
 
@@ -51,7 +51,7 @@ services:
         container_name: app-pma
         restart: always
         volumes:
-            - ./dockerize/conf/phpMyAdmin/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php
+            - ./conf/phpMyAdmin/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php
         ports:
             - "${PMA_PORT:-12010}:80"
         environment:
@@ -81,15 +81,15 @@ services:
     twitter-test:
         build:
             context: .
-            dockerfile: ./dockerize/dockerfile/app.dockerfile
+            dockerfile: /dockerfile/app.dockerfile
         image: danielhuang030/twitter-test:0.0.4
         container_name: twitter-test
         restart: always
         volumes:
-            - ./:/var/www/html/
-            - ./dockerize/conf/supervisord/supervisord.conf:/etc/supervisord.conf
-            - ./dockerize/conf/php/php.ini:/usr/local/etc/php/conf.d/php-custom.ini
-            - ./dockerize/conf/cron/root:/etc/crontabs/root
+            - ../:/var/www/html/
+            - ./conf/supervisord/supervisord.conf:/etc/supervisord.conf
+            - ./conf/php/php.ini:/usr/local/etc/php/conf.d/php-custom.ini
+            - ./conf/cron/root:/etc/crontabs/root
         networks:
             - app-network
         depends_on:
@@ -100,7 +100,7 @@ services:
     # laravel-echo-server:
     #     build:
     #         context: .
-    #         dockerfile: ./dockerize/dockerfile/laravel-echo-server.dockerfile
+    #         dockerfile: /dockerfile/laravel-echo-server.dockerfile
     #     image: danielhuang030/laravel-echo-server:0.0.1
     #     container_name: laravel-echo-server
     #     restart: always
@@ -133,9 +133,9 @@ services:
         container_name: web-server
         restart: always
         volumes:
-            - ./:/var/www/html
-            - ./dockerize/conf/nginx/default.conf:/etc/nginx/conf.d/default.conf
-            - ./dockerize/log/nginx/:/var/log/nginx
+            - ../:/var/www/html
+            - ./conf/nginx/default.conf:/etc/nginx/conf.d/default.conf
+            - ./log/nginx/:/var/log/nginx
         ports:
             - "${WEB_PORT:-12001}:12001"
         networks:
