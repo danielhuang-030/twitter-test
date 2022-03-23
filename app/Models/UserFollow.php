@@ -34,14 +34,12 @@ class UserFollow extends Pivot
     }
 
     /**
-     * set updated at
+     * Get the name of the "updated at" column.
      *
-     * @param mix $value
-     *
-     * @return self
+     * @return string|null
      */
-    public function setUpdatedAt($value): self
+    public function getUpdatedAtColumn()
     {
-        return $this;
+        return static::UPDATED_AT;
     }
 }
