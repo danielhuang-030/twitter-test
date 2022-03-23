@@ -32,4 +32,16 @@ class UserFollow extends Pivot
     {
         return $this->belongsTo(User::class, 'follow_id');
     }
+
+    /**
+     * set updated at
+     *
+     * @param mix $value
+     *
+     * @return self
+     */
+    public function setUpdatedAt($value): self
+    {
+        return $this;
+    }
 }
