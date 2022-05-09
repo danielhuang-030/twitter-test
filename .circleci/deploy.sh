@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # container name
-container=twitter-test
+container=twitter-test-app
 docker_command="docker exec -i $container"
 
 # shutdown the laravel app
