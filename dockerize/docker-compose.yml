@@ -1,25 +1,25 @@
-version: '3'
+version: '3.7'
 
 networks:
-    app-network:
+    twitter-test-network:
         driver: bridge
 
 services:
 
-#app-db
-    app-db:
+#twitter-test-db
+    twitter-test-db:
         image: mysql:5.7
-        container_name: app-db
+        container_name: ${DB_HOST:-twitter-test-db}
         restart: always
         ports:
             - "${DB_PORT:-12006}:3306"
         environment:
             MYSQL_DATABASE: ${DB_DATABASE:-twitter_test}
             MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
-            TZ: ${DB_TZ:-Asia/Taipei}
+            TZ: ${TZ:-Asia/Taipei}
         command: [
             "--character-set-server=utf8mb4",
-            "--collation-server=utf8mb4_unicode_ci",
+            "--collation-server=utf8mb4_general_ci",
             "--innodb-use-native-aio=0",
             "--server-id=1",
             "--log_bin=ON",
@@ -28,117 +28,112 @@ services:
         volumes:
             - ./data/mysql:/var/lib/mysql
         networks:
-            - app-network
+            - twitter-test-network
 
-#app-redis
-    app-redis:
+#twitter-test-redis
+    twitter-test-redis:
         build:
             context: .
-            dockerfile: /dockerfile/redis.dockerfile
-        image: danielhuang030/app-redis:0.0.1
-        container_name: app-redis
+            dockerfile: ./dockerfile/redis.dockerfile
+        image: danielhuang030/twitter-test-redis:0.0.1
+        container_name: ${REDIS_HOST:-twitter-test-redis}
         restart: always
         ports:
             - "${REDIS_PORT:-12009}:6379"
         volumes:
             - ./data/redis:/data
         networks:
-            - app-network
+            - twitter-test-network
 
 #phpMyAdmin
     pma:
         image: phpmyadmin/phpmyadmin:latest
-        container_name: app-pma
+        container_name: twitter-test-pma
         restart: always
         volumes:
-            - ./conf/phpMyAdmin/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php
+            - type: bind
+              source: ./conf/phpMyAdmin/config.user.inc.php
+              target: /etc/phpmyadmin/config.user.inc.php
         ports:
             - "${PMA_PORT:-12010}:80"
         environment:
             SESSION_TIMEOUT: ${PMA_SESSION_TIMEOUT:-86400}
-            PMA_HOST: app-db
+            PMA_HOST: ${DB_HOST:-twitter-test-db}
         networks:
-            - app-network
+            - twitter-test-network
         depends_on:
-            - app-db
+            - ${DB_HOST:-twitter-test-db}
 
 #phpRedisAdmin
     pra:
         image: erikdubbelboer/phpredisadmin:latest
-        container_name: app-pra
+        container_name: twitter-test-pra
         restart: always
         ports:
-            - "${PMA_PORT:-12011}:80"
+            - "${PRA_PORT:-12020}:80"
         environment:
-            REDIS_1_HOST: app-redis
-            REDIS_1_NAME: app-redis
+            REDIS_1_HOST: ${REDIS_HOST:-twitter-test-redis}
+            REDIS_1_NAME: ${REDIS_HOST:-twitter-test-redis}
         networks:
-            - app-network
+            - twitter-test-network
         depends_on:
-            - app-redis
+            - ${REDIS_HOST:-twitter-test-redis}
 
 #twitter-test
     twitter-test:
         build:
             context: .
-            dockerfile: /dockerfile/app.dockerfile
+            dockerfile: ./dockerfile/app.dockerfile
         image: danielhuang030/twitter-test:0.0.4
-        container_name: twitter-test
+        container_name: ${APP:-twitter-test-app}
         restart: always
         volumes:
             - ../:/var/www/html/
-            - ./conf/supervisord/supervisord.conf:/etc/supervisord.conf
-            - ./conf/php/php.ini:/usr/local/etc/php/conf.d/php-custom.ini
-            - ./conf/cron/root:/etc/crontabs/root
+            - type: bind
+              source: ./conf/supervisord/supervisord.conf
+              target: /etc/supervisord.conf
+            - type: bind
+              source: ./conf/php/php.ini
+              target: /usr/local/etc/php/conf.d/php-custom.ini
+            - type: bind
+              source: ./conf/cron/root
+              target: /etc/crontabs/root
         ports:
-            - '${SUPERVISORD_PORT:-12008}:9001'
+            - "${SUPERVISORD_PORT:-12008}:9001"
         networks:
-            - app-network
+            - twitter-test-network
         depends_on:
-            - app-db
-            - app-redis
+            - ${DB_HOST:-twitter-test-db}
+            - ${REDIS_HOST:-twitter-test-redis}
 
-#laravel-echo-server
-    # laravel-echo-server:
-    #     build:
-    #         context: .
-    #         dockerfile: /dockerfile/laravel-echo-server.dockerfile
-    #     image: danielhuang030/laravel-echo-server:0.0.1
-    #     container_name: laravel-echo-server
-    #     restart: always
-    #     links:
-    #         - app-redis
-    #     ports:
-    #         - "${WEBSOCKET_PORT:-12007}:6001"
-    #     networks:
-    #         - app-network
-
-#soketi
-    soketi:
+#twitter-test-soketi
+    twitter-test-soketi:
         image: 'quay.io/soketi/soketi:latest-16-alpine'
-        container_name: soketi
+        container_name: twitter-test-soketi
         restart: always
         environment:
             DEBUG: '1'
             DEFAULT_APP_ID: ${SOKETI_APP_ID:-app-id}
             DEFAULT_APP_KEY: ${SOKETI_APP_KEY:-app-key}
             DEFAULT_APP_SECRET: ${SOKETI_APP_SECRET:-app-secret}
-            PORT: ${SOKETI_PORT:-6001}
+            PORT: 6001
         ports:
-            - '${SOKETI_EXPOSE_PORT:-12004}:${SOKETI_PORT:-6001}'
+            - '${WEBSOCKET_PORT:-12001}:6001'
         networks:
-            - app-network
+            - twitter-test-network
 
-#web-server
-    web-server:
+#twitter-test-web-server
+    twitter-test-web-server:
         image: nginx:alpine
-        container_name: web-server
+        container_name: twitter-test-web-server
         restart: always
         volumes:
             - ../:/var/www/html
-            - ./conf/nginx/default.conf:/etc/nginx/conf.d/default.conf
             - ./log/nginx/:/var/log/nginx
+            - type: bind
+              source: ./conf/nginx/default.conf
+              target: /etc/nginx/conf.d/default.conf
         ports:
-            - "${WEB_PORT:-12001}:12001"
+            - "${WEB_PORT:-12000}:80"
         networks:
-            - app-network
+            - twitter-test-network

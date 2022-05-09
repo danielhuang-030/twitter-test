@@ -24,7 +24,7 @@ RUN rm /var/cache/apk/* && \
 ## 安裝composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-COPY ./dockerize/conf/cron/root /etc/crontabs/root
-COPY ./dockerize/conf/supervisord/supervisord.conf /etc/supervisord.conf
+COPY ./conf/cron/root /etc/crontabs/root
+COPY ./conf/supervisord/supervisord.conf /etc/supervisord.conf
 
 ENTRYPOINT ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]

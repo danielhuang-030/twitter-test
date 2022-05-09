@@ -37,16 +37,16 @@ refer to the project [README.md](https://github.com/danielhuang-030/twitter-test
 ### Port(default)
 | service  | port-inside | port-outside  | description |
 |---|---|---|---|
-| web-server  | 12001 | 12001 | [twitter-test](http://localhost:12001/api), [soketi(WebSocket)](http://localhost:12004), [Supervisor status](http://localhost:12008) |
-| app-redis | 6379 | 12009 | Redis |
-| app-db | 3306, 33060 | 12006 | MySQL |
-| soketi | 6001 | - | soketi(WebSocket) |
-| twitter-test | 9000 | - | [twitter-test](https://github.com/danielhuang-030/twitter-test) |
-| app-pma | 80 | 12010 | [phpMyAdmin](http://localhost:12010) |
-| app-pra | 80 | 12011 | [phpRedisAdmin](http://localhost:12011) |
+| twitter-test-web-server  | 80 | 12000 | [twitter-test](http://localhost:12000/api), [soketi(WebSocket)](http://localhost:12001), [Supervisor status](http://localhost:12008) |
+| twitter-test-redis | 6379 | 12009 | Redis |
+| twitter-test-db | 3306, 33060 | 12006 | MySQL |
+| twitter-test-soketi | 6001 | 12001 | soketi(WebSocket) |
+| twitter-test-app | 9000 | - | [twitter-test](https://github.com/danielhuang-030/twitter-test) |
+| twitter-test-pma | 80 | 12010 | [phpMyAdmin](http://localhost:12010) |
+| twitter-test-pra | 80 | 12011 | [phpRedisAdmin](http://localhost:12011) |
 
 ### Password(default)
 | Service  | Username | Password  |
 |---|---|---|
-| app-db | root | root |
+| twitter-test-db | root | root |
 | Supervisor status | root | root |
