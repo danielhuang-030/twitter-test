@@ -48,8 +48,8 @@ php artisan horizon
 
 ```
 ### Tools
- - [Laravel Horizon](http://localhost:12001/horizon/dashboard)
- - [Swagger UI](http://localhost:12001/api-docs/)
+ - [Laravel Horizon](http://localhost:12000/horizon/dashboard)
+ - [Swagger UI](http://localhost:12000/api-docs/)
 
 ### API info
 
