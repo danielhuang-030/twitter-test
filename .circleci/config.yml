@@ -16,9 +16,8 @@ jobs:
     steps:
       - checkout
       - run: sudo apt update
-      - run: sudo apt install -y php8.0-mysql
       # - run: sudo apt install -y libsqlite3-dev zlib1g-dev
-      # - run: sudo apt install -y mariadb-client
+      - run: sudo apt install -y mariadb-client
       # - run: sudo docker-php-ext-install zip
       # - run: sudo docker-php-ext-install pdo_mysql bcmath pcntl
       - run: sudo composer self-update
