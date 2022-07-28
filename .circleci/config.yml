@@ -26,7 +26,7 @@ jobs:
               - composer-v1-{{ checksum "composer.lock" }}
               - composer-v1-
       - run: cp .env.circleci .env
-      - run: composer install -n --ignore-platform-reqs
+      - run: composer install -n --ignore-platform-req=php+
       - save_cache:
           key: composer-v1-{{ checksum "composer.lock" }}
           paths:
