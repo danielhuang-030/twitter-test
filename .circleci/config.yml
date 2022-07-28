@@ -3,7 +3,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: ubuntu-2004:202201-01
+      - image: circleci/php
       - image: mysql:5.7
         command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --innodb-use-native-aio=0 --server-id=1 --log_bin=ON
         environment:
