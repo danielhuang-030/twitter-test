@@ -3,7 +3,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: php:8.1-fpm-alpine
+      - image: ubuntu-2004:202201-01
       - image: mysql:5.7
         command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --innodb-use-native-aio=0 --server-id=1 --log_bin=ON
         environment:
@@ -15,21 +15,20 @@ jobs:
 
     steps:
       - checkout
-      - run: apk update && apk upgrade && apk add bash git vim && apk --update add supervisor npm
-      - run: docker-php-ext-install pdo_mysql bcmath pcntl
-      - run: apk add --no-cache freetype libpng libjpeg-turbo freetype-dev libpng-dev libjpeg-turbo-dev libzip-dev libwebp-dev curl
-      - run: docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg --with-webp
-      - run: docker-php-ext-install gd
-      - run: docker-php-ext-install zip
-      - run: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+      - run: sudo apt update
+      - run: sudo apt install -y libsqlite3-dev zlib1g-dev
+      - run: sudo apt install -y mariadb-client
+      - run: sudo docker-php-ext-install zip
+      - run: sudo docker-php-ext-install pdo_mysql bcmath pcntl
+      - run: sudo composer self-update
       - restore_cache:
           keys:
-              - composer-v2-{{ checksum "composer.lock" }}
-              - composer-v2-
+              - composer-v1-{{ checksum "composer.lock" }}
+              - composer-v1-
       - run: cp .env.circleci .env
       - run: composer install -n --ignore-platform-reqs
       - save_cache:
-          key: composer-v2-{{ checksum "composer.lock" }}
+          key: composer-v1-{{ checksum "composer.lock" }}
           paths:
               - vendor
       #- restore_cache: # special step to restore the dependency cache if `package.json` does not change
