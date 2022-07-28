@@ -15,20 +15,20 @@ jobs:
 
     steps:
       - checkout
-      - run: sudo apt update
-      - run: sudo apt install -y libsqlite3-dev zlib1g-dev
-      - run: sudo apt install -y mariadb-client
-      - run: sudo docker-php-ext-install zip
-      - run: sudo docker-php-ext-install pdo_mysql bcmath pcntl
-      - run: sudo composer self-update
+      - run: apk update && apk upgrade && apk add bash git vim && apk --update add supervisor npm
+      - run: docker-php-ext-install pdo_mysql bcmath pcntl
+      - run: apk add --no-cache freetype libpng libjpeg-turbo freetype-dev libpng-dev libjpeg-turbo-dev libzip-dev libwebp-dev curl docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg --with-webp
+      - run: docker-php-ext-install gd
+      - run: docker-php-ext-install zip
+      - run: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
       - restore_cache:
           keys:
-              - composer-v1-{{ checksum "composer.lock" }}
-              - composer-v1-
+              - composer-v2-{{ checksum "composer.lock" }}
+              - composer-v2-
       - run: cp .env.circleci .env
       - run: composer install -n --ignore-platform-reqs
       - save_cache:
-          key: composer-v1-{{ checksum "composer.lock" }}
+          key: composer-v2-{{ checksum "composer.lock" }}
           paths:
               - vendor
       #- restore_cache: # special step to restore the dependency cache if `package.json` does not change
