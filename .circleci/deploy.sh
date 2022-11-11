@@ -27,6 +27,8 @@ $docker_command php artisan horizon:purge
 $docker_command php artisan horizon:terminate
 $docker_command php artisan queue:restart
 
+$docker_command php artisan octane:stop
+
 # rise from the ashes
 $docker_command php artisan up
 
