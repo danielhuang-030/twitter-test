@@ -42,6 +42,7 @@ services:
             - "${REDIS_PORT:-12009}:6379"
         volumes:
             - ./data/redis:/data
+            - ./conf/redis/redis.conf:/usr/local/etc/redis/redis.conf
         networks:
             - twitter-test-network
 
@@ -84,7 +85,7 @@ services:
         build:
             context: .
             dockerfile: ./dockerfile/app.dockerfile
-        image: danielhuang030/twitter-test:0.0.4
+        image: danielhuang030/twitter-test:0.0.5
         container_name: ${APP:-twitter-test-app}
         restart: always
         volumes:
