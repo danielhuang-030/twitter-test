@@ -23,10 +23,9 @@ $docker_command php artisan config:cache
 $docker_command php artisan route:cache
 
 # horizon
-$docker_command php artisan horizon:purge
 $docker_command php artisan horizon:terminate
-$docker_command php artisan queue:restart
 
+# octane
 $docker_command php artisan octane:stop
 
 # rise from the ashes
