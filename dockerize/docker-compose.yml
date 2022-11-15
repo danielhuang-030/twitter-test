@@ -85,7 +85,7 @@ services:
         build:
             context: .
             dockerfile: ./dockerfile/app.dockerfile
-        image: danielhuang030/twitter-test:0.0.5
+        image: danielhuang030/twitter-test:0.0.6
         container_name: ${APP:-twitter-test-app}
         restart: always
         volumes:
@@ -96,9 +96,9 @@ services:
             - type: bind
               source: ./conf/php/php.ini
               target: /usr/local/etc/php/conf.d/php-custom.ini
-            - type: bind
-              source: ./conf/cron/root
-              target: /etc/crontabs/root
+            # - type: bind
+            #   source: ./conf/cron/root
+            #   target: /etc/crontabs/root
         ports:
             - "${SUPERVISORD_PORT:-12008}:9001"
         networks:
