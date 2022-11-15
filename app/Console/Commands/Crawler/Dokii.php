@@ -42,7 +42,6 @@ class Dokii extends BaseCommand
 
         // check total
         $total = data_get(static::getMonitorTotalPairs(), $monitor, 0);
-        $total = 2;
 
         // rules
         if (
@@ -50,7 +49,7 @@ class Dokii extends BaseCommand
             count($items) != $total
         ) {
             // notity
-            $this->notityByLine(sprintf('items changed. %s', sprintf(static::URL_SHOW, $monitor)));
+            $this->notityByLine(sprintf('items changed. %s', sprintf(static::URL_SHOW, $monitor)), $monitor);
         }
 
         return true;

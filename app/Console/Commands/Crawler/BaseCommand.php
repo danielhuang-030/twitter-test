@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\Crawler;
 
+use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\MessageFormatter;
@@ -17,7 +18,7 @@ abstract class BaseCommand extends Command
 {
     public const URL_MONITOR = '';
     public const URL_SHOW = '';
-    public const STOP_LINE_NOTITY_TIME = 3600;
+    public const STOP_LINE_NOTITY_TIME = '22:30';
 
     protected $client;
 
@@ -60,9 +61,6 @@ abstract class BaseCommand extends Command
             $url = sprintf(static::URL_MONITOR, $monitor);
             try {
                 $response = $this->client->get($url, [
-                    'curl' => [
-                        CURLOPT_TCP_KEEPALIVE => 1,
-                    ],
                     'headers' => [
                         'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36',
                     ],
@@ -75,8 +73,7 @@ abstract class BaseCommand extends Command
                 $this->executeAndNotify($responseData, $monitor);
             } catch (\Throwable $th) {
                 // notity stopping
-                $this->notityByLine(sprintf('notity stopping. %s', $th->getMessage()));
-                Redis::setex(static::getRedisKeyForStopLineNotity(), static::STOP_LINE_NOTITY_TIME, true);
+                $this->notityByLine(sprintf('notity stopping. %s', $th->getMessage()), $monitor);
 
                 return Command::FAILURE;
             }
@@ -85,18 +82,38 @@ abstract class BaseCommand extends Command
         return Command::SUCCESS;
     }
 
-    public static function getRedisKeyForStopLineNotity(): string
+    public static function getRedisKeyForStopLineNotity(string $monitor): string
     {
-        return 'notity:line:stopping';
+        return vsprintf('notity:line:stopping:%s:%s', [
+            str((new \ReflectionClass(static::class))->getShortName())->snake(),
+            $monitor,
+        ]);
     }
 
-    protected function notityByLine(string $message): bool
+    public static function setNotityStoppingUtil(string $monitor): bool
     {
-        if (Redis::get(static::getRedisKeyForStopLineNotity())) {
+        // calculating time
+        $baseTime = Carbon::now();
+        $notityTime = Carbon::parse(static::STOP_LINE_NOTITY_TIME);
+        if ($baseTime->greaterThan($notityTime)) {
+            $notityTime = $notityTime->addDays(1);
+        }
+
+        return Redis::setex(static::getRedisKeyForStopLineNotity($monitor), $baseTime->diffInSeconds($notityTime), true);
+    }
+
+    protected function notityByLine(string $message, string $monitor): bool
+    {
+        if (Redis::get(static::getRedisKeyForStopLineNotity($monitor))) {
             return false;
         }
 
-        return Line::send($message);
+        $result = Line::send($message);
+        if ($result) {
+            static::setNotityStoppingUtil($monitor);
+        }
+
+        return $result;
     }
 
     abstract protected static function getMonitors(): array;
