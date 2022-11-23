@@ -27,6 +27,7 @@ services:
         ]
         volumes:
             - ./data/mysql:/var/lib/mysql
+            - ./conf/mysql/custom.cnf:/etc/mysql/conf.d/custom.cnf
         networks:
             - twitter-test-network
 
