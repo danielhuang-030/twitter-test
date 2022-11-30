@@ -24,17 +24,25 @@ class RutenCampaign extends BaseCommand
 
     protected static function getMonitors(): array
     {
+        return array_keys(static::getMonitorTotalPairs());
+    }
+
+    protected static function getMonitorTotalPairs(): array
+    {
         return [
-            'order-buy0923617020',
+            order-buy0923617020 => 1,
         ];
     }
 
     protected function executeAndNotify(array $responseData, $monitor): bool
     {
+        // check total
+        $total = data_get(static::getMonitorTotalPairs(), $monitor, 0);
+
         // rules
         if (
             'success' == data_get($responseData, 'status') &&
-            0 < data_get($responseData, 'data.total_count', 0)
+            $total <> data_get($responseData, 'data.total_count', 0)
         ) {
             // notity
             $this->notityByLine(sprintf('found campaigns. %s', vsprintf(static::URL_SHOW, [

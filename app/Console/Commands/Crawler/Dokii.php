@@ -23,9 +23,7 @@ class Dokii extends BaseCommand
 
     protected static function getMonitors(): array
     {
-        return [
-            22602,
-        ];
+        return array_keys(static::getMonitorTotalPairs());
     }
 
     protected static function getMonitorTotalPairs(): array

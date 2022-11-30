@@ -23,9 +23,7 @@ class RutenItem extends BaseCommand
 
     protected static function getMonitors(): array
     {
-        return [
-            305422,
-        ];
+        return array_keys(static::getMonitorTotalPairs());
     }
 
     protected static function getMonitorTotalPairs(): array
