@@ -30,7 +30,7 @@ class RutenCampaign extends BaseCommand
     protected static function getMonitorTotalPairs(): array
     {
         return [
-            order-buy0923617020 => 1,
+            'order-buy0923617020' => 1,
         ];
     }
 

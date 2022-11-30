@@ -58,6 +58,10 @@ abstract class BaseCommand extends Command
         }
 
         foreach ($monitors as $monitor) {
+            if (Redis::get(static::getRedisKeyForStopLineNotity($monitor))) {
+                continue;
+            }
+
             $url = sprintf(static::URL_MONITOR, $monitor);
             try {
                 $response = $this->client->get($url, [
