@@ -5,8 +5,7 @@ namespace App\Console\Commands\Crawler;
 class RutenCampaign extends BaseCommand
 {
     public const URL_MONITOR = 'https://rapi.ruten.com.tw/api/users/v1/%s/campaigns/rightnow?event_type=all';
-    public const URL_SHOW = 'https://www.ruten.com.tw/store/%s';
-    // public const URL_SHOW = 'https://www.ruten.com.tw/store/%s/campaign?sort=rnk%%2Fdc&eventId=%d&p=1';
+    public const URL_STORE = 'https://www.ruten.com.tw/store/%s';
 
     /**
      * The name and signature of the console command.
@@ -22,27 +21,26 @@ class RutenCampaign extends BaseCommand
      */
     protected $description = 'crawler ruten campaigns';
 
-    protected static function getMonitors(): array
-    {
-        return array_keys(static::getMonitorTotalPairs());
-    }
-
-    protected static function getMonitorTotalPairs(): array
+    protected static function getMonitorDataList(): array
     {
         return [
-            'order-buy0923617020' => 1,
+            'order-buy0923617020' => [
+                'monitor'   => static::URL_MONITOR,
+                'promotion' => static::URL_STORE,
+                'total'     => 1,
+            ],
         ];
     }
 
     protected function executeAndNotify(array $responseData, $monitor): bool
     {
         // check total
-        $total = data_get(static::getMonitorTotalPairs(), $monitor, 0);
+        $total = (int) data_get(static::getMonitorDataList(), sprintf('%s.total', $monitor));
 
         // rules
         if (
             'success' == data_get($responseData, 'status') &&
-            $total <> data_get($responseData, 'data.total_count', 0)
+            $total != data_get($responseData, 'data.total_count', 0)
         ) {
             // notity
             $this->notityByLine(sprintf('found campaigns. %s', vsprintf(static::URL_SHOW, [

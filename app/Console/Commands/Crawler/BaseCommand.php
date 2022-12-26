@@ -58,17 +58,18 @@ abstract class BaseCommand extends Command
         }
 
         foreach ($monitors as $monitor) {
-            if (Redis::get(static::getRedisKeyForStopLineNotity($monitor))) {
+            if (Redis::exists(static::getRedisKeyForStopLineNotity($monitor))) {
                 continue;
             }
 
-            $url = sprintf(static::URL_MONITOR, $monitor);
+            $url = sprintf(data_get(static::getMonitorDataList(), sprintf('%s.monitor', $monitor)), $monitor);
             try {
                 $response = $this->client->get($url, [
                     'headers' => [
                         'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36',
                     ],
                 ]);
+
                 $responseData = json_decode($response->getBody(), true);
                 if (empty($responseData)) {
                     throw new \Exception('Unable to get response data');
@@ -77,7 +78,10 @@ abstract class BaseCommand extends Command
                 $this->executeAndNotify($responseData, $monitor);
             } catch (\Throwable $th) {
                 // notity stopping
-                $this->notityByLine(sprintf('notity stopping. %s', $th->getMessage()), $monitor);
+                $this->notityByLine(vsprintf("notity stopping. %s \n( checked: %s )", [
+                    $th->getMessage(),
+                    static::getCheckedUrl($monitor),
+                ]), $monitor);
 
                 return Command::FAILURE;
             }
@@ -86,10 +90,12 @@ abstract class BaseCommand extends Command
         return Command::SUCCESS;
     }
 
-    public static function getRedisKeyForStopLineNotity(string $monitor): string
+    public static function getRedisKeyForStopLineNotity(string $monitor, string $crawler = ''): string
     {
+        $crawler = (!empty($crawler) ? $crawler : str((new \ReflectionClass(static::class))->getShortName())->snake());
+
         return vsprintf('notity:line:stopping:%s:%s', [
-            str((new \ReflectionClass(static::class))->getShortName())->snake(),
+            $crawler,
             $monitor,
         ]);
     }
@@ -120,7 +126,21 @@ abstract class BaseCommand extends Command
         return $result;
     }
 
-    abstract protected static function getMonitors(): array;
+    protected static function getMonitors(): array
+    {
+        return array_keys(static::getMonitorDataList());
+    }
+
+    protected static function getCheckedUrl($monitor)
+    {
+        return vsprintf('%s/crawler/checked/%s/%s', [
+            config('app.url'),
+            str((new \ReflectionClass(static::class))->getShortName())->snake(),
+            $monitor,
+        ]);
+    }
 
     abstract protected function executeAndNotify(array $responseData, $monitor): bool;
+
+    abstract protected static function getMonitorDataList(): array;
 }

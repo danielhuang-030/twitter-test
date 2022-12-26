@@ -11,6 +11,8 @@
 |
 */
 
+use App\Http\Controllers\CrawlerController;
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -18,3 +20,4 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/crawler/checked/{crawler}/{monitor}', [CrawlerController::class, 'checked']);

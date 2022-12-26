@@ -4,9 +4,6 @@ namespace App\Console\Commands\Crawler;
 
 class Dokii extends BaseCommand
 {
-    public const URL_MONITOR = 'https://www.dokiitoys.com/promotion/promotionproductsajax/%d?page=4';
-    public const URL_SHOW = 'https://www.dokiitoys.com/onsale/1111M111M/%d';
-
     /**
      * The name and signature of the console command.
      *
@@ -21,15 +18,14 @@ class Dokii extends BaseCommand
      */
     protected $description = 'crawler dokii toys';
 
-    protected static function getMonitors(): array
-    {
-        return array_keys(static::getMonitorTotalPairs());
-    }
-
-    protected static function getMonitorTotalPairs(): array
+    protected static function getMonitorDataList(): array
     {
         return [
-            22602 => 3,
+            23374 => [
+                'monitor'   => 'https://www.dokiitoys.com/promotion/promotionproductsajax/%d?page=2',
+                'promotion' => 'https://www.dokiitoys.com/onsale/1P1M/%d',
+                'total'     => 1,
+            ],
         ];
     }
 
@@ -39,7 +35,7 @@ class Dokii extends BaseCommand
         $items = data_get($responseData, 'standards', []);
 
         // check total
-        $total = data_get(static::getMonitorTotalPairs(), $monitor, 0);
+        $total = (int) data_get(static::getMonitorDataList(), sprintf('%s.total', $monitor));
 
         // rules
         if (
@@ -47,7 +43,10 @@ class Dokii extends BaseCommand
             count($items) != $total
         ) {
             // notity
-            $this->notityByLine(sprintf('items changed. %s', sprintf(static::URL_SHOW, $monitor)), $monitor);
+            $this->notityByLine(vsprintf("items changed. %s \n( checked: %s )", [
+                sprintf((string) data_get(static::getMonitorDataList(), sprintf(sprintf('%s.promotion', $monitor), $monitor)), $monitor),
+                static::getCheckedUrl($monitor),
+            ]), $monitor);
         }
 
         return true;
