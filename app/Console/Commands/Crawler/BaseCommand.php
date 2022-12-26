@@ -133,7 +133,7 @@ abstract class BaseCommand extends Command
 
     protected static function getCheckedUrl($monitor)
     {
-        return vsprintf('%s/crawler/checked/%s/%s', [
+        return vsprintf('%s/crawler/index/%s/%s', [
             config('app.url'),
             str((new \ReflectionClass(static::class))->getShortName())->snake(),
             $monitor,

@@ -20,4 +20,5 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/crawler/index/{crawler}/{monitor}', [CrawlerController::class, 'index']);
 Route::get('/crawler/checked/{crawler}/{monitor}', [CrawlerController::class, 'checked']);

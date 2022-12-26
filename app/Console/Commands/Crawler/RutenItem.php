@@ -4,6 +4,7 @@ namespace App\Console\Commands\Crawler;
 
 class RutenItem extends BaseCommand
 {
+    public const URL_MONITOR = 'https://rapi.ruten.com.tw/api/campaigns/v1/%d/items?sort=rnk%%2Fdc&per_page=50&page=1&detail=true';
     public const URL_PROMOTION = 'https://www.ruten.com.tw/store/%s/campaign?sort=rnk%%2Fdc&eventId=%d&p=1';
 
     /**
@@ -24,12 +25,12 @@ class RutenItem extends BaseCommand
     {
         return [
             314827 => [
-                'monitor'   => 'https://rapi.ruten.com.tw/api/campaigns/v1/%d/items?sort=rnk%%2Fdc&per_page=50&page=1&detail=true',
+                'monitor'   => static::URL_MONITOR,
                 'promotion' => static::URL_PROMOTION,
                 'total'     => 89,
             ],
             314896 => [
-                'monitor'   => 'https://rapi.ruten.com.tw/api/campaigns/v1/%d/items?sort=rnk%%2Fdc&per_page=50&page=1&detail=true',
+                'monitor'   => static::URL_MONITOR,
                 'promotion' => static::URL_PROMOTION,
                 'total'     => 372,
             ],

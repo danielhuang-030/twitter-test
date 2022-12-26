@@ -43,10 +43,12 @@ class RutenCampaign extends BaseCommand
             $total != data_get($responseData, 'data.total_count', 0)
         ) {
             // notity
-            $this->notityByLine(sprintf('found campaigns. %s', vsprintf(static::URL_SHOW, [
-                $monitor,
-                // data_get($responseData, 'data.list.0.event_id'),
-            ])), $monitor);
+            $this->notityByLine(vsprintf('found campaigns. %s \n( checked: %s )', [
+                vsprintf(static::URL_STORE, [
+                    $monitor,
+                ]),
+                static::getCheckedUrl($monitor),
+            ]), $monitor);
         }
 
         return true;
