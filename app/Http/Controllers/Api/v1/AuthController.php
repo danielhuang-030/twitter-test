@@ -1,14 +1,16 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\v1;
 
-use App\Http\Requests\Auth\LoginRequest;
-use App\Http\Requests\Auth\SignupRequest;
+use App\Enums\ApiResponseCode;
+use App\Http\Requests\Api\v1\Auth\AuthLoginRequest;
+use App\Http\Requests\Api\v1\Auth\AuthSignupRequest;
+use App\Services\AuthService;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class AuthController extends Controller
+class AuthController extends BaseController
 {
     /**
      * @OA\SecurityScheme(
@@ -17,29 +19,16 @@ class AuthController extends Controller
      *     scheme="bearer",
      * )
      */
-
-    /**
-     * UserService.
-     *
-     * @var UserService
-     */
-    protected $userService;
-
-    /**
-     * construct.
-     *
-     * @param UserService $userService
-     */
-    public function __construct(UserService $userService)
+    public function __construct(protected AuthService $service, protected UserService $userService)
     {
-        $this->userService = $userService;
+        parent::__construct();
     }
 
     /**
      * signup.
      *
      * @OA\Post(
-     *     path="/api/signup",
+     *     path="/api/v1/signup",
      *     summary="Signup",
      *     description="Signup",
      *     tags={"Auth"},
@@ -135,30 +124,23 @@ class AuthController extends Controller
      *     ),
      * )
      *
-     * @param SignupRequest $request
+     * @param AuthSignupRequest $request
      */
-    public function signup(SignupRequest $request)
+    public function signup(AuthSignupRequest $request)
     {
-        if (null === $this->userService->create($request->only([
-            'name',
-            'email',
-            'password',
-        ]))) {
-            return response()->json([
-                'message' => 'Failed to create user!',
-            ], Response::HTTP_BAD_REQUEST);
+        $user = $this->userService->create($request->validated());
+        if (empty($user)) {
+            return $this->responseFail(message: 'Failed to create user!');
         }
 
-        return response()->json([
-            'message' => 'Successfully created user!',
-        ]);
+        return $this->responseSuccess(message: 'User created successfully!');
     }
 
     /**
      * login.
      *
      * @OA\Post(
-     *     path="/api/login",
+     *     path="/api/v1/login",
      *     summary="Login",
      *     description="Login",
      *     tags={"Auth"},
@@ -239,21 +221,20 @@ class AuthController extends Controller
      *     ),
      * )
      *
-     * @param LoginRequest $request
+     * @param AuthLoginRequest $request
      */
-    public function login(LoginRequest $request)
+    public function login(AuthLoginRequest $request)
     {
-        $user = $this->userService->attempt($request->only([
-            'email',
-            'password',
-        ]));
-        if (null === $user) {
-            return response()->json([
-                'message' => 'Unauthorized',
-            ], Response::HTTP_UNAUTHORIZED);
+        $user = $this->service->attempt($request->validated());
+        if (empty($user)) {
+            return $this->responseFail(
+                code: ApiResponseCode::ERROR_UNAUTHORIZED->value,
+                message: 'Unauthorized',
+                httpStatusCode: Response::HTTP_UNAUTHORIZED
+            );
         }
 
-        return response()->json(array_merge($user->toArray(), [
+        return $this->responseSuccess(array_merge($user->toArray(), [
             'token' => $user->token(),
         ]));
     }
@@ -262,7 +243,7 @@ class AuthController extends Controller
      * Logout user (Revoke the token).
      *
      * @OA\Get(
-     *     path="/api/logout",
+     *     path="/api/v1/logout",
      *     summary="Logout",
      *     description="Logout",
      *     tags={"Auth"},
@@ -315,8 +296,6 @@ class AuthController extends Controller
     {
         $request->user()->token()->delete();
 
-        return response()->json([
-            'message' => 'Successfully logged out',
-        ]);
+        return $this->responseSuccess(message: 'Successfully logged out');
     }
 }

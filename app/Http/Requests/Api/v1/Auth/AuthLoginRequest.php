@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Auth;
+namespace App\Http\Requests\Api\v1\Auth;
 
 use App\Http\Requests\JsonRequest;
 
-class LoginRequest extends JsonRequest
+class AuthLoginRequest extends JsonRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -14,11 +14,11 @@ class LoginRequest extends JsonRequest
     public function rules()
     {
         return [
-            'email'       => [
+            'email' => [
                 'required',
                 'email',
             ],
-            'password'    => [
+            'password' => [
                 'required',
             ],
         ];

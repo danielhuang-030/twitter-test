@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Requests\Auth;
+namespace App\Http\Requests\Api\v1\Auth;
 
 use App\Http\Requests\JsonRequest;
 
-class SignupRequest extends JsonRequest
+class AuthSignupRequest extends JsonRequest
 {
     /**
-     * password pattern
+     * password pattern.
      *
      * @var string
      */
-    const PASSWORD_PATTERN = '#^\w{6,200}$#';
+    public const PASSWORD_PATTERN = '#^\w{6,200}$#';
 
     /**
      * Get the validation rules that apply to the request.
@@ -21,10 +21,10 @@ class SignupRequest extends JsonRequest
     public function rules()
     {
         return [
-            'name'     => [
+            'name' => [
                 'required',
             ],
-            'email'    => [
+            'email' => [
                 'required',
                 'email',
                 'unique:users',
@@ -36,7 +36,7 @@ class SignupRequest extends JsonRequest
             ],
             'password_confirmation' => [
                 'required',
-            ]
+            ],
         ];
     }
 }
