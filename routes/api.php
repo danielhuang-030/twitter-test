@@ -15,7 +15,7 @@ use App\Http\Controllers\Api\v1\AuthController;
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\PostController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\Api\v1\UserController;
 
 // swagger
 Route::get('docs', [ApiController::class, 'getJSON']);

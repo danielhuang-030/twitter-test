@@ -24,6 +24,6 @@ class UserService
 
     public function getUser(int $id): ?User
     {
-        return $this->userRepository->find($id);
+        return $this->userRepository->getById($id);
     }
 }

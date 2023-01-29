@@ -1,15 +1,16 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Requests\User\PostsRequest;
 use App\Params\PostParam;
+use App\Services\PostService;
 use App\Services\UserService;
 use Auth;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class UserController extends Controller
+class UserController extends BaseController
 {
     /**
      * @OA\Schema(
@@ -24,28 +25,11 @@ class UserController extends Controller
      * )
      */
 
-    /**
-     * UserService.
-     *
-     * @var UserService
-     */
-    protected $userService;
-
-    /**
-     * User.
-     *
-     * @var User
-     */
     protected $user;
 
-    /**
-     * construct.
-     *
-     * @param UserService $userService
-     */
-    public function __construct(UserService $userService)
+    public function __construct(protected UserService $userService, protected PostService $postService)
     {
-        $this->userService = $userService;
+        parent::__construct();
 
         // get user
         $this->middleware(function ($request, $next) {
@@ -65,7 +49,7 @@ class UserController extends Controller
      * info.
      *
      * @OA\Get(
-     *     path="/api/users/{id}/info",
+     *     path="/api/v1/users/{id}/info",
      *     summary="User Info",
      *     description="User info",
      *     tags={"User"},
@@ -133,14 +117,16 @@ class UserController extends Controller
      */
     public function info(Request $request, $id)
     {
-        return response()->json($this->user);
+        return $this->responseSuccess(data: [
+            'user' => $this->user,
+        ]);
     }
 
     /**
      * following.
      *
      * @OA\Get(
-     *     path="/api/users/{id}/following",
+     *     path="/api/v1/users/{id}/following",
      *     summary="User Following",
      *     description="User following list",
      *     tags={"User"},
@@ -216,14 +202,16 @@ class UserController extends Controller
      */
     public function following(Request $request, $id)
     {
-        return response()->json($this->user->following);
+        return $this->responseSuccess(data: [
+            'following' => $this->user->following,
+        ]);
     }
 
     /**
      * followers.
      *
      * @OA\Get(
-     *     path="/api/users/{id}/followers",
+     *     path="/api/v1/users/{id}/followers",
      *     summary="User followers",
      *     description="User follower list",
      *     tags={"User"},
@@ -299,14 +287,16 @@ class UserController extends Controller
      */
     public function followers(Request $request, $id)
     {
-        return response()->json($this->user->followers);
+        return $this->responseSuccess(data: [
+            'followers' => $this->user->followers,
+        ]);
     }
 
     /**
      * posts.
      *
      * @OA\Get(
-     *     path="/api/users/{id}/posts",
+     *     path="/api/v1/users/{id}/posts",
      *     summary="User Posts",
      *     description="User post list",
      *     tags={"User"},
@@ -338,7 +328,7 @@ class UserController extends Controller
      *         )
      *     ),
      *     @OA\Parameter(
-     *         name="page_size",
+     *         name="per_page",
      *         in="query",
      *         required=false,
      *         description="page size",
@@ -373,7 +363,7 @@ class UserController extends Controller
      *                         example=1,
      *                     ),
      *                     @OA\Property(
-     *                         property="page_size",
+     *                         property="per_page",
      *                         type="integer",
      *                         format="int64",
      *                         description="page size",
@@ -451,21 +441,16 @@ class UserController extends Controller
      */
     public function posts(PostsRequest $request, $id)
     {
-        $paginator = $this->userService->getPosts((new PostParam($request))->setUserId($id));
+        $paginator = $this->postService->getPosts((new PostParam($request))->setUserId($id));
 
-        return response()->json([
-            'data'      => $paginator->getCollection(),
-            'page'      => $paginator->currentPage(),
-            'page_size' => $paginator->perPage(),
-            'total'     => $paginator->total(),
-        ]);
+        return $this->responseSuccessWithPagination($paginator);
     }
 
     /**
      * liked posts.
      *
      * @OA\Get(
-     *     path="/api/users/{id}/liked_posts",
+     *     path="/api/v1/users/{id}/liked_posts",
      *     summary="User Liked Posts",
      *     description="User liked post list",
      *     tags={"User"},

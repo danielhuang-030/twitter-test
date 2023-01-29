@@ -12,7 +12,7 @@ trait RulePagination
      *
      * @return array
      */
-    public function getPaginationRules(string $pageName = 'page', string $perPageName = 'page_size')
+    public function getPaginationRules(string $pageName = 'page', string $perPageName = 'per_page')
     {
         return [
             $pageName => [
@@ -34,7 +34,7 @@ trait RulePagination
      *
      * @return array
      */
-    public function getPaginationMessages(string $pageName = 'page', string $perPageName = 'page_size')
+    public function getPaginationMessages(string $pageName = 'page', string $perPageName = 'per_page')
     {
         return [
             sprintf('%s.min', $pageName) => 'The number of pages must be at least :min.',
@@ -51,6 +51,6 @@ trait RulePagination
      */
     public static function getPerPageRange()
     {
-        return [1, config('app.max_page_size')];
+        return [1, config('app.max_per_page')];
     }
 }

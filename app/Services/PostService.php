@@ -3,83 +3,47 @@
 namespace App\Services;
 
 use App\Models\Post;
+use App\Params\PostParam;
 use App\Repositories\PostRepository;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class PostService
 {
-    /**
-     * PostRepository.
-     *
-     * @var PostRepository
-     */
-    protected $postRepository;
-
-    /**
-     * construct.
-     *
-     * @param PostRepository $postRepository
-     */
-    public function __construct(PostRepository $postRepository)
+    public function __construct(protected PostRepository $postRepository)
     {
-        $this->postRepository = $postRepository;
     }
 
-    /**
-     * add.
-     *
-     * @param array $requestData
-     * @param int   $userId
-     *
-     * @return Post
-     */
-    public function add(array $requestData, int $userId)
+    public function getPosts(PostParam $param): LengthAwarePaginator
     {
-        return $this->postRepository->add($requestData, $userId);
+        return $this->postRepository->getPaginatorByParam($param);
     }
 
-    /**
-     * find.
-     *
-     * @param int $id
-     *
-     * @return Post
-     */
-    public function find(int $id)
+    public function add(array $requestData, int $userId): ?Post
     {
-        return $this->postRepository->find($id);
+        $requestData['user_id'] = $userId;
+
+        return $this->postRepository->create($requestData);
     }
 
-    /**
-     * edit.
-     *
-     * @param array $requestData
-     * @param int   $id
-     * @param int   $userId
-     *
-     * @return Post
-     */
-    public function edit(array $requestData, int $id, int $userId)
+    public function find(int $id): ?Post
+    {
+        return $this->postRepository->getById($id);
+    }
+
+    public function edit(array $requestData, int $id, int $userId): ?Post
     {
         $post = $this->find($id);
-        if (null === $post) {
+        if (empty($post)) {
             return null;
         }
         if ((int) $post->user_id !== $userId) {
             return null;
         }
 
-        return $this->postRepository->edit($requestData, $id);
+        return $this->postRepository->update($requestData, $id);
     }
 
-    /**
-     * del.
-     *
-     * @param int $id
-     * @param int $userId
-     *
-     * @return bool
-     */
-    public function del(int $id, int $userId)
+    public function del(int $id, int $userId): bool
     {
         $post = $this->find($id);
         if (null === $post) {
@@ -88,25 +52,15 @@ class PostService
         if ((int) $post->user_id !== $userId) {
             return false;
         }
-        if (0 === $this->postRepository->del($id)) {
-            return false;
-        }
+        $this->postRepository->delete($id);
 
         return true;
     }
 
-    /**
-     * like.
-     *
-     * @param int $id
-     * @param int $userId
-     *
-     * @return bool
-     */
-    public function like(int $id, int $userId)
+    public function like(int $id, int $userId): bool
     {
         $post = $this->find($id);
-        if (null === $post || $post->user_id === $userId) {
+        if (empty($post) || $post->user_id == $userId) {
             return false;
         }
         $post->likedUsers()->syncWithoutDetaching((array) $userId);
@@ -114,18 +68,10 @@ class PostService
         return true;
     }
 
-    /**
-     * dislike.
-     *
-     * @param int $id
-     * @param int $userId
-     *
-     * @return bool
-     */
-    public function dislike(int $id, int $userId)
+    public function dislike(int $id, int $userId): bool
     {
         $post = $this->find($id);
-        if (null === $post || $post->user_id === $userId) {
+        if (empty($post) || $post->user_id === $userId) {
             return false;
         }
         $post->likedUsers()->detach((array) $userId);
