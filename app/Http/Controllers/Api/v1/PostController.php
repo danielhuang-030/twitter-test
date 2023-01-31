@@ -1,23 +1,26 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\v1;
 
-use App\Http\Requests\Post\DislikeRequest;
-use App\Http\Requests\Post\LikeRequest;
-use App\Http\Requests\Post\ShowRequest;
-use App\Http\Requests\Post\StoreRequest;
-use App\Http\Requests\Post\UpdateRequest;
+use App\Enums\ApiResponseCode;
+use App\Http\Requests\Api\v1\Post\DislikeRequest;
+use App\Http\Requests\Api\v1\Post\LikeRequest;
+use App\Http\Requests\Api\v1\Post\ShowRequest;
+use App\Http\Requests\Api\v1\Post\StoreRequest;
+use App\Http\Requests\Api\v1\Post\UpdateRequest;
+use App\Http\Resources\Api\v1\Post\PostResource;
+use App\Http\Resources\Api\v1\User\UserResource;
 use App\Services\PostService;
-use Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class PostController extends Controller
+class PostController extends BaseController
 {
     /**
      * @OA\Schema(
      *     schema="PostResponse",
      *     type="object",
      *     title="Post Response",
+     *
      *     @OA\Property(property="id", type="integer" ,format="int64", example=1),
      *     @OA\Property(property="user_id", type="integer", format="int64", example="1"),
      *     @OA\Property(property="content", type="string", format="string", example="test"),
@@ -25,22 +28,9 @@ class PostController extends Controller
      *     @OA\Property(property="updated_at", type="string", format="date-time", example="2020-07-31 23:54:28"),
      * )
      */
-
-    /**
-     * PostService.
-     *
-     * @var PostService
-     */
-    protected $postService;
-
-    /**
-     * construct.
-     *
-     * @param PostService $postService
-     */
-    public function __construct(PostService $postService)
+    public function __construct(protected PostService $postService)
     {
-        $this->postService = $postService;
+        parent::__construct();
     }
 
     /**
@@ -56,11 +46,15 @@ class PostController extends Controller
      *             "passport": {},
      *         },
      *     },
+     *
      *     @OA\RequestBody(
+     *
      *         @OA\MediaType(
      *             mediaType="application/json",
+     *
      *             @OA\Schema(
      *                 required={"content"},
+     *
      *                 @OA\Property(
      *                     property="content",
      *                     type="string",
@@ -71,18 +65,24 @@ class PostController extends Controller
      *             ),
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Successfully.",
+     *
      *         @OA\JsonContent(ref="#/components/schemas/PostResponse")
      *     ),
+     *
      *     @OA\Response(
      *         response="400",
      *         description="Failed.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -94,13 +94,17 @@ class PostController extends Controller
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="422",
      *         description="Validation error.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -120,14 +124,14 @@ class PostController extends Controller
      */
     public function store(StoreRequest $request)
     {
-        $post = $this->postService->add($request->all(), data_get(Auth::user(), 'id', 0));
-        if (null === $post) {
-            return response()->json([
-                'message' => 'error',
-            ], Response::HTTP_BAD_REQUEST);
+        $post = $this->postService->add($request->validated(), (int) data_get(\Auth::user(), 'id'));
+        if (empty($post)) {
+            return $this->responseFail(code: ApiResponseCode::ERROR_POST_ADD->value);
         }
 
-        return response()->json($post);
+        return $this->responseSuccess([
+            'post' => PostResource::make($post),
+        ]);
     }
 
     /**
@@ -143,29 +147,37 @@ class PostController extends Controller
      *             "passport": {},
      *         },
      *     },
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
      *         description="id",
+     *
      *         @OA\Schema(
      *             type="integer",
      *             format="int64",
      *             example=1,
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Successfully.",
+     *
      *         @OA\JsonContent(ref="#/components/schemas/PostResponse")
      *     ),
+     *
      *     @OA\Response(
      *         response="422",
      *         description="Failed.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -177,13 +189,17 @@ class PostController extends Controller
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="401",
      *         description="Unauthorized.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -204,7 +220,14 @@ class PostController extends Controller
      */
     public function show(ShowRequest $request, int $id)
     {
-        return response()->json($this->postService->find($id));
+        $post = $this->postService->find($id);
+        if (empty($post)) {
+            return $this->responseFail(code: ApiResponseCode::ERROR_POST_NOT_EXIST->value);
+        }
+
+        return $this->responseSuccess(data: [
+            'post' => PostResource::make($post),
+        ]);
     }
 
     /**
@@ -220,22 +243,28 @@ class PostController extends Controller
      *             "passport": {},
      *         },
      *     },
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
      *         description="id",
+     *
      *         @OA\Schema(
      *             type="integer",
      *             format="int64",
      *             example=1,
      *         )
      *     ),
+     *
      *     @OA\RequestBody(
+     *
      *         @OA\MediaType(
      *             mediaType="application/json",
+     *
      *             @OA\Schema(
      *                 required={"content"},
+     *
      *                 @OA\Property(
      *                     property="content",
      *                     type="string",
@@ -246,18 +275,24 @@ class PostController extends Controller
      *             ),
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Successfully.",
+     *
      *         @OA\JsonContent(ref="#/components/schemas/PostResponse")
      *     ),
+     *
      *     @OA\Response(
      *         response="422",
      *         description="Failed.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -269,13 +304,17 @@ class PostController extends Controller
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="401",
      *         description="Unauthorized.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -296,14 +335,14 @@ class PostController extends Controller
      */
     public function update(UpdateRequest $request, $id)
     {
-        $post = $this->postService->edit($request->all(), $id, data_get(Auth::user(), 'id', 0));
-        if (null === $post) {
-            return response()->json([
-                'message' => 'error',
-            ], Response::HTTP_BAD_REQUEST);
+        $post = $this->postService->edit($request->validated(), $id, (int) data_get(\Auth::user(), 'id'));
+        if (empty($post)) {
+            return $this->responseFail(code: ApiResponseCode::ERROR_POST_EDIT->value);
         }
 
-        return response()->json($post);
+        return $this->responseSuccess(data: [
+            'post' => PostResource::make($post),
+        ]);
     }
 
     /**
@@ -319,24 +358,30 @@ class PostController extends Controller
      *             "passport": {},
      *         },
      *     },
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
      *         description="id",
+     *
      *         @OA\Schema(
      *             type="integer",
      *             format="int64",
      *             example=1,
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Successfully.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -348,13 +393,17 @@ class PostController extends Controller
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="400",
      *         description="Failed.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -366,13 +415,17 @@ class PostController extends Controller
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="401",
      *         description="Unauthorized.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -392,15 +445,11 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        if (!$this->postService->del($id, data_get(Auth::user(), 'id', 0))) {
-            return response()->json([
-                'message' => 'error',
-            ], Response::HTTP_BAD_REQUEST);
+        if (!$this->postService->del($id, (int) data_get(\Auth::user(), 'id'))) {
+            return $this->responseFail(code: ApiResponseCode::ERROR_POST_DEL->value);
         }
 
-        return response()->json([
-            'message' => 'Successfully deleted post!',
-        ]);
+        return $this->responseSuccess(message: 'Successfully deleted post!');
     }
 
     /**
@@ -416,24 +465,30 @@ class PostController extends Controller
      *             "passport": {},
      *         },
      *     },
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
      *         description="id",
+     *
      *         @OA\Schema(
      *             type="integer",
      *             format="int64",
      *             example=1,
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Successfully.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -445,13 +500,17 @@ class PostController extends Controller
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="400",
      *         description="Failed.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -463,13 +522,17 @@ class PostController extends Controller
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="422",
      *         description="Validation error.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -481,13 +544,17 @@ class PostController extends Controller
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="401",
      *         description="Unauthorized.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -506,15 +573,11 @@ class PostController extends Controller
      */
     public function like(LikeRequest $request, $id)
     {
-        if (!$this->postService->like($id, data_get(Auth::user(), 'id', 0))) {
-            return response()->json([
-                'message' => 'error',
-            ], Response::HTTP_BAD_REQUEST);
+        if (!$this->postService->like($id, data_get(\Auth::user(), 'id', 0))) {
+            return $this->responseFail(code: ApiResponseCode::ERROR_POST_LIKE->value);
         }
 
-        return response()->json([
-            'message' => 'Successfully liked post!',
-        ]);
+        return $this->responseSuccess(message: 'Successfully liked post!');
     }
 
     /**
@@ -530,24 +593,30 @@ class PostController extends Controller
      *             "passport": {},
      *         },
      *     },
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
      *         description="id",
+     *
      *         @OA\Schema(
      *             type="integer",
      *             format="int64",
      *             example=1,
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Successfully.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -559,13 +628,17 @@ class PostController extends Controller
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="400",
      *         description="Failed.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -577,13 +650,17 @@ class PostController extends Controller
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="422",
      *         description="Validation error.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -595,13 +672,17 @@ class PostController extends Controller
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="401",
      *         description="Unauthorized.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -620,15 +701,11 @@ class PostController extends Controller
      */
     public function dislike(DislikeRequest $request, $id)
     {
-        if (!$this->postService->dislike($id, data_get(Auth::user(), 'id', 0))) {
-            return response()->json([
-                'message' => 'error',
-            ], Response::HTTP_BAD_REQUEST);
+        if (!$this->postService->dislike($id, data_get(\Auth::user(), 'id', 0))) {
+            return $this->responseFail(code: ApiResponseCode::ERROR_POST_DISLIKE->value);
         }
 
-        return response()->json([
-            'message' => 'Successfully disliked post!',
-        ]);
+        return $this->responseSuccess(message: 'Successfully disliked post!');
     }
 
     /**
@@ -644,37 +721,47 @@ class PostController extends Controller
      *             "passport": {},
      *         },
      *     },
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
      *         description="id",
+     *
      *         @OA\Schema(
      *             type="integer",
      *             format="int64",
      *             example=1,
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Successfully.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
      *                     type="array",
+     *
      *                     @OA\Items(ref="#/components/schemas/UserResponse"),
      *                 ),
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="400",
      *         description="Failed.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -686,13 +773,17 @@ class PostController extends Controller
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="401",
      *         description="Unauthorized.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -711,14 +802,16 @@ class PostController extends Controller
     public function likedUsers($id)
     {
         $post = $this->postService->find($id);
-        if (null === $post) {
-            return response()->json([
-                'message' => 'error',
-            ], Response::HTTP_BAD_REQUEST);
+        if (empty($post)) {
+            return $this->responseFail(code: ApiResponseCode::ERROR_POST_NOT_EXIST->value);
         }
 
-        return response()->json($post->load(['likedUsers' => function ($query) {
-            $query->orderBy('updated_at', 'desc');
-        }])->likedUsers);
+        return $this->responseSuccess(data: [
+            'users' => UserResource::collection($post->load([
+                'likedUsers' => function ($query) {
+                    $query->orderBy('updated_at', 'desc');
+                },
+            ])->likedUsers),
+        ]);
     }
 }

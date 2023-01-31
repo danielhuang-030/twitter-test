@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Post;
+namespace App\Http\Requests\Api\v1\Post;
 
 use App\Http\Requests\JsonRequest;
 use App\Http\Requests\Traits\MergeRouteParams;
 
-class UpdateRequest extends JsonRequest
+class LikeRequest extends JsonRequest
 {
     use MergeRouteParams;
 
@@ -20,9 +20,6 @@ class UpdateRequest extends JsonRequest
             'id' => [
                 'required',
                 'exists:posts',
-            ],
-            'content' => [
-                'required',
             ],
         ];
     }

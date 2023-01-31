@@ -67,7 +67,7 @@ trait FormatJsonResponses
                 ],
             ], $responseData),
             $code,
-            !empty($message) ? $message : ApiResponseCode::from($code)?->message(),
+            $message,
             $httpStatusCode
         );
     }

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Post;
+namespace App\Http\Requests\Api\v1\Post;
 
 use App\Http\Requests\JsonRequest;
 use App\Http\Requests\Traits\MergeRouteParams;
 
-class ShowRequest extends JsonRequest
+class UpdateRequest extends JsonRequest
 {
     use MergeRouteParams;
 
@@ -20,6 +20,10 @@ class ShowRequest extends JsonRequest
             'id' => [
                 'required',
                 'exists:posts',
+            ],
+            'content' => [
+                'required',
+                'string',
             ],
         ];
     }

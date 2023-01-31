@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Api\v1;
 
-use App\Http\Requests\User\PostsRequest;
+use App\Enums\ApiResponseCode;
+use App\Http\Requests\Api\v1\User\PostsRequest;
+use App\Http\Resources\Api\v1\Post\PostResource;
+use App\Http\Resources\Api\v1\User\UserResource;
 use App\Params\PostParam;
 use App\Services\PostService;
 use App\Services\UserService;
-use Auth;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class UserController extends BaseController
 {
@@ -17,6 +18,7 @@ class UserController extends BaseController
      *     schema="UserResponse",
      *     type="object",
      *     title="User Response",
+     *
      *     @OA\Property(property="id", type="integer" ,format="int64", example=1),
      *     @OA\Property(property="name", type="string", format="string", example="test001"),
      *     @OA\Property(property="email", type="string", format="string", example="test001@test.com"),
@@ -24,7 +26,6 @@ class UserController extends BaseController
      *     @OA\Property(property="updated_at", type="string", format="date-time", example="2020-07-31 23:54:28"),
      * )
      */
-
     protected $user;
 
     public function __construct(protected UserService $userService, protected PostService $postService)
@@ -33,12 +34,10 @@ class UserController extends BaseController
 
         // get user
         $this->middleware(function ($request, $next) {
-            $id = $request->route('id', 0);
-            $this->user = (empty($id) ? Auth::user() : $this->userService->getUser($id));
-            if (null === $this->user) {
-                return response()->json([
-                    'message' => 'error',
-                ], Response::HTTP_BAD_REQUEST);
+            $id = (int) $request->route('id');
+            $this->user = (empty($id) ? \Auth::user() : $this->userService->getUser($id));
+            if (empty($this->user)) {
+                return $this->responseFail(code: ApiResponseCode::ERROR_USER_NOT_EXIST->value);
             }
 
             return $next($request);
@@ -58,29 +57,37 @@ class UserController extends BaseController
      *             "passport": {},
      *         },
      *     },
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
      *         description="id",
+     *
      *         @OA\Schema(
      *             type="integer",
      *             format="int64",
      *             example=1,
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Successfully.",
+     *
      *         @OA\JsonContent(ref="#/components/schemas/UserResponse")
      *     ),
+     *
      *     @OA\Response(
      *         response="400",
      *         description="Failed.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -92,13 +99,17 @@ class UserController extends BaseController
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="401",
      *         description="Unauthorized.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -118,7 +129,7 @@ class UserController extends BaseController
     public function info(Request $request, $id)
     {
         return $this->responseSuccess(data: [
-            'user' => $this->user,
+            'user' => UserResource::make($this->user),
         ]);
     }
 
@@ -135,37 +146,47 @@ class UserController extends BaseController
      *             "passport": {},
      *         },
      *     },
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
      *         description="id",
+     *
      *         @OA\Schema(
      *             type="integer",
      *             format="int64",
      *             example=1,
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Successfully.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
      *                     type="array",
+     *
      *                     @OA\Items(ref="#/components/schemas/UserResponse"),
      *                 ),
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="400",
      *         description="Failed.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -177,13 +198,17 @@ class UserController extends BaseController
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="401",
      *         description="Unauthorized.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -203,7 +228,7 @@ class UserController extends BaseController
     public function following(Request $request, $id)
     {
         return $this->responseSuccess(data: [
-            'following' => $this->user->following,
+            'following' => UserResource::collection($this->user->following),
         ]);
     }
 
@@ -220,37 +245,47 @@ class UserController extends BaseController
      *             "passport": {},
      *         },
      *     },
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
      *         description="id",
+     *
      *         @OA\Schema(
      *             type="integer",
      *             format="int64",
      *             example=1,
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Successfully.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
      *                     type="array",
+     *
      *                     @OA\Items(ref="#/components/schemas/UserResponse"),
      *                 ),
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="400",
      *         description="Failed.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -262,13 +297,17 @@ class UserController extends BaseController
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="401",
      *         description="Unauthorized.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -288,7 +327,7 @@ class UserController extends BaseController
     public function followers(Request $request, $id)
     {
         return $this->responseSuccess(data: [
-            'followers' => $this->user->followers,
+            'followers' => UserResource::collection($this->user->followers),
         ]);
     }
 
@@ -305,56 +344,68 @@ class UserController extends BaseController
      *             "passport": {},
      *         },
      *     },
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
      *         description="id",
+     *
      *         @OA\Schema(
      *             type="integer",
      *             format="int64",
      *             example=1,
      *         )
      *     ),
+     *
      *     @OA\Parameter(
      *         name="page",
      *         in="query",
      *         required=false,
      *         description="page",
+     *
      *         @OA\Schema(
      *             type="integer",
      *             format="int64",
      *             example=1,
      *         )
      *     ),
+     *
      *     @OA\Parameter(
      *         name="per_page",
      *         in="query",
      *         required=false,
      *         description="page size",
+     *
      *         @OA\Schema(
      *             type="integer",
      *             format="int64",
      *             example=10,
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Successfully.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
      *                     type="object",
      *                     allOf={
      *                         @OA\Schema(
+     *
      *                             @OA\Property(
      *                                 property="data",
      *                                 type="array",
+     *
      *                                 @OA\Items(ref="#/components/schemas/PostResponse"),
      *                             ),
      *                         ),
      *                     },
+     *
      *                     @OA\Property(
      *                         property="page",
      *                         type="integer",
@@ -380,13 +431,17 @@ class UserController extends BaseController
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="400",
      *         description="Failed.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -398,13 +453,17 @@ class UserController extends BaseController
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="422",
      *         description="Failed.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -416,13 +475,17 @@ class UserController extends BaseController
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="401",
      *         description="Unauthorized.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -443,7 +506,10 @@ class UserController extends BaseController
     {
         $paginator = $this->postService->getPosts((new PostParam($request))->setUserId($id));
 
-        return $this->responseSuccessWithPagination($paginator);
+        return $this->responseSuccessWithPagination(
+            paginator: $paginator,
+            data: PostResource::collection($paginator)
+        );
     }
 
     /**
@@ -459,37 +525,47 @@ class UserController extends BaseController
      *             "passport": {},
      *         },
      *     },
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
      *         description="id",
+     *
      *         @OA\Schema(
      *             type="integer",
      *             format="int64",
      *             example=1,
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Successfully.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
      *                     type="array",
+     *
      *                     @OA\Items(ref="#/components/schemas/PostResponse"),
      *                 ),
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="400",
      *         description="Failed.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -501,13 +577,17 @@ class UserController extends BaseController
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="401",
      *         description="Unauthorized.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
