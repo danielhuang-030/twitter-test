@@ -37,7 +37,7 @@ class PostController extends BaseController
      * Store a newly created resource in storage.
      *
      * @OA\Post(
-     *     path="/api/posts",
+     *     path="/api/v1/posts",
      *     summary="Post Store",
      *     description="Post store",
      *     tags={"Post"},
@@ -138,7 +138,7 @@ class PostController extends BaseController
      * Display the specified resource.
      *
      * @OA\Get(
-     *     path="/api/posts/{id}",
+     *     path="/api/v1/posts/{id}",
      *     summary="Post Show",
      *     description="Post show",
      *     tags={"Post"},
@@ -234,7 +234,7 @@ class PostController extends BaseController
      * Update the specified resource in storage.
      *
      * @OA\Put(
-     *     path="/api/posts/{id}",
+     *     path="/api/v1/posts/{id}",
      *     summary="Post Update",
      *     description="Post update",
      *     tags={"Post"},
@@ -349,7 +349,7 @@ class PostController extends BaseController
      * Remove the specified resource from storage.
      *
      * @OA\Delete(
-     *     path="/api/posts/{id}",
+     *     path="/api/v1/posts/{id}",
      *     summary="Post Delete",
      *     description="Post delete",
      *     tags={"Post"},
@@ -456,7 +456,7 @@ class PostController extends BaseController
      * like.
      *
      * @OA\Patch(
-     *     path="/api/posts/{id}/like",
+     *     path="/api/v1/posts/{id}/like",
      *     summary="Post Like",
      *     description="Post like",
      *     tags={"Post"},
@@ -584,7 +584,7 @@ class PostController extends BaseController
      * dislike.
      *
      * @OA\Delete(
-     *     path="/api/posts/{id}/like",
+     *     path="/api/v1/posts/{id}/like",
      *     summary="Post Dislike",
      *     description="Post dislike",
      *     tags={"Post"},
@@ -712,7 +712,7 @@ class PostController extends BaseController
      * liked users.
      *
      * @OA\Get(
-     *     path="/api/posts/{id}/liked_users",
+     *     path="/api/v1/posts/{id}/liked_users",
      *     summary="Post Liked Users",
      *     description="Post liked user list",
      *     tags={"Post"},

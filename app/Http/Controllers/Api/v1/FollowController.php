@@ -18,7 +18,7 @@ class FollowController extends BaseController
      * following.
      *
      * @OA\Patch(
-     *     path="/api/following/{id}",
+     *     path="/api/v1/following/{id}",
      *     summary="User Following",
      *     description="User following",
      *     tags={"User"},
@@ -145,7 +145,7 @@ class FollowController extends BaseController
      * unfollow.
      *
      * @OA\Delete(
-     *     path="/api/following/{id}",
+     *     path="/api/v1/following/{id}",
      *     summary="User Unfollow",
      *     description="User unfollow",
      *     tags={"User"},

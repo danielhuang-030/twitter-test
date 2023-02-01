@@ -198,12 +198,54 @@ class AuthController extends BaseController
      *
      *                 @OA\Schema(
      *
-     *                     @OA\Property(property="id", type="integer" ,format="int64", example=1),
-     *                     @OA\Property(property="name", type="string", format="string", example="test001"),
-     *                     @OA\Property(property="email", type="string", format="string", example="test001@test.com"),
-     *                     @OA\Property(property="created_at", type="string", format="date-time", example="2020-07-31 23:54:28"),
-     *                     @OA\Property(property="updated_at", type="string", format="date-time", example="2020-07-31 23:54:28"),
-     *                     @OA\Property(property="token", type="string", format="string", example="eyJ0eXAiOiJKV1QiLCJhbGciOiJ..."),
+     *                     @OA\Property(
+     *                          property="code",
+     *                          type="string",
+     *                          example="000000",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="success",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
+     *                          @OA\Property(
+     *                               property="user",
+     *                               type="object",
+     *                               @OA\Property(
+     *                                    property="id",
+     *                                    type="number",
+     *                                    example=1,
+     *                               ),
+     *                               @OA\Property(
+     *                                    property="name",
+     *                                    type="string",
+     *                                    example="test001",
+     *                               ),
+     *                               @OA\Property(
+     *                                    property="email",
+     *                                    type="string",
+     *                                    example="test001@test.com",
+     *                               ),
+     *                               @OA\Property(
+     *                                    property="created_at",
+     *                                    type="string",
+     *                                    example="2022-03-10 17:45:16",
+     *                               ),
+     *                               @OA\Property(
+     *                                    property="updated_at",
+     *                                    type="string",
+     *                                    example="2022-03-10 17:45:16",
+     *                               ),
+     *                          ),
+     *                          @OA\Property(
+     *                               property="token",
+     *                               type="string",
+     *                               example="eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9...",
+     *                          ),
+     *                     ),
      *                 ),
      *             ),
      *         },
