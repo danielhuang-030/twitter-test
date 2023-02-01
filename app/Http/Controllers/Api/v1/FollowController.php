@@ -1,30 +1,17 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\v1;
 
-use App\Http\Requests\Follow\FollowingRequest;
-use App\Http\Requests\Follow\UnfollowRequest;
+use App\Enums\ApiResponseCode;
+use App\Http\Requests\Api\v1\Follow\FollowingRequest;
+use App\Http\Requests\Api\v1\Follow\UnfollowRequest;
 use App\Services\FollowService;
-use Auth;
-use Symfony\Component\HttpFoundation\Response;
 
-class FollowController extends Controller
+class FollowController extends BaseController
 {
-    /**
-     * FollowService.
-     *
-     * @var FollowService
-     */
-    protected $followService;
-
-    /**
-     * construct.
-     *
-     * @param FollowService $followService
-     */
-    public function __construct(FollowService $followService)
+    public function __construct(protected FollowService $followService)
     {
-        $this->followService = $followService;
+        parent::__construct();
     }
 
     /**
@@ -40,24 +27,30 @@ class FollowController extends Controller
      *             "passport": {},
      *         },
      *     },
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
      *         description="id",
+     *
      *         @OA\Schema(
      *             type="integer",
      *             format="int64",
      *             example=1,
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Successfully.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -69,13 +62,17 @@ class FollowController extends Controller
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="400",
      *         description="Failed.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -87,13 +84,17 @@ class FollowController extends Controller
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="422",
      *         description="Validation error.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -105,13 +106,17 @@ class FollowController extends Controller
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="401",
      *         description="Unauthorized.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -129,15 +134,11 @@ class FollowController extends Controller
      */
     public function following(FollowingRequest $request, $id)
     {
-        if (!$this->followService->follow($id, data_get(Auth::user(), 'id', 0))) {
-            return response()->json([
-                'message' => 'error',
-            ], Response::HTTP_BAD_REQUEST);
+        if (!$this->followService->follow($id, (int) data_get(\Auth::user(), 'id'))) {
+            return $this->responseFail(code: ApiResponseCode::ERROR_FOLLOW_FOLLOWING->value);
         }
 
-        return response()->json([
-            'message' => 'Successfully followed user!',
-        ]);
+        return $this->responseSuccess(message: 'Successfully followed user!');
     }
 
     /**
@@ -153,24 +154,30 @@ class FollowController extends Controller
      *             "passport": {},
      *         },
      *     },
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
      *         description="id",
+     *
      *         @OA\Schema(
      *             type="integer",
      *             format="int64",
      *             example=1,
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Successfully.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -182,13 +189,17 @@ class FollowController extends Controller
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="400",
      *         description="Failed.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -200,13 +211,17 @@ class FollowController extends Controller
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="422",
      *         description="Validation error.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -218,13 +233,17 @@ class FollowController extends Controller
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="401",
      *         description="Unauthorized.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -243,14 +262,10 @@ class FollowController extends Controller
      */
     public function unfollow(UnfollowRequest $request, $id)
     {
-        if (!$this->followService->unfollow($id, data_get(Auth::user(), 'id', 0))) {
-            return response()->json([
-                'message' => 'error',
-            ], Response::HTTP_BAD_REQUEST);
+        if (!$this->followService->unfollow($id, (int) data_get(\Auth::user(), 'id'))) {
+            return $this->responseFail(code: ApiResponseCode::ERROR_FOLLOW_UNFOLLOW->value);
         }
 
-        return response()->json([
-            'message' => 'Successfully unfollowed user!',
-        ]);
+        return $this->responseSuccess(message: 'Successfully unfollowed user!');
     }
 }

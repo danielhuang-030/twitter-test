@@ -19,6 +19,9 @@ enum ApiResponseCode: string
     case ERROR_POST_LIKE = '501005';
     case ERROR_POST_DISLIKE = '501006';
 
+    case ERROR_FOLLOW_FOLLOWING = '502001';
+    case ERROR_FOLLOW_UNFOLLOW = '502002';
+
     public function message(): string
     {
         return match ($this) {
@@ -36,6 +39,9 @@ enum ApiResponseCode: string
             static::ERROR_POST_DEL => 'Post delete failed',
             static::ERROR_POST_LIKE => 'Post like failed',
             static::ERROR_POST_DISLIKE => 'Post dislike failed',
+
+            static::ERROR_FOLLOW_FOLLOWING => 'Following failed',
+            static::ERROR_FOLLOW_UNFOLLOW => 'Unfollow failed',
 
             default => 'Unexpected code',
         };

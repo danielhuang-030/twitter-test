@@ -12,10 +12,10 @@
 */
 
 use App\Http\Controllers\Api\v1\AuthController;
+use App\Http\Controllers\Api\v1\FollowController;
 use App\Http\Controllers\Api\v1\PostController;
 use App\Http\Controllers\Api\v1\UserController;
 use App\Http\Controllers\ApiController;
-use App\Http\Controllers\FollowController;
 
 // swagger
 Route::get('docs', [ApiController::class, 'getJSON']);

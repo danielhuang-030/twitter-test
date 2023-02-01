@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Follow;
+namespace App\Http\Requests\Api\v1\Follow;
 
 use App\Http\Requests\JsonRequest;
 use App\Http\Requests\Traits\MergeRouteParams;

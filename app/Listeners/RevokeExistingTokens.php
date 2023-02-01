@@ -16,7 +16,7 @@ class RevokeExistingTokens implements ShouldQueue
      *
      * @var int
      */
-    const LIMIT = 100;
+    public const LIMIT = 100;
 
     /**
      * UserRepository.
@@ -44,7 +44,7 @@ class RevokeExistingTokens implements ShouldQueue
      */
     public function handle(AccessTokenCreated $event)
     {
-        $user = $this->userRepository->find($event->userId);
+        $user = $this->userRepository->getById($event->userId);
         if (null === $user) {
             return;
         }
