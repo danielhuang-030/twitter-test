@@ -85,11 +85,19 @@ class AuthController extends BaseController
      *                 @OA\Schema(
      *
      *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="Successfully created user!",
+     *                          property="code",
+     *                          type="string",
+     *                          example="000000",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="User created successfully!",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
+     *                          example="{}",
      *                     ),
      *                 ),
      *             ),
@@ -107,11 +115,19 @@ class AuthController extends BaseController
      *                 @OA\Schema(
      *
      *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="Failed to create user!",
+     *                          property="code",
+     *                          type="string",
+     *                          example="500002",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="User add failed",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
+     *                          example="{}",
      *                     ),
      *                 ),
      *             ),
@@ -129,11 +145,19 @@ class AuthController extends BaseController
      *                 @OA\Schema(
      *
      *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="The email field is required.",
+     *                          property="code",
+     *                          type="string",
+     *                          example="999001",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="The email field is required.",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
+     *                          example="{}",
      *                     ),
      *                 ),
      *             ),
@@ -147,7 +171,7 @@ class AuthController extends BaseController
     {
         $user = $this->userService->create($request->validated());
         if (empty($user)) {
-            return $this->responseFail(message: 'Failed to create user!');
+            return $this->responseFail(code: ApiResponseCode::ERROR_USER_ADD->value);
         }
 
         return $this->responseSuccess(message: 'User created successfully!');
@@ -262,11 +286,19 @@ class AuthController extends BaseController
      *                 @OA\Schema(
      *
      *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="Unauthorized",
+     *                          property="code",
+     *                          type="string",
+     *                          example="999002",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="Unauthorized",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
+     *                          example="{}",
      *                     ),
      *                 ),
      *             ),
@@ -284,11 +316,19 @@ class AuthController extends BaseController
      *                 @OA\Schema(
      *
      *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="The email field is required.",
+     *                          property="code",
+     *                          type="string",
+     *                          example="999001",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="The email field is required.",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
+     *                          example="{}",
      *                     ),
      *                 ),
      *             ),
@@ -339,13 +379,20 @@ class AuthController extends BaseController
      *                 mediaType="application/json",
      *
      *                 @OA\Schema(
-     *
      *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="Successfully logged out",
+     *                          property="code",
+     *                          type="string",
+     *                          example="000000",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="Successfully logged out",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
+     *                          example="{}",
      *                     ),
      *                 ),
      *             ),
@@ -363,11 +410,19 @@ class AuthController extends BaseController
      *                 @OA\Schema(
      *
      *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="Unauthorized",
+     *                          property="code",
+     *                          type="string",
+     *                          example="999002",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="Unauthorized",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
+     *                          example="{}",
      *                     ),
      *                 ),
      *             ),
