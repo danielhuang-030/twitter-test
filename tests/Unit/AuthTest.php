@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use App\Models\User;
 use App\Repositories\UserRepository;
+use App\Services\AuthService;
 use App\Services\UserService;
 use Hash;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -49,8 +50,8 @@ class AuthTest extends TestCase
             'userRepository' => $userRepositoryMock,
         ]);
         $postData = [
-            'name'     => $this->name,
-            'email'    => $this->email,
+            'name' => $this->name,
+            'email' => $this->email,
             'password' => $this->password,
         ];
         $result = $userService->create($postData);
@@ -66,6 +67,7 @@ class AuthTest extends TestCase
     public function testLogin()
     {
         $userFaker = new User();
+        $userFaker->id = 999;
         $userFaker->name = $this->name;
         $userFaker->email = $this->email;
         $userFaker->password = Hash::make($this->password);
@@ -74,14 +76,14 @@ class AuthTest extends TestCase
             ->once()
             ->with($this->email)
             ->andReturn($userFaker);
-        $userService = resolve(UserService::class, [
+        $authService = resolve(AuthService::class, [
             'userRepository' => $userRepositoryMock,
         ]);
         $postData = [
-            'email'    => $this->email,
+            'email' => $this->email,
             'password' => $this->password,
         ];
-        $result = $userService->attempt($postData);
+        $result = $authService->attempt($postData);
         $this->assertEquals($this->name, $result->name);
         $this->assertEquals($this->email, $result->email);
     }

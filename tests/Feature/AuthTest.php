@@ -34,16 +34,18 @@ class AuthTest extends TestCase
      */
     public function testSignup()
     {
-        $response = $this->postJson('/api/signup', [
-            'name'                  => $this->name,
-            'email'                 => $this->email,
-            'password'              => $this->password,
+        $response = $this->postJson('/api/v1/signup', [
+            'name' => $this->name,
+            'email' => $this->email,
+            'password' => $this->password,
             'password_confirmation' => $this->password,
         ]);
 
         $response->assertStatus(200)
             ->assertExactJson([
-                'message' => 'Successfully created user!',
+                'code' => '000000',
+                'message' => 'User created successfully!',
+                'data' => [],
             ]);
     }
 
@@ -55,23 +57,29 @@ class AuthTest extends TestCase
     public function testLogin()
     {
         $user = factory(User::class)->create([
-            'email'    => $this->email,
+            'email' => $this->email,
             'password' => Hash::make($this->password),
         ]);
 
-        $response = $this->postJson('/api/login', [
-            'email'    => $this->email,
+        $response = $this->postJson('/api/v1/login', [
+            'email' => $this->email,
             'password' => $this->password,
         ]);
 
         $response->assertStatus(200)
             ->assertJsonStructure([
-                'id',
-                'name',
-                'email',
-                'created_at',
-                'updated_at',
-                'token',
+                'code',
+                'message',
+                'data' => [
+                    'user' => [
+                        'id',
+                        'name',
+                        'email',
+                        'created_at',
+                        'updated_at',
+                    ],
+                    'token',
+                ],
             ]);
     }
 }
