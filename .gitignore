@@ -12,6 +12,7 @@ yarn-error.log
 _ide_helper.php
 .phpstorm.meta.php
 *.code-workspace
+/.vscode
 
 /public/js
 /public/css
