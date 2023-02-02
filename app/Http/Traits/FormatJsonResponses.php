@@ -62,7 +62,7 @@ trait FormatJsonResponses
             array_merge([
                 'pagination' => [
                     'page' => $paginator->currentPage(),
-                    'perPage' => $paginator->perPage(),
+                    'per_page' => $paginator->perPage(),
                     'total' => $paginator->total(),
                 ],
             ], $responseData),
