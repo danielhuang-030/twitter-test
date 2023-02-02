@@ -11,6 +11,7 @@ enum ApiResponseCode: string
     case ERROR_UNAUTHORIZED = '999002';
 
     case ERROR_USER_NOT_EXIST = '500001';
+    case ERROR_USER_ADD = '500002';
 
     case ERROR_POST_NOT_EXIST = '501001';
     case ERROR_POST_ADD = '501002';
@@ -32,6 +33,7 @@ enum ApiResponseCode: string
             static::ERROR_UNAUTHORIZED => 'Unauthorized',
 
             static::ERROR_USER_NOT_EXIST => 'User does not exist',
+            static::ERROR_USER_ADD => 'User add failed',
 
             static::ERROR_POST_NOT_EXIST => 'Post does not exist',
             static::ERROR_POST_ADD => 'Post add failed',
