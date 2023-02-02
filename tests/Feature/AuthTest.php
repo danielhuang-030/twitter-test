@@ -56,7 +56,7 @@ class AuthTest extends TestCase
      */
     public function testLogin()
     {
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'email' => $this->email,
             'password' => Hash::make($this->password),
         ]);
