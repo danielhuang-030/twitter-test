@@ -1,14 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Post;
+namespace App\Http\Requests\Api\v1\Auth;
 
 use App\Http\Requests\JsonRequest;
-use App\Http\Requests\Traits\MergeRouteParams;
 
-class UpdateRequest extends JsonRequest
+class AuthLoginRequest extends JsonRequest
 {
-    use MergeRouteParams;
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -17,11 +14,11 @@ class UpdateRequest extends JsonRequest
     public function rules()
     {
         return [
-            'id' => [
+            'email' => [
                 'required',
-                'exists:posts',
+                'email',
             ],
-            'content' => [
+            'password' => [
                 'required',
             ],
         ];

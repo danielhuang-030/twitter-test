@@ -224,9 +224,9 @@ return [
         'View'         => Illuminate\Support\Facades\View::class,
     ],
 
-    // page size
-    'page_size' => 2,
+    // per page
+    'per_page' => 2,
 
-    // max page size
-    'max_page_size' => 100,
+    // max per page
+    'max_per_page' => 100,
 ];

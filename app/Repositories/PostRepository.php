@@ -3,121 +3,25 @@
 namespace App\Repositories;
 
 use App\Models\Post;
-use App\Params\PostParam;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 
-class PostRepository
+class PostRepository extends BaseRepository
 {
-    /**
-     * Post.
-     *
-     * @var Post
-     */
-    private $post;
-
-    /**
-     * construct.
-     *
-     * @param Post $post
-     */
-    public function __construct(Post $post)
+    protected function model(): string
     {
-        $this->post = $post;
+        return Post::class;
     }
 
-    /**
-     * add.
-     *
-     * @param array $requestData
-     * @param int   $userId
-     *
-     * @return Post
-     */
-    public function add(array $requestData, int $userId)
+    protected function getQueryByParam($param): Builder
     {
-        $requestData['user_id'] = $userId;
-
-        return $this->post->create($requestData);
-    }
-
-    /**
-     * edit.
-     *
-     * @param array $requestData
-     * @param int   $id
-     *
-     * @return Post
-     */
-    public function edit(array $requestData, int $id)
-    {
-        $post = $this->post->find($id);
-        if (null === $post) {
-            return null;
-        }
-        if (!$post->update($requestData)) {
-            return null;
-        }
-
-        return $post;
-    }
-
-    /**
-     * find.
-     *
-     * @param array $requestData
-     * @param int   $userId
-     *
-     * @return Post
-     */
-    public function find(int $id)
-    {
-        return $this->post->find($id);
-    }
-
-    /**
-     * del.
-     *
-     * @param int $id
-     *
-     * @return int
-     */
-    public function del(int $id)
-    {
-        return $this->post->find($id)->delete();
-    }
-
-    /**
-     * get by param.
-     *
-     * @param PostParam $param
-     *
-     * @return LengthAwarePaginator
-     */
-    public function getByParam(PostParam $param)
-    {
-        // query
-        $query = $this->post->query();
+        $query = parent::getQueryByParam($param);
 
         // user id
         $userId = $param->getUserId();
         if (!empty($userId)) {
-            $query->where('user_id', $userId);
+            $query->where($this->model->qualifyColumn('user_id'), $userId);
         }
 
-        // withs
-        $withs = $param->getWiths();
-        if (!empty($withs)) {
-            $query->with($withs);
-        }
-
-        // sort
-        $sortBy = $param->getSortBy();
-        if (!empty($sortBy)) {
-            foreach ($sortBy as $sort => $isDesc) {
-                $query->orderBy($sort, $isDesc ? 'desc' : 'asc');
-            }
-        }
-
-        return $query->paginate($param->getPerPage(), ['*'], 'page', $param->getPage());
+        return $query;
     }
 }

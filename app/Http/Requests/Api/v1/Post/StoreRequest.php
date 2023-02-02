@@ -1,14 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Post;
+namespace App\Http\Requests\Api\v1\Post;
 
 use App\Http\Requests\JsonRequest;
-use App\Http\Requests\Traits\MergeRouteParams;
 
-class ShowRequest extends JsonRequest
+class StoreRequest extends JsonRequest
 {
-    use MergeRouteParams;
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -17,9 +14,9 @@ class ShowRequest extends JsonRequest
     public function rules()
     {
         return [
-            'id' => [
+            'content' => [
                 'required',
-                'exists:posts',
+                'string',
             ],
         ];
     }

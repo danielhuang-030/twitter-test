@@ -1,37 +1,24 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\v1;
 
-use App\Http\Requests\Follow\FollowingRequest;
-use App\Http\Requests\Follow\UnfollowRequest;
+use App\Enums\ApiResponseCode;
+use App\Http\Requests\Api\v1\Follow\FollowingRequest;
+use App\Http\Requests\Api\v1\Follow\UnfollowRequest;
 use App\Services\FollowService;
-use Auth;
-use Symfony\Component\HttpFoundation\Response;
 
-class FollowController extends Controller
+class FollowController extends BaseController
 {
-    /**
-     * FollowService.
-     *
-     * @var FollowService
-     */
-    protected $followService;
-
-    /**
-     * construct.
-     *
-     * @param FollowService $followService
-     */
-    public function __construct(FollowService $followService)
+    public function __construct(protected FollowService $followService)
     {
-        $this->followService = $followService;
+        parent::__construct();
     }
 
     /**
      * following.
      *
      * @OA\Patch(
-     *     path="/api/following/{id}",
+     *     path="/api/v1/following/{id}",
      *     summary="User Following",
      *     description="User following",
      *     tags={"User"},
@@ -113,11 +100,19 @@ class FollowController extends Controller
      *                 mediaType="application/json",
      *                 @OA\Schema(
      *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="Unauthorized",
+     *                          property="code",
+     *                          type="string",
+     *                          example="999002",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="Unauthorized",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
+     *                          example="{}",
      *                     ),
      *                 ),
      *             ),
@@ -129,22 +124,18 @@ class FollowController extends Controller
      */
     public function following(FollowingRequest $request, $id)
     {
-        if (!$this->followService->follow($id, data_get(Auth::user(), 'id', 0))) {
-            return response()->json([
-                'message' => 'error',
-            ], Response::HTTP_BAD_REQUEST);
+        if (!$this->followService->follow($id, (int) data_get(\Auth::user(), 'id'))) {
+            return $this->responseFail(code: ApiResponseCode::ERROR_FOLLOW_FOLLOWING->value);
         }
 
-        return response()->json([
-            'message' => 'Successfully followed user!',
-        ]);
+        return $this->responseSuccess(message: 'Successfully followed user!');
     }
 
     /**
      * unfollow.
      *
      * @OA\Delete(
-     *     path="/api/following/{id}",
+     *     path="/api/v1/following/{id}",
      *     summary="User Unfollow",
      *     description="User unfollow",
      *     tags={"User"},
@@ -226,11 +217,19 @@ class FollowController extends Controller
      *                 mediaType="application/json",
      *                 @OA\Schema(
      *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="Unauthorized",
+     *                          property="code",
+     *                          type="string",
+     *                          example="999002",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="Unauthorized",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
+     *                          example="{}",
      *                     ),
      *                 ),
      *             ),
@@ -243,14 +242,10 @@ class FollowController extends Controller
      */
     public function unfollow(UnfollowRequest $request, $id)
     {
-        if (!$this->followService->unfollow($id, data_get(Auth::user(), 'id', 0))) {
-            return response()->json([
-                'message' => 'error',
-            ], Response::HTTP_BAD_REQUEST);
+        if (!$this->followService->unfollow($id, (int) data_get(\Auth::user(), 'id'))) {
+            return $this->responseFail(code: ApiResponseCode::ERROR_FOLLOW_UNFOLLOW->value);
         }
 
-        return response()->json([
-            'message' => 'Successfully unfollowed user!',
-        ]);
+        return $this->responseSuccess(message: 'Successfully unfollowed user!');
     }
 }

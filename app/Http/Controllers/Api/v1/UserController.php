@@ -1,60 +1,67 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\v1;
 
-use App\Http\Requests\User\PostsRequest;
+use App\Enums\ApiResponseCode;
+use App\Http\Requests\Api\v1\User\PostsRequest;
+use App\Http\Resources\Api\v1\Post\PostResource;
+use App\Http\Resources\Api\v1\User\UserResource;
 use App\Params\PostParam;
+use App\Services\PostService;
 use App\Services\UserService;
-use Auth;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 
-class UserController extends Controller
+class UserController extends BaseController
 {
     /**
      * @OA\Schema(
      *     schema="UserResponse",
      *     type="object",
      *     title="User Response",
-     *     @OA\Property(property="id", type="integer" ,format="int64", example=1),
-     *     @OA\Property(property="name", type="string", format="string", example="test001"),
-     *     @OA\Property(property="email", type="string", format="string", example="test001@test.com"),
-     *     @OA\Property(property="created_at", type="string", format="date-time", example="2020-07-31 23:54:28"),
-     *     @OA\Property(property="updated_at", type="string", format="date-time", example="2020-07-31 23:54:28"),
+     *     @OA\Property(
+     *          property="id",
+     *          type="integer",
+     *          format="int64",
+     *          example=1,
+     *     ),
+     *     @OA\Property(
+     *          property="name",
+     *          type="string",
+     *          format="string",
+     *          example="test001",
+     *     ),
+     *     @OA\Property(
+     *          property="email",
+     *          type="string",
+     *          format="string",
+     *          example="test001@test.com",
+     *     ),
+     *     @OA\Property(
+     *          property="created_at",
+     *          type="string",
+     *          format="string",
+     *          example="2022-03-10 17:45:16",
+     *     ),
+     *     @OA\Property(
+     *          property="updated_at",
+     *          type="string",
+     *          format="string",
+     *          example="2022-03-10 17:45:16",
+     *     ),
      * )
-     */
-
-    /**
-     * UserService.
-     *
-     * @var UserService
-     */
-    protected $userService;
-
-    /**
-     * User.
-     *
-     * @var User
      */
     protected $user;
 
-    /**
-     * construct.
-     *
-     * @param UserService $userService
-     */
-    public function __construct(UserService $userService)
+    public function __construct(protected UserService $userService, protected PostService $postService)
     {
-        $this->userService = $userService;
+        parent::__construct();
 
         // get user
         $this->middleware(function ($request, $next) {
-            $id = $request->route('id', 0);
-            $this->user = (empty($id) ? Auth::user() : $this->userService->getUser($id));
-            if (null === $this->user) {
-                return response()->json([
-                    'message' => 'error',
-                ], Response::HTTP_BAD_REQUEST);
+            $id = (int) $request->route('id');
+            $this->user = (empty($id) ? \Auth::user() : $this->userService->getUser($id));
+            if (empty($this->user)) {
+                return $this->responseFail(code: ApiResponseCode::ERROR_USER_NOT_EXIST->value);
             }
 
             return $next($request);
@@ -65,7 +72,7 @@ class UserController extends Controller
      * info.
      *
      * @OA\Get(
-     *     path="/api/users/{id}/info",
+     *     path="/api/v1/users/{id}/info",
      *     summary="User Info",
      *     description="User info",
      *     tags={"User"},
@@ -116,11 +123,19 @@ class UserController extends Controller
      *                 mediaType="application/json",
      *                 @OA\Schema(
      *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="Unauthorized",
+     *                          property="code",
+     *                          type="string",
+     *                          example="999002",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="Unauthorized",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
+     *                          example="{}",
      *                     ),
      *                 ),
      *             ),
@@ -133,14 +148,16 @@ class UserController extends Controller
      */
     public function info(Request $request, $id)
     {
-        return response()->json($this->user);
+        return $this->responseSuccess(data: [
+            'user' => UserResource::make($this->user),
+        ]);
     }
 
     /**
      * following.
      *
      * @OA\Get(
-     *     path="/api/users/{id}/following",
+     *     path="/api/v1/users/{id}/following",
      *     summary="User Following",
      *     description="User following list",
      *     tags={"User"},
@@ -199,11 +216,19 @@ class UserController extends Controller
      *                 mediaType="application/json",
      *                 @OA\Schema(
      *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="Unauthorized",
+     *                          property="code",
+     *                          type="string",
+     *                          example="999002",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="Unauthorized",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
+     *                          example="{}",
      *                     ),
      *                 ),
      *             ),
@@ -216,14 +241,16 @@ class UserController extends Controller
      */
     public function following(Request $request, $id)
     {
-        return response()->json($this->user->following);
+        return $this->responseSuccess(data: [
+            'following' => UserResource::collection($this->user->following),
+        ]);
     }
 
     /**
      * followers.
      *
      * @OA\Get(
-     *     path="/api/users/{id}/followers",
+     *     path="/api/v1/users/{id}/followers",
      *     summary="User followers",
      *     description="User follower list",
      *     tags={"User"},
@@ -282,11 +309,19 @@ class UserController extends Controller
      *                 mediaType="application/json",
      *                 @OA\Schema(
      *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="Unauthorized",
+     *                          property="code",
+     *                          type="string",
+     *                          example="999002",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="Unauthorized",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
+     *                          example="{}",
      *                     ),
      *                 ),
      *             ),
@@ -299,14 +334,16 @@ class UserController extends Controller
      */
     public function followers(Request $request, $id)
     {
-        return response()->json($this->user->followers);
+        return $this->responseSuccess(data: [
+            'followers' => UserResource::collection($this->user->followers),
+        ]);
     }
 
     /**
      * posts.
      *
      * @OA\Get(
-     *     path="/api/users/{id}/posts",
+     *     path="/api/v1/users/{id}/posts",
      *     summary="User Posts",
      *     description="User post list",
      *     tags={"User"},
@@ -338,7 +375,7 @@ class UserController extends Controller
      *         )
      *     ),
      *     @OA\Parameter(
-     *         name="page_size",
+     *         name="per_page",
      *         in="query",
      *         required=false,
      *         description="page size",
@@ -359,33 +396,45 @@ class UserController extends Controller
      *                     allOf={
      *                         @OA\Schema(
      *                             @OA\Property(
-     *                                 property="data",
-     *                                 type="array",
-     *                                 @OA\Items(ref="#/components/schemas/PostResponse"),
+     *                                  property="code",
+     *                                  type="string",
+     *                                  example="000000",
+     *                             ),
+     *                             @OA\Property(
+     *                                  property="message",
+     *                                  type="string",
+     *                                  example="success",
+     *                             ),
+     *                             @OA\Property(
+     *                                  property="data",
+     *                                  type="object",
+     *                                  @OA\Property(
+     *                                       property="pagination",
+     *                                       type="object",
+     *                                       @OA\Property(
+     *                                            property="page",
+     *                                            type="number",
+     *                                            example=1,
+     *                                       ),
+     *                                       @OA\Property(
+     *                                            property="per_page",
+     *                                            type="number",
+     *                                            example=20,
+     *                                       ),
+     *                                       @OA\Property(
+     *                                            property="total",
+     *                                            type="number",
+     *                                            example=5,
+     *                                       ),
+     *                                  ),
+     *                                  @OA\Property(
+     *                                       property="data",
+     *                                       type="array",
+     *                                       @OA\Items(ref="#/components/schemas/PostResponse"),
+     *                                  ),
      *                             ),
      *                         ),
      *                     },
-     *                     @OA\Property(
-     *                         property="page",
-     *                         type="integer",
-     *                         format="int64",
-     *                         description="page",
-     *                         example=1,
-     *                     ),
-     *                     @OA\Property(
-     *                         property="page_size",
-     *                         type="integer",
-     *                         format="int64",
-     *                         description="page size",
-     *                         example=10,
-     *                     ),
-     *                     @OA\Property(
-     *                         property="total",
-     *                         type="integer",
-     *                         format="int64",
-     *                         description="total",
-     *                         example=1,
-     *                     ),
      *                 ),
      *             ),
      *         },
@@ -434,11 +483,19 @@ class UserController extends Controller
      *                 mediaType="application/json",
      *                 @OA\Schema(
      *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="Unauthorized",
+     *                          property="code",
+     *                          type="string",
+     *                          example="999002",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="Unauthorized",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
+     *                          example="{}",
      *                     ),
      *                 ),
      *             ),
@@ -451,21 +508,19 @@ class UserController extends Controller
      */
     public function posts(PostsRequest $request, $id)
     {
-        $paginator = $this->userService->getPosts((new PostParam($request))->setUserId($id));
+        $paginator = $this->postService->getPosts((new PostParam($request))->setUserId($id));
 
-        return response()->json([
-            'data'      => $paginator->getCollection(),
-            'page'      => $paginator->currentPage(),
-            'page_size' => $paginator->perPage(),
-            'total'     => $paginator->total(),
-        ]);
+        return $this->responseSuccessWithPagination(
+            paginator: $paginator,
+            data: PostResource::collection($paginator)
+        );
     }
 
     /**
      * liked posts.
      *
      * @OA\Get(
-     *     path="/api/users/{id}/liked_posts",
+     *     path="/api/v1/users/{id}/liked_posts",
      *     summary="User Liked Posts",
      *     description="User liked post list",
      *     tags={"User"},
@@ -524,11 +579,19 @@ class UserController extends Controller
      *                 mediaType="application/json",
      *                 @OA\Schema(
      *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="Unauthorized",
+     *                          property="code",
+     *                          type="string",
+     *                          example="999002",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="Unauthorized",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
+     *                          example="{}",
      *                     ),
      *                 ),
      *             ),
@@ -541,8 +604,16 @@ class UserController extends Controller
      */
     public function likedPosts(Request $request, $id)
     {
-        return response()->json($this->user->load(['likePosts' => function ($query) {
-            $query->orderBy('updated_at', 'desc');
-        }])->likePosts);
+        $likePosts = $this->user->load([
+            'likePosts' => function ($query) {
+                $query->orderBy('updated_at', 'desc');
+            },
+        ])->likePosts;
+
+        return $this->responseSuccess(
+            data: [
+                'posts' => PostResource::collection($likePosts),
+            ]
+        );
     }
 }

@@ -1,11 +1,14 @@
 <?php
 
-namespace App\Http\Requests\Auth;
+namespace App\Http\Requests\Api\v1\Follow;
 
 use App\Http\Requests\JsonRequest;
+use App\Http\Requests\Traits\MergeRouteParams;
 
-class LoginRequest extends JsonRequest
+class UnfollowRequest extends JsonRequest
 {
+    use MergeRouteParams;
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -14,12 +17,9 @@ class LoginRequest extends JsonRequest
     public function rules()
     {
         return [
-            'email'       => [
+            'id' => [
                 'required',
-                'email',
-            ],
-            'password'    => [
-                'required',
+                'exists:users',
             ],
         ];
     }

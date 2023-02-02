@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\User;
+namespace App\Http\Requests\Api\v1\User;
 
 use App\Http\Requests\JsonRequest;
 use App\Http\Requests\Traits\MergeRouteParams;
@@ -20,7 +20,7 @@ class PostsRequest extends JsonRequest
      */
     public function rules()
     {
-        return array_merge_recursive(
+        return array_merge(
             $this->getPaginationRules(),
             $this->getSortByRules(), [
                 'id' => [
@@ -38,7 +38,7 @@ class PostsRequest extends JsonRequest
      */
     public function messages()
     {
-        return array_merge_recursive(
+        return array_merge(
             $this->getPaginationMessages(),
             $this->getSortByMessages()
         );

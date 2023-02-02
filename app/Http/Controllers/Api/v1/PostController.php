@@ -1,53 +1,62 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\v1;
 
-use App\Http\Requests\Post\DislikeRequest;
-use App\Http\Requests\Post\LikeRequest;
-use App\Http\Requests\Post\ShowRequest;
-use App\Http\Requests\Post\StoreRequest;
-use App\Http\Requests\Post\UpdateRequest;
+use App\Enums\ApiResponseCode;
+use App\Http\Requests\Api\v1\Post\DislikeRequest;
+use App\Http\Requests\Api\v1\Post\LikeRequest;
+use App\Http\Requests\Api\v1\Post\ShowRequest;
+use App\Http\Requests\Api\v1\Post\StoreRequest;
+use App\Http\Requests\Api\v1\Post\UpdateRequest;
+use App\Http\Resources\Api\v1\Post\PostResource;
+use App\Http\Resources\Api\v1\User\UserResource;
 use App\Services\PostService;
-use Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class PostController extends Controller
+class PostController extends BaseController
 {
     /**
      * @OA\Schema(
      *     schema="PostResponse",
      *     type="object",
      *     title="Post Response",
-     *     @OA\Property(property="id", type="integer" ,format="int64", example=1),
-     *     @OA\Property(property="user_id", type="integer", format="int64", example="1"),
-     *     @OA\Property(property="content", type="string", format="string", example="test"),
-     *     @OA\Property(property="created_at", type="string", format="date-time", example="2020-07-31 23:54:28"),
-     *     @OA\Property(property="updated_at", type="string", format="date-time", example="2020-07-31 23:54:28"),
+     *     @OA\Property(
+     *          property="id",
+     *          type="number",
+     *          example=1,
+     *     ),
+     *     @OA\Property(
+     *          property="author",
+     *          type="string",
+     *          example="test001",
+     *     ),
+     *     @OA\Property(
+     *          property="content",
+     *          type="string",
+     *          example="test\ntest2",
+     *     ),
+     *     @OA\Property(
+     *          property="created_at",
+     *          type="string",
+     *          example="2023-01-31 16:47:43",
+     *     ),
+     *     @OA\Property(
+     *          property="updated_at",
+     *          type="string",
+     *          example="2023-01-31 16:47:43",
+     *     ),
      * )
      */
-
-    /**
-     * PostService.
-     *
-     * @var PostService
-     */
-    protected $postService;
-
-    /**
-     * construct.
-     *
-     * @param PostService $postService
-     */
-    public function __construct(PostService $postService)
+    public function __construct(protected PostService $postService)
     {
-        $this->postService = $postService;
+        parent::__construct();
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @OA\Post(
-     *     path="/api/posts",
+     *     path="/api/v1/posts",
      *     summary="Post Store",
      *     description="Post store",
      *     tags={"Post"},
@@ -120,21 +129,21 @@ class PostController extends Controller
      */
     public function store(StoreRequest $request)
     {
-        $post = $this->postService->add($request->all(), data_get(Auth::user(), 'id', 0));
-        if (null === $post) {
-            return response()->json([
-                'message' => 'error',
-            ], Response::HTTP_BAD_REQUEST);
+        $post = $this->postService->add($request->validated(), (int) data_get(\Auth::user(), 'id'));
+        if (empty($post)) {
+            return $this->responseFail(code: ApiResponseCode::ERROR_POST_ADD->value);
         }
 
-        return response()->json($post);
+        return $this->responseSuccess([
+            'post' => PostResource::make($post),
+        ]);
     }
 
     /**
      * Display the specified resource.
      *
      * @OA\Get(
-     *     path="/api/posts/{id}",
+     *     path="/api/v1/posts/{id}",
      *     summary="Post Show",
      *     description="Post show",
      *     tags={"Post"},
@@ -185,11 +194,19 @@ class PostController extends Controller
      *                 mediaType="application/json",
      *                 @OA\Schema(
      *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="Unauthorized",
+     *                          property="code",
+     *                          type="string",
+     *                          example="999002",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="Unauthorized",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
+     *                          example="{}",
      *                     ),
      *                 ),
      *             ),
@@ -204,14 +221,21 @@ class PostController extends Controller
      */
     public function show(ShowRequest $request, int $id)
     {
-        return response()->json($this->postService->find($id));
+        $post = $this->postService->find($id);
+        if (empty($post)) {
+            return $this->responseFail(code: ApiResponseCode::ERROR_POST_NOT_EXIST->value);
+        }
+
+        return $this->responseSuccess(data: [
+            'post' => PostResource::make($post),
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @OA\Put(
-     *     path="/api/posts/{id}",
+     *     path="/api/v1/posts/{id}",
      *     summary="Post Update",
      *     description="Post update",
      *     tags={"Post"},
@@ -277,11 +301,19 @@ class PostController extends Controller
      *                 mediaType="application/json",
      *                 @OA\Schema(
      *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="Unauthorized",
+     *                          property="code",
+     *                          type="string",
+     *                          example="999002",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="Unauthorized",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
+     *                          example="{}",
      *                     ),
      *                 ),
      *             ),
@@ -296,21 +328,21 @@ class PostController extends Controller
      */
     public function update(UpdateRequest $request, $id)
     {
-        $post = $this->postService->edit($request->all(), $id, data_get(Auth::user(), 'id', 0));
-        if (null === $post) {
-            return response()->json([
-                'message' => 'error',
-            ], Response::HTTP_BAD_REQUEST);
+        $post = $this->postService->edit($request->validated(), $id, (int) data_get(\Auth::user(), 'id'));
+        if (empty($post)) {
+            return $this->responseFail(code: ApiResponseCode::ERROR_POST_EDIT->value);
         }
 
-        return response()->json($post);
+        return $this->responseSuccess(data: [
+            'post' => PostResource::make($post),
+        ]);
     }
 
     /**
      * Remove the specified resource from storage.
      *
      * @OA\Delete(
-     *     path="/api/posts/{id}",
+     *     path="/api/v1/posts/{id}",
      *     summary="Post Delete",
      *     description="Post delete",
      *     tags={"Post"},
@@ -374,11 +406,19 @@ class PostController extends Controller
      *                 mediaType="application/json",
      *                 @OA\Schema(
      *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="Unauthorized",
+     *                          property="code",
+     *                          type="string",
+     *                          example="999002",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="Unauthorized",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
+     *                          example="{}",
      *                     ),
      *                 ),
      *             ),
@@ -392,22 +432,18 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        if (!$this->postService->del($id, data_get(Auth::user(), 'id', 0))) {
-            return response()->json([
-                'message' => 'error',
-            ], Response::HTTP_BAD_REQUEST);
+        if (!$this->postService->del($id, (int) data_get(\Auth::user(), 'id'))) {
+            return $this->responseFail(code: ApiResponseCode::ERROR_POST_DEL->value);
         }
 
-        return response()->json([
-            'message' => 'Successfully deleted post!',
-        ]);
+        return $this->responseSuccess(message: 'Successfully deleted post!');
     }
 
     /**
      * like.
      *
      * @OA\Patch(
-     *     path="/api/posts/{id}/like",
+     *     path="/api/v1/posts/{id}/like",
      *     summary="Post Like",
      *     description="Post like",
      *     tags={"Post"},
@@ -489,11 +525,19 @@ class PostController extends Controller
      *                 mediaType="application/json",
      *                 @OA\Schema(
      *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="Unauthorized",
+     *                          property="code",
+     *                          type="string",
+     *                          example="999002",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="Unauthorized",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
+     *                          example="{}",
      *                     ),
      *                 ),
      *             ),
@@ -506,22 +550,18 @@ class PostController extends Controller
      */
     public function like(LikeRequest $request, $id)
     {
-        if (!$this->postService->like($id, data_get(Auth::user(), 'id', 0))) {
-            return response()->json([
-                'message' => 'error',
-            ], Response::HTTP_BAD_REQUEST);
+        if (!$this->postService->like($id, data_get(\Auth::user(), 'id', 0))) {
+            return $this->responseFail(code: ApiResponseCode::ERROR_POST_LIKE->value);
         }
 
-        return response()->json([
-            'message' => 'Successfully liked post!',
-        ]);
+        return $this->responseSuccess(message: 'Successfully liked post!');
     }
 
     /**
      * dislike.
      *
      * @OA\Delete(
-     *     path="/api/posts/{id}/like",
+     *     path="/api/v1/posts/{id}/like",
      *     summary="Post Dislike",
      *     description="Post dislike",
      *     tags={"Post"},
@@ -603,11 +643,19 @@ class PostController extends Controller
      *                 mediaType="application/json",
      *                 @OA\Schema(
      *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="Unauthorized",
+     *                          property="code",
+     *                          type="string",
+     *                          example="999002",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="Unauthorized",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
+     *                          example="{}",
      *                     ),
      *                 ),
      *             ),
@@ -620,22 +668,18 @@ class PostController extends Controller
      */
     public function dislike(DislikeRequest $request, $id)
     {
-        if (!$this->postService->dislike($id, data_get(Auth::user(), 'id', 0))) {
-            return response()->json([
-                'message' => 'error',
-            ], Response::HTTP_BAD_REQUEST);
+        if (!$this->postService->dislike($id, data_get(\Auth::user(), 'id', 0))) {
+            return $this->responseFail(code: ApiResponseCode::ERROR_POST_DISLIKE->value);
         }
 
-        return response()->json([
-            'message' => 'Successfully disliked post!',
-        ]);
+        return $this->responseSuccess(message: 'Successfully disliked post!');
     }
 
     /**
      * liked users.
      *
      * @OA\Get(
-     *     path="/api/posts/{id}/liked_users",
+     *     path="/api/v1/posts/{id}/liked_users",
      *     summary="Post Liked Users",
      *     description="Post liked user list",
      *     tags={"Post"},
@@ -694,11 +738,19 @@ class PostController extends Controller
      *                 mediaType="application/json",
      *                 @OA\Schema(
      *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="Unauthorized",
+     *                          property="code",
+     *                          type="string",
+     *                          example="999002",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="Unauthorized",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
+     *                          example="{}",
      *                     ),
      *                 ),
      *             ),
@@ -711,14 +763,16 @@ class PostController extends Controller
     public function likedUsers($id)
     {
         $post = $this->postService->find($id);
-        if (null === $post) {
-            return response()->json([
-                'message' => 'error',
-            ], Response::HTTP_BAD_REQUEST);
+        if (empty($post)) {
+            return $this->responseFail(code: ApiResponseCode::ERROR_POST_NOT_EXIST->value);
         }
 
-        return response()->json($post->load(['likedUsers' => function ($query) {
-            $query->orderBy('updated_at', 'desc');
-        }])->likedUsers);
+        return $this->responseSuccess(data: [
+            'users' => UserResource::collection($post->load([
+                'likedUsers' => function ($query) {
+                    $query->orderBy('updated_at', 'desc');
+                },
+            ])->likedUsers),
+        ]);
     }
 }

@@ -2,17 +2,21 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\ApiResponseCode;
+use App\Http\Traits\FormatJsonResponses;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Symfony\Component\HttpFoundation\Response;
 
 class Authenticate extends Middleware
 {
+    use FormatJsonResponses;
+
     /**
      * Determine if the user is logged in to any of the given guards.
      *
      * @param \Illuminate\Http\Request $request
-     * @param array                    $guards
+     * @param array $guards
      *
      * @return void
      *
@@ -24,7 +28,13 @@ class Authenticate extends Middleware
             parent::authenticate($request, $guards);
         } catch (\Throwable $th) {
             if ($request->expectsJson()) {
-                throw new HttpResponseException(response()->json(['message' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED));
+                $code = ApiResponseCode::ERROR_UNAUTHORIZED->value;
+
+                throw new HttpResponseException($this->responseFail(
+                    code: $code,
+                    message: ApiResponseCode::from($code)?->message(),
+                    httpStatusCode: Response::HTTP_UNAUTHORIZED
+                ));
             }
 
             throw $th;

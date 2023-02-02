@@ -6,35 +6,14 @@ use App\Repositories\UserRepository;
 
 class FollowService
 {
-    /**
-     * UserRepository.
-     *
-     * @var UserRepository
-     */
-    protected $userRepository;
-
-    /**
-     * construct.
-     *
-     * @param UserRepository $userRepository
-     */
-    public function __construct(UserRepository $userRepository)
+    public function __construct(protected UserRepository $userRepository)
     {
-        $this->userRepository = $userRepository;
     }
 
-    /**
-     * follow.
-     *
-     * @param int $followId
-     * @param int $userId
-     *
-     * @return bool
-     */
-    public function follow(int $followId, int $userId)
+    public function follow(int $followId, int $userId): bool
     {
-        $user = $this->userRepository->find($userId);
-        if (null === $user) {
+        $user = $this->userRepository->getById($userId);
+        if (empty($user)) {
             return false;
         }
         $user->following()->syncWithoutDetaching((array) $followId);
@@ -42,18 +21,10 @@ class FollowService
         return true;
     }
 
-    /**
-     * unfollow.
-     *
-     * @param int $followId
-     * @param int $userId
-     *
-     * @return bool
-     */
-    public function unfollow(int $followId, int $userId)
+    public function unfollow(int $followId, int $userId): bool
     {
-        $user = $this->userRepository->find($userId);
-        if (null === $user) {
+        $user = $this->userRepository->getById($userId);
+        if (empty($user)) {
             return false;
         }
         if (0 === $user->following()->detach((array) $followId)) {

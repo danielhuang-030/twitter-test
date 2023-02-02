@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Follow;
+namespace App\Http\Requests\Api\v1\Post;
 
 use App\Http\Requests\JsonRequest;
 use App\Http\Requests\Traits\MergeRouteParams;
 
-class UnfollowRequest extends JsonRequest
+class DislikeRequest extends JsonRequest
 {
     use MergeRouteParams;
 
@@ -19,7 +19,7 @@ class UnfollowRequest extends JsonRequest
         return [
             'id' => [
                 'required',
-                'exists:users',
+                'exists:posts',
             ],
         ];
     }
