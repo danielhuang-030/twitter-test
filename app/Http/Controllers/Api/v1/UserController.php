@@ -423,35 +423,46 @@ class UserController extends BaseController
      *                         @OA\Schema(
      *
      *                             @OA\Property(
-     *                                 property="data",
-     *                                 type="array",
+     *                                  property="code",
+     *                                  type="string",
+     *                                  example="000000",
+     *                             ),
+     *                             @OA\Property(
+     *                                  property="message",
+     *                                  type="string",
+     *                                  example="success",
+     *                             ),
+     *                             @OA\Property(
+     *                                  property="data",
+     *                                  type="object",
+     *                                  @OA\Property(
+     *                                       property="pagination",
+     *                                       type="object",
+     *                                       @OA\Property(
+     *                                            property="page",
+     *                                            type="number",
+     *                                            example=1,
+     *                                       ),
+     *                                       @OA\Property(
+     *                                            property="per_page",
+     *                                            type="number",
+     *                                            example=20,
+     *                                       ),
+     *                                       @OA\Property(
+     *                                            property="total",
+     *                                            type="number",
+     *                                            example=5,
+     *                                       ),
+     *                                  ),
+     *                                  @OA\Property(
+     *                                       property="data",
+     *                                       type="array",
      *
-     *                                 @OA\Items(ref="#/components/schemas/PostResponse"),
+     *                                       @OA\Items(ref="#/components/schemas/PostResponse"),
+     *                                  ),
      *                             ),
      *                         ),
      *                     },
-     *
-     *                     @OA\Property(
-     *                         property="page",
-     *                         type="integer",
-     *                         format="int64",
-     *                         description="page",
-     *                         example=1,
-     *                     ),
-     *                     @OA\Property(
-     *                         property="per_page",
-     *                         type="integer",
-     *                         format="int64",
-     *                         description="page size",
-     *                         example=10,
-     *                     ),
-     *                     @OA\Property(
-     *                         property="total",
-     *                         type="integer",
-     *                         format="int64",
-     *                         description="total",
-     *                         example=1,
-     *                     ),
      *                 ),
      *             ),
      *         },

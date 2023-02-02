@@ -21,11 +21,31 @@ class PostController extends BaseController
      *     type="object",
      *     title="Post Response",
      *
-     *     @OA\Property(property="id", type="integer" ,format="int64", example=1),
-     *     @OA\Property(property="user_id", type="integer", format="int64", example="1"),
-     *     @OA\Property(property="content", type="string", format="string", example="test"),
-     *     @OA\Property(property="created_at", type="string", format="date-time", example="2020-07-31 23:54:28"),
-     *     @OA\Property(property="updated_at", type="string", format="date-time", example="2020-07-31 23:54:28"),
+     *     @OA\Property(
+     *          property="id",
+     *          type="number",
+     *          example=1,
+     *     ),
+     *     @OA\Property(
+     *          property="author",
+     *          type="string",
+     *          example="test001",
+     *     ),
+     *     @OA\Property(
+     *          property="content",
+     *          type="string",
+     *          example="test\ntest2",
+     *     ),
+     *     @OA\Property(
+     *          property="created_at",
+     *          type="string",
+     *          example="2023-01-31 16:47:43",
+     *     ),
+     *     @OA\Property(
+     *          property="updated_at",
+     *          type="string",
+     *          example="2023-01-31 16:47:43",
+     *     ),
      * )
      */
     public function __construct(protected PostService $postService)
