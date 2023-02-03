@@ -97,8 +97,22 @@ class PostController extends BaseController
      *                 @OA\Schema(
      *
      *                     @OA\Property(
-     *                         property="post",
-     *                         ref="#/components/schemas/PostResponse",
+     *                          property="code",
+     *                          type="string",
+     *                          example="000000",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="success",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
+     *                          @OA\Property(
+     *                               property="post",
+     *                               ref="#/components/schemas/PostResponse",
+     *                          ),
      *                     ),
      *                 ),
      *             ),

@@ -59,7 +59,7 @@ class FollowController extends BaseController
      *                     @OA\Property(
      *                          property="message",
      *                          type="string",
-     *                          example="Successfully unfollowed user!",
+     *                          example="Successfully followed user!",
      *                     ),
      *                     @OA\Property(
      *                          property="data",
@@ -163,11 +163,18 @@ class FollowController extends BaseController
      *                 @OA\Schema(
      *
      *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="Successfully unfollowed user!",
+     *                          property="code",
+     *                          type="string",
+     *                          example="000000",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="Successfully unfollowed user!",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
      *                     ),
      *                 ),
      *             ),
