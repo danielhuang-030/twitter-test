@@ -13,16 +13,18 @@ class PostsRequest extends JsonRequest
     use RuleSortBy;
     use MergeRouteParams;
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
-    public function rules()
+    public const SORT_BY_CREATED_AT = 'created_at';
+    public const SORT_BY_UPDATED_AT = 'updated_at';
+    public const SORT_BY_KEYS = [
+        PostsRequest::SORT_BY_CREATED_AT,
+        PostsRequest::SORT_BY_UPDATED_AT,
+    ];
+
+    public function rules(): array
     {
         return array_merge(
             $this->getPaginationRules(),
-            $this->getSortByRules(), [
+            $this->getSortByRules(sortByKeys: static::SORT_BY_KEYS), [
                 'id' => [
                     'required',
                     'exists:users',
@@ -31,12 +33,7 @@ class PostsRequest extends JsonRequest
         );
     }
 
-    /**
-     * messages.
-     *
-     * @return array
-     */
-    public function messages()
+    public function messages(): array
     {
         return array_merge(
             $this->getPaginationMessages(),
