@@ -54,7 +54,7 @@ class AuthController extends BaseController
      *     @OA\Property(
      *          property="message",
      *          type="string",
-     *          example="Unauthorized",
+     *          example="Unauthorized.",
      *     ),
      *     @OA\Property(
      *          property="data",
@@ -163,7 +163,7 @@ class AuthController extends BaseController
      *                     @OA\Property(
      *                          property="message",
      *                          type="string",
-     *                          example="User add failed",
+     *                          example="User add failed.",
      *                     ),
      *                     @OA\Property(
      *                          property="data",
@@ -247,7 +247,7 @@ class AuthController extends BaseController
      *                     @OA\Property(
      *                          property="message",
      *                          type="string",
-     *                          example="success",
+     *                          example="Success.",
      *                     ),
      *                     @OA\Property(
      *                          property="data",
@@ -359,7 +359,7 @@ class AuthController extends BaseController
      *                     @OA\Property(
      *                          property="message",
      *                          type="string",
-     *                          example="Successfully logged out",
+     *                          example="Successfully logged out!",
      *                     ),
      *                     @OA\Property(
      *                          property="data",
@@ -384,6 +384,6 @@ class AuthController extends BaseController
     {
         $request->user()->token()->delete();
 
-        return $this->responseSuccess(message: 'Successfully logged out');
+        return $this->responseSuccess(message: 'Successfully logged out!');
     }
 }

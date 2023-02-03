@@ -45,7 +45,28 @@ class PostController extends BaseController
      *          type="string",
      *          example="2023-01-31 16:47:43",
      *     ),
-     * )
+     * ),
+     *
+     * @OA\Schema(
+     *     schema="PostNotExistResponse",
+     *     type="object",
+     *     title="Post Not Exist Response",
+     *
+     *     @OA\Property(
+     *          property="code",
+     *          type="string",
+     *          example="501001",
+     *     ),
+     *     @OA\Property(
+     *          property="message",
+     *          type="string",
+     *          example="Post does not exist.",
+     *     ),
+     *     @OA\Property(
+     *          property="data",
+     *          type="object",
+     *     ),
+     * ),
      */
     public function __construct(protected PostService $postService)
     {
@@ -104,7 +125,7 @@ class PostController extends BaseController
      *                     @OA\Property(
      *                          property="message",
      *                          type="string",
-     *                          example="success",
+     *                          example="Success.",
      *                     ),
      *                     @OA\Property(
      *                          property="data",
@@ -137,7 +158,7 @@ class PostController extends BaseController
      *                     @OA\Property(
      *                          property="message",
      *                          type="string",
-     *                          example="Post add failed",
+     *                          example="Post add failed.",
      *                     ),
      *                     @OA\Property(
      *                          property="data",
@@ -225,7 +246,7 @@ class PostController extends BaseController
      *                     @OA\Property(
      *                          property="message",
      *                          type="string",
-     *                          example="success",
+     *                          example="Success.",
      *                     ),
      *                     @OA\Property(
      *                          property="data",
@@ -238,6 +259,13 @@ class PostController extends BaseController
      *                 ),
      *             ),
      *         },
+     *     ),
+     *
+     *     @OA\Response(
+     *         response="400",
+     *         description="Failed.",
+     *
+     *         @OA\JsonContent(ref="#/components/schemas/PostNotExistResponse")
      *     ),
      *
      *     @OA\Response(
@@ -337,7 +365,7 @@ class PostController extends BaseController
      *                     @OA\Property(
      *                          property="message",
      *                          type="string",
-     *                          example="success",
+     *                          example="Success.",
      *                     ),
      *                     @OA\Property(
      *                          property="data",
@@ -414,6 +442,7 @@ class PostController extends BaseController
      *     @OA\Response(
      *         response="200",
      *         description="Successfully.",
+     *
      *         content={
      *
      *             @OA\MediaType(
@@ -422,11 +451,18 @@ class PostController extends BaseController
      *                 @OA\Schema(
      *
      *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="Successfully deleted post!",
+     *                          property="code",
+     *                          type="string",
+     *                          example="000000",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="Successfully deleted post!",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
      *                     ),
      *                 ),
      *             ),
@@ -444,11 +480,18 @@ class PostController extends BaseController
      *                 @OA\Schema(
      *
      *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="error",
+     *                          property="code",
+     *                          type="string",
+     *                          example="501004",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="Post delete failed.",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
      *                     ),
      *                 ),
      *             ),
@@ -514,11 +557,18 @@ class PostController extends BaseController
      *                 @OA\Schema(
      *
      *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="Successfully liked post!",
+     *                          property="code",
+     *                          type="string",
+     *                          example="000000",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="Successfully liked post!",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
      *                     ),
      *                 ),
      *             ),
@@ -536,11 +586,18 @@ class PostController extends BaseController
      *                 @OA\Schema(
      *
      *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="error",
+     *                          property="code",
+     *                          type="string",
+     *                          example="501005",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="Post like failed.",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
      *                     ),
      *                 ),
      *             ),
@@ -612,11 +669,18 @@ class PostController extends BaseController
      *                 @OA\Schema(
      *
      *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="Successfully disliked post!",
+     *                          property="code",
+     *                          type="string",
+     *                          example="000000",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="Successfully disliked post!",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
      *                     ),
      *                 ),
      *             ),
@@ -634,11 +698,18 @@ class PostController extends BaseController
      *                 @OA\Schema(
      *
      *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="error",
+     *                          property="code",
+     *                          type="string",
+     *                          example="501006",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="Post dislike failed.",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
      *                     ),
      *                 ),
      *             ),
@@ -708,9 +779,27 @@ class PostController extends BaseController
      *                 mediaType="application/json",
      *
      *                 @OA\Schema(
-     *                     type="array",
      *
-     *                     @OA\Items(ref="#/components/schemas/UserResponse"),
+     *                     @OA\Property(
+     *                          property="code",
+     *                          type="string",
+     *                          example="000000",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="Success.",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
+     *                          @OA\Property(
+     *                               property="users",
+     *                               type="array",
+     *
+     *                               @OA\Items(ref="#/components/schemas/UserResponse"),
+     *                          ),
+     *                     ),
      *                 ),
      *             ),
      *         },
@@ -719,23 +808,8 @@ class PostController extends BaseController
      *     @OA\Response(
      *         response="400",
      *         description="Failed.",
-     *         content={
      *
-     *             @OA\MediaType(
-     *                 mediaType="application/json",
-     *
-     *                 @OA\Schema(
-     *
-     *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="error",
-     *                     ),
-     *                 ),
-     *             ),
-     *         },
+     *         @OA\JsonContent(ref="#/components/schemas/PostNotExistResponse")
      *     ),
      *
      *     @OA\Response(
