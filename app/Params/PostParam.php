@@ -23,7 +23,7 @@ class PostParam extends BaseParam
             // default sort by updated_at DESC
             $this->setSortBy('updated_at', true);
         } else {
-            $this->setSortBy($request->input('sort_by'), (bool) $request->input('is_desc'));
+            $this->setSortBy($request->input('sort_by'), (bool) $request->input('is_desc', false));
         }
     }
 

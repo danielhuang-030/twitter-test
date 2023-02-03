@@ -403,6 +403,30 @@ class UserController extends BaseController
      *         )
      *     ),
      *
+     *     @OA\Parameter(
+     *         name="sort_by",
+     *         in="query",
+     *         required=false,
+     *         description="sort by",
+     *
+     *         @OA\Schema(
+     *             type="string",
+     *             example="updated_at",
+     *         )
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="is_desc",
+     *         in="query",
+     *         required=false,
+     *         description="is sort by desc",
+     *
+     *         @OA\Schema(
+     *             type="integer",
+     *             example=1,
+     *         )
+     *     ),
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Successfully.",

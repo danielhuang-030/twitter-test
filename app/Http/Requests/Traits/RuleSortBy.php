@@ -2,41 +2,30 @@
 
 namespace App\Http\Requests\Traits;
 
+use Illuminate\Validation\Rule;
+
 trait RuleSortBy
 {
-    /**
-     * get sort by rules.
-     *
-     * @param string $sortByName
-     * @param string $isDescName
-     *
-     * @return array
-     */
-    public function getSortByRules(string $sortByName = 'sort_by', string $isDescName = 'is_desc')
-    {
-        return [
-            $sortByName => [
-                'string',
-            ],
-            $isDescName => [
-                'boolean',
-            ],
-        ];
+    public function getSortByRules(
+        string $sortByName = 'sort_by',
+        string $isDescName = 'is_desc',
+        array $sortByKeys = []
+    ): array {
+        $rules[$sortByName][] = 'string';
+        if (!empty($sortByKeys)) {
+            $rules[$sortByName][] = Rule::in($sortByKeys);
+        }
+        $rules[$isDescName][] = 'boolean';
+
+        return $rules;
     }
 
-    /**
-     * get sort by messages.
-     *
-     * @param string $sortByName
-     * @param string $isDescName
-     *
-     * @return array
-     */
     public function getSortByMessages(string $sortByName = 'sort_by', string $isDescName = 'is_desc')
     {
         return [
-            sprintf('%s.*', $sortByName) => '排序格式错误',
-            sprintf('%s.*', $isDescName) => '排序升降幂格式错误',
+            sprintf('%s.in', $sortByName) => ':attribute must be one of the following values: :values',
+            sprintf('%s.*', $sortByName) => 'Incorrect sort format.',
+            sprintf('%s.*', $isDescName) => 'Incorrect descending format.',
         ];
     }
 }
