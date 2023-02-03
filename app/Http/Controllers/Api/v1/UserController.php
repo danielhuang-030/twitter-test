@@ -49,7 +49,28 @@ class UserController extends BaseController
      *          format="string",
      *          example="2022-03-10 17:45:16",
      *     ),
-     * )
+     * ),
+     *
+     * @OA\Schema(
+     *     schema="UserNotExistResponse",
+     *     type="object",
+     *     title="User Not Exist Response",
+     *
+     *     @OA\Property(
+     *          property="code",
+     *          type="string",
+     *          example="500001",
+     *     ),
+     *     @OA\Property(
+     *          property="message",
+     *          type="string",
+     *          example="User does not exist",
+     *     ),
+     *     @OA\Property(
+     *          property="data",
+     *          type="object",
+     *     ),
+     * ),
      */
     protected $user;
 
@@ -100,12 +121,6 @@ class UserController extends BaseController
      *         response="200",
      *         description="Successfully.",
      *
-     *         @OA\JsonContent(ref="#/components/schemas/UserResponse")
-     *     ),
-     *
-     *     @OA\Response(
-     *         response="400",
-     *         description="Failed.",
      *         content={
      *
      *             @OA\MediaType(
@@ -114,15 +129,33 @@ class UserController extends BaseController
      *                 @OA\Schema(
      *
      *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="error",
+     *                          property="code",
+     *                          type="string",
+     *                          example="000000",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="success",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
+     *                          @OA\Property(
+     *                               property="user",
+     *                               ref="#/components/schemas/UserResponse",
+     *                          ),
      *                     ),
      *                 ),
      *             ),
      *         },
+     *     ),
+     *
+     *     @OA\Response(
+     *         response="400",
+     *         description="User does not exist.",
+     *
+     *         @OA\JsonContent(ref="#/components/schemas/UserNotExistResponse")
      *     ),
      *
      *     @OA\Response(
@@ -179,9 +212,27 @@ class UserController extends BaseController
      *                 mediaType="application/json",
      *
      *                 @OA\Schema(
-     *                     type="array",
      *
-     *                     @OA\Items(ref="#/components/schemas/UserResponse"),
+     *                     @OA\Property(
+     *                          property="code",
+     *                          type="string",
+     *                          example="000000",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="success",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
+     *                          @OA\Property(
+     *                               property="following",
+     *                               type="array",
+     *
+     *                               @OA\Items(ref="#/components/schemas/UserResponse")
+     *                          ),
+     *                     ),
      *                 ),
      *             ),
      *         },
@@ -189,24 +240,9 @@ class UserController extends BaseController
      *
      *     @OA\Response(
      *         response="400",
-     *         description="Failed.",
-     *         content={
+     *         description="User does not exist.",
      *
-     *             @OA\MediaType(
-     *                 mediaType="application/json",
-     *
-     *                 @OA\Schema(
-     *
-     *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="error",
-     *                     ),
-     *                 ),
-     *             ),
-     *         },
+     *         @OA\JsonContent(ref="#/components/schemas/UserNotExistResponse")
      *     ),
      *
      *     @OA\Response(
@@ -263,9 +299,27 @@ class UserController extends BaseController
      *                 mediaType="application/json",
      *
      *                 @OA\Schema(
-     *                     type="array",
      *
-     *                     @OA\Items(ref="#/components/schemas/UserResponse"),
+     *                     @OA\Property(
+     *                          property="code",
+     *                          type="string",
+     *                          example="000000",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="success",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
+     *                          @OA\Property(
+     *                               property="followers",
+     *                               type="array",
+     *
+     *                               @OA\Items(ref="#/components/schemas/UserResponse")
+     *                          ),
+     *                     ),
      *                 ),
      *             ),
      *         },
@@ -273,24 +327,9 @@ class UserController extends BaseController
      *
      *     @OA\Response(
      *         response="400",
-     *         description="Failed.",
-     *         content={
+     *         description="User does not exist.",
      *
-     *             @OA\MediaType(
-     *                 mediaType="application/json",
-     *
-     *                 @OA\Schema(
-     *
-     *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="error",
-     *                     ),
-     *                 ),
-     *             ),
-     *         },
+     *         @OA\JsonContent(ref="#/components/schemas/UserNotExistResponse")
      *     ),
      *
      *     @OA\Response(
@@ -425,24 +464,9 @@ class UserController extends BaseController
      *
      *     @OA\Response(
      *         response="400",
-     *         description="Failed.",
-     *         content={
+     *         description="User does not exist.",
      *
-     *             @OA\MediaType(
-     *                 mediaType="application/json",
-     *
-     *                 @OA\Schema(
-     *
-     *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="error",
-     *                     ),
-     *                 ),
-     *             ),
-     *         },
+     *         @OA\JsonContent(ref="#/components/schemas/UserNotExistResponse")
      *     ),
      *
      *     @OA\Response(
@@ -509,9 +533,27 @@ class UserController extends BaseController
      *                 mediaType="application/json",
      *
      *                 @OA\Schema(
-     *                     type="array",
      *
-     *                     @OA\Items(ref="#/components/schemas/PostResponse"),
+     *                     @OA\Property(
+     *                          property="code",
+     *                          type="string",
+     *                          example="000000",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="success",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
+     *                          @OA\Property(
+     *                               property="posts",
+     *                               type="array",
+     *
+     *                               @OA\Items(ref="#/components/schemas/PostResponse"),
+     *                          ),
+     *                     ),
      *                 ),
      *             ),
      *         },
@@ -519,24 +561,9 @@ class UserController extends BaseController
      *
      *     @OA\Response(
      *         response="400",
-     *         description="Failed.",
-     *         content={
+     *         description="User does not exist.",
      *
-     *             @OA\MediaType(
-     *                 mediaType="application/json",
-     *
-     *                 @OA\Schema(
-     *
-     *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="error",
-     *                     ),
-     *                 ),
-     *             ),
-     *         },
+     *         @OA\JsonContent(ref="#/components/schemas/UserNotExistResponse")
      *     ),
      *
      *     @OA\Response(
