@@ -45,7 +45,7 @@ class RevokeExistingTokens implements ShouldQueue
     public function handle(AccessTokenCreated $event)
     {
         $user = $this->userRepository->getById($event->userId);
-        if (null === $user) {
+        if (empty($user)) {
             return;
         }
 

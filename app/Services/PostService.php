@@ -36,7 +36,7 @@ class PostService
         if (empty($post)) {
             return null;
         }
-        if ((int) $post->user_id !== $userId) {
+        if ($post->user_id != $userId) {
             return null;
         }
 
@@ -46,10 +46,10 @@ class PostService
     public function del(int $id, int $userId): bool
     {
         $post = $this->find($id);
-        if (null === $post) {
+        if (empty($post)) {
             return false;
         }
-        if ((int) $post->user_id !== $userId) {
+        if ($post->user_id != $userId) {
             return false;
         }
         $this->postRepository->delete($id);
@@ -71,7 +71,7 @@ class PostService
     public function dislike(int $id, int $userId): bool
     {
         $post = $this->find($id);
-        if (empty($post) || $post->user_id === $userId) {
+        if (empty($post) || $post->user_id == $userId) {
             return false;
         }
         $post->likedUsers()->detach((array) $userId);
