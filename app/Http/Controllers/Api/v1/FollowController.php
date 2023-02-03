@@ -64,7 +64,6 @@ class FollowController extends BaseController
      *                     @OA\Property(
      *                          property="data",
      *                          type="object",
-     *                          example="{}",
      *                     ),
      *                 ),
      *             ),
@@ -94,37 +93,6 @@ class FollowController extends BaseController
      *                     @OA\Property(
      *                          property="data",
      *                          type="object",
-     *                          example="{}",
-     *                     ),
-     *                 ),
-     *             ),
-     *         },
-     *     ),
-     *
-     *     @OA\Response(
-     *         response="422",
-     *         description="Validation error.",
-     *         content={
-     *
-     *             @OA\MediaType(
-     *                 mediaType="application/json",
-     *
-     *                 @OA\Schema(
-     *
-     *                     @OA\Property(
-     *                          property="code",
-     *                          type="string",
-     *                          example="999001",
-     *                     ),
-     *                     @OA\Property(
-     *                          property="message",
-     *                          type="string",
-     *                          example="The selected id is invalid.",
-     *                     ),
-     *                     @OA\Property(
-     *                          property="data",
-     *                          type="object",
-     *                          example="{}",
      *                     ),
      *                 ),
      *             ),
@@ -136,6 +104,13 @@ class FollowController extends BaseController
      *         description="Unauthorized.",
      *
      *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse"),
+     *     ),
+     *
+     *     @OA\Response(
+     *         response="422",
+     *         description="Validation error.",
+     *
+     *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse"),
      *     ),
      * )
      *
@@ -222,37 +197,6 @@ class FollowController extends BaseController
      *                     @OA\Property(
      *                          property="data",
      *                          type="object",
-     *                          example="{}",
-     *                     ),
-     *                 ),
-     *             ),
-     *         },
-     *     ),
-     *
-     *     @OA\Response(
-     *         response="422",
-     *         description="Validation error.",
-     *         content={
-     *
-     *             @OA\MediaType(
-     *                 mediaType="application/json",
-     *
-     *                 @OA\Schema(
-     *
-     *                     @OA\Property(
-     *                          property="code",
-     *                          type="string",
-     *                          example="999001",
-     *                     ),
-     *                     @OA\Property(
-     *                          property="message",
-     *                          type="string",
-     *                          example="The selected id is invalid.",
-     *                     ),
-     *                     @OA\Property(
-     *                          property="data",
-     *                          type="object",
-     *                          example="{}",
      *                     ),
      *                 ),
      *             ),
@@ -264,6 +208,13 @@ class FollowController extends BaseController
      *         description="Unauthorized.",
      *
      *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse"),
+     *     ),
+     *
+     *     @OA\Response(
+     *         response="422",
+     *         description="Validation error.",
+     *
+     *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse"),
      *     ),
      * )
      *

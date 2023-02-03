@@ -446,32 +446,17 @@ class UserController extends BaseController
      *     ),
      *
      *     @OA\Response(
-     *         response="422",
-     *         description="Failed.",
-     *         content={
-     *
-     *             @OA\MediaType(
-     *                 mediaType="application/json",
-     *
-     *                 @OA\Schema(
-     *
-     *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="The number of pages must be at least 1.",
-     *                     ),
-     *                 ),
-     *             ),
-     *         },
-     *     ),
-     *
-     *     @OA\Response(
      *         response="401",
      *         description="Unauthorized.",
      *
      *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse"),
+     *     ),
+     *
+     *     @OA\Response(
+     *         response="422",
+     *         description="Validation error.",
+     *
+     *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse"),
      *     ),
      * )
      *

@@ -89,7 +89,20 @@ class PostController extends BaseController
      *         response="200",
      *         description="Successfully.",
      *
-     *         @OA\JsonContent(ref="#/components/schemas/PostResponse"),
+     *         content={
+     *
+     *             @OA\MediaType(
+     *                 mediaType="application/json",
+     *
+     *                 @OA\Schema(
+     *
+     *                     @OA\Property(
+     *                         property="post",
+     *                         ref="#/components/schemas/PostResponse",
+     *                     ),
+     *                 ),
+     *             ),
+     *         },
      *     ),
      *
      *     @OA\Response(
@@ -115,37 +128,6 @@ class PostController extends BaseController
      *                     @OA\Property(
      *                          property="data",
      *                          type="object",
-     *                          example="{}",
-     *                     ),
-     *                 ),
-     *             ),
-     *         },
-     *     ),
-     *
-     *     @OA\Response(
-     *         response="422",
-     *         description="Validation error.",
-     *         content={
-     *
-     *             @OA\MediaType(
-     *                 mediaType="application/json",
-     *
-     *                 @OA\Schema(
-     *
-     *                     @OA\Property(
-     *                          property="code",
-     *                          type="string",
-     *                          example="999001",
-     *                     ),
-     *                     @OA\Property(
-     *                          property="message",
-     *                          type="string",
-     *                          example="The content field is required.",
-     *                     ),
-     *                     @OA\Property(
-     *                          property="data",
-     *                          type="object",
-     *                          example="{}",
      *                     ),
      *                 ),
      *             ),
@@ -157,6 +139,13 @@ class PostController extends BaseController
      *         description="Unauthorized.",
      *
      *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse"),
+     *     ),
+     *
+     *     @OA\Response(
+     *         response="422",
+     *         description="Validation error.",
+     *
+     *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse"),
      *     ),
      * )
      *
@@ -211,32 +200,17 @@ class PostController extends BaseController
      *     ),
      *
      *     @OA\Response(
-     *         response="422",
-     *         description="Failed.",
-     *         content={
-     *
-     *             @OA\MediaType(
-     *                 mediaType="application/json",
-     *
-     *                 @OA\Schema(
-     *
-     *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="The selected id is invalid.",
-     *                     ),
-     *                 ),
-     *             ),
-     *         },
-     *     ),
-     *
-     *     @OA\Response(
      *         response="401",
      *         description="Unauthorized.",
      *
      *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse"),
+     *     ),
+     *
+     *     @OA\Response(
+     *         response="422",
+     *         description="Validation error.",
+     *
+     *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse"),
      *     ),
      * )
      *
@@ -311,32 +285,17 @@ class PostController extends BaseController
      *     ),
      *
      *     @OA\Response(
-     *         response="422",
-     *         description="Failed.",
-     *         content={
-     *
-     *             @OA\MediaType(
-     *                 mediaType="application/json",
-     *
-     *                 @OA\Schema(
-     *
-     *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="The selected id is invalid.",
-     *                     ),
-     *                 ),
-     *             ),
-     *         },
-     *     ),
-     *
-     *     @OA\Response(
      *         response="401",
      *         description="Unauthorized.",
      *
      *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse"),
+     *     ),
+     *
+     *     @OA\Response(
+     *         response="422",
+     *         description="Validation error.",
+     *
+     *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse"),
      *     ),
      * )
      *
@@ -521,33 +480,17 @@ class PostController extends BaseController
      *     ),
      *
      *     @OA\Response(
-     *         response="422",
-     *         description="Validation error.",
-     *         content={
-     *
-     *             @OA\MediaType(
-     *                 mediaType="application/json",
-     *
-     *                 @OA\Schema(
-     *
-     *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="The selected id is invalid.",
-     *                     ),
-     *                 ),
-     *             ),
-     *         },
-     *     ),
-     *
-     *     @OA\Response(
      *         response="401",
      *         description="Unauthorized.",
      *
      *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse"),
      *     ),
+     *
+     *     @OA\Response(
+     *         response="422",
+     *         description="Validation error.",
+     *
+     *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse"),
      *     ),
      * )
      *
@@ -635,32 +578,17 @@ class PostController extends BaseController
      *     ),
      *
      *     @OA\Response(
-     *         response="422",
-     *         description="Validation error.",
-     *         content={
-     *
-     *             @OA\MediaType(
-     *                 mediaType="application/json",
-     *
-     *                 @OA\Schema(
-     *
-     *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="The selected id is invalid.",
-     *                     ),
-     *                 ),
-     *             ),
-     *         },
-     *     ),
-     *
-     *     @OA\Response(
      *         response="401",
      *         description="Unauthorized.",
      *
      *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse"),
+     *     ),
+     *
+     *     @OA\Response(
+     *         response="422",
+     *         description="Validation error.",
+     *
+     *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse"),
      *     ),
      * )
      *
