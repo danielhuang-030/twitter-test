@@ -210,7 +210,34 @@ class PostController extends BaseController
      *         response="200",
      *         description="Successfully.",
      *
-     *         @OA\JsonContent(ref="#/components/schemas/PostResponse")
+     *         content={
+     *
+     *             @OA\MediaType(
+     *                 mediaType="application/json",
+     *
+     *                 @OA\Schema(
+     *
+     *                     @OA\Property(
+     *                          property="code",
+     *                          type="string",
+     *                          example="000000",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="success",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
+     *                          @OA\Property(
+     *                               property="post",
+     *                               ref="#/components/schemas/PostResponse",
+     *                          ),
+     *                     ),
+     *                 ),
+     *             ),
+     *         },
      *     ),
      *
      *     @OA\Response(
@@ -295,7 +322,34 @@ class PostController extends BaseController
      *         response="200",
      *         description="Successfully.",
      *
-     *         @OA\JsonContent(ref="#/components/schemas/PostResponse")
+     *         content={
+     *
+     *             @OA\MediaType(
+     *                 mediaType="application/json",
+     *
+     *                 @OA\Schema(
+     *
+     *                     @OA\Property(
+     *                          property="code",
+     *                          type="string",
+     *                          example="000000",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="success",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
+     *                          @OA\Property(
+     *                               property="post",
+     *                               ref="#/components/schemas/PostResponse",
+     *                          ),
+     *                     ),
+     *                 ),
+     *             ),
+     *         },
      *     ),
      *
      *     @OA\Response(
