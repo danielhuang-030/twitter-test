@@ -21,6 +21,27 @@ class AuthController extends BaseController
      * ),
      *
      * @OA\Schema(
+     *     schema="ValidationErrorResponse",
+     *     type="object",
+     *     title="Validation Error Response",
+     *
+     *     @OA\Property(
+     *          property="code",
+     *          type="string",
+     *          example="999001",
+     *     ),
+     *     @OA\Property(
+     *          property="message",
+     *          type="string",
+     *          example="The selected id is invalid.",
+     *     ),
+     *     @OA\Property(
+     *          property="data",
+     *          type="object",
+     *     ),
+     * ),
+     *
+     * @OA\Schema(
      *     schema="UnauthorizedResponse",
      *     type="object",
      *     title="Unauthorized Response",
@@ -38,9 +59,8 @@ class AuthController extends BaseController
      *     @OA\Property(
      *          property="data",
      *          type="object",
-     *          example="{}",
      *     ),
-     * )
+     * ),
      */
     public function __construct(protected AuthService $service, protected UserService $userService)
     {
@@ -119,7 +139,6 @@ class AuthController extends BaseController
      *                     @OA\Property(
      *                          property="data",
      *                          type="object",
-     *                          example="{}",
      *                     ),
      *                 ),
      *             ),
@@ -149,7 +168,6 @@ class AuthController extends BaseController
      *                     @OA\Property(
      *                          property="data",
      *                          type="object",
-     *                          example="{}",
      *                     ),
      *                 ),
      *             ),
@@ -159,31 +177,8 @@ class AuthController extends BaseController
      *     @OA\Response(
      *         response="422",
      *         description="Validation error.",
-     *         content={
      *
-     *             @OA\MediaType(
-     *                 mediaType="application/json",
-     *
-     *                 @OA\Schema(
-     *
-     *                     @OA\Property(
-     *                          property="code",
-     *                          type="string",
-     *                          example="999001",
-     *                     ),
-     *                     @OA\Property(
-     *                          property="message",
-     *                          type="string",
-     *                          example="The email field is required.",
-     *                     ),
-     *                     @OA\Property(
-     *                          property="data",
-     *                          type="object",
-     *                          example="{}",
-     *                     ),
-     *                 ),
-     *             ),
-     *         },
+     *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse"),
      *     ),
      * )
      *
@@ -307,31 +302,8 @@ class AuthController extends BaseController
      *     @OA\Response(
      *         response="422",
      *         description="Validation error.",
-     *         content={
      *
-     *             @OA\MediaType(
-     *                 mediaType="application/json",
-     *
-     *                 @OA\Schema(
-     *
-     *                     @OA\Property(
-     *                          property="code",
-     *                          type="string",
-     *                          example="999001",
-     *                     ),
-     *                     @OA\Property(
-     *                          property="message",
-     *                          type="string",
-     *                          example="The email field is required.",
-     *                     ),
-     *                     @OA\Property(
-     *                          property="data",
-     *                          type="object",
-     *                          example="{}",
-     *                     ),
-     *                 ),
-     *             ),
-     *         },
+     *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse"),
      *     ),
      * )
      *
@@ -392,7 +364,6 @@ class AuthController extends BaseController
      *                     @OA\Property(
      *                          property="data",
      *                          type="object",
-     *                          example="{}",
      *                     ),
      *                 ),
      *             ),
