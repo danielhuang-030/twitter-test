@@ -18,6 +18,28 @@ class AuthController extends BaseController
      *     securityScheme="passport",
      *     type="http",
      *     scheme="bearer",
+     * ),
+     *
+     * @OA\Schema(
+     *     schema="UnauthorizedResponse",
+     *     type="object",
+     *     title="Unauthorized Response",
+     *
+     *     @OA\Property(
+     *          property="code",
+     *          type="string",
+     *          example="999002",
+     *     ),
+     *     @OA\Property(
+     *          property="message",
+     *          type="string",
+     *          example="Unauthorized",
+     *     ),
+     *     @OA\Property(
+     *          property="data",
+     *          type="object",
+     *          example="{}",
+     *     ),
      * )
      */
     public function __construct(protected AuthService $service, protected UserService $userService)
@@ -33,11 +55,15 @@ class AuthController extends BaseController
      *     summary="Signup",
      *     description="Signup",
      *     tags={"Auth"},
+     *
      *     @OA\RequestBody(
+     *
      *         @OA\MediaType(
      *             mediaType="application/json",
+     *
      *             @OA\Schema(
      *                 required={"name", "email", "password", "password_confirmation"},
+     *
      *                 @OA\Property(
      *                     property="name",
      *                     type="string",
@@ -69,13 +95,17 @@ class AuthController extends BaseController
      *             ),
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Successfully.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                          property="code",
      *                          type="string",
@@ -95,13 +125,17 @@ class AuthController extends BaseController
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="400",
      *         description="Failed.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                          property="code",
      *                          type="string",
@@ -121,13 +155,17 @@ class AuthController extends BaseController
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="422",
      *         description="Validation error.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                          property="code",
      *                          type="string",
@@ -169,11 +207,15 @@ class AuthController extends BaseController
      *     summary="Login",
      *     description="Login",
      *     tags={"Auth"},
+     *
      *     @OA\RequestBody(
+     *
      *         @OA\MediaType(
      *             mediaType="application/json",
+     *
      *             @OA\Schema(
      *                 required={"email", "password"},
+     *
      *                 @OA\Property(
      *                     property="email",
      *                     type="string",
@@ -191,13 +233,17 @@ class AuthController extends BaseController
      *             ),
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Successfully.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                          property="code",
      *                          type="string",
@@ -250,39 +296,24 @@ class AuthController extends BaseController
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="401",
      *         description="Unauthorized.",
-     *         content={
-     *             @OA\MediaType(
-     *                 mediaType="application/json",
-     *                 @OA\Schema(
-     *                     @OA\Property(
-     *                          property="code",
-     *                          type="string",
-     *                          example="999002",
-     *                     ),
-     *                     @OA\Property(
-     *                          property="message",
-     *                          type="string",
-     *                          example="Unauthorized",
-     *                     ),
-     *                     @OA\Property(
-     *                          property="data",
-     *                          type="object",
-     *                          example="{}",
-     *                     ),
-     *                 ),
-     *             ),
-     *         },
+     *
+     *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse"),
      *     ),
+     *
      *     @OA\Response(
      *         response="422",
      *         description="Validation error.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                          property="code",
      *                          type="string",
@@ -337,13 +368,17 @@ class AuthController extends BaseController
      *             "passport": {},
      *         },
      *     },
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Successfully.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                          property="code",
      *                          type="string",
@@ -363,31 +398,12 @@ class AuthController extends BaseController
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="401",
      *         description="Unauthorized.",
-     *         content={
-     *             @OA\MediaType(
-     *                 mediaType="application/json",
-     *                 @OA\Schema(
-     *                     @OA\Property(
-     *                          property="code",
-     *                          type="string",
-     *                          example="999002",
-     *                     ),
-     *                     @OA\Property(
-     *                          property="message",
-     *                          type="string",
-     *                          example="Unauthorized",
-     *                     ),
-     *                     @OA\Property(
-     *                          property="data",
-     *                          type="object",
-     *                          example="{}",
-     *                     ),
-     *                 ),
-     *             ),
-     *         },
+     *
+     *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse"),
      *     ),
      * )
      *
