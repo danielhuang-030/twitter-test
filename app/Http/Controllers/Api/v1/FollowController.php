@@ -134,31 +134,8 @@ class FollowController extends BaseController
      *     @OA\Response(
      *         response="401",
      *         description="Unauthorized.",
-     *         content={
      *
-     *             @OA\MediaType(
-     *                 mediaType="application/json",
-     *
-     *                 @OA\Schema(
-     *
-     *                     @OA\Property(
-     *                          property="code",
-     *                          type="string",
-     *                          example="999002",
-     *                     ),
-     *                     @OA\Property(
-     *                          property="message",
-     *                          type="string",
-     *                          example="Unauthorized",
-     *                     ),
-     *                     @OA\Property(
-     *                          property="data",
-     *                          type="object",
-     *                          example="{}",
-     *                     ),
-     *                 ),
-     *             ),
-     *         },
+     *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse"),
      *     ),
      * )
      *
@@ -285,31 +262,8 @@ class FollowController extends BaseController
      *     @OA\Response(
      *         response="401",
      *         description="Unauthorized.",
-     *         content={
      *
-     *             @OA\MediaType(
-     *                 mediaType="application/json",
-     *
-     *                 @OA\Schema(
-     *
-     *                     @OA\Property(
-     *                          property="code",
-     *                          type="string",
-     *                          example="999002",
-     *                     ),
-     *                     @OA\Property(
-     *                          property="message",
-     *                          type="string",
-     *                          example="Unauthorized",
-     *                     ),
-     *                     @OA\Property(
-     *                          property="data",
-     *                          type="object",
-     *                          example="{}",
-     *                     ),
-     *                 ),
-     *             ),
-     *         },
+     *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse"),
      *     ),
      * )
      *

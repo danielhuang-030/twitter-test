@@ -11,7 +11,6 @@ use App\Http\Requests\Api\v1\Post\UpdateRequest;
 use App\Http\Resources\Api\v1\Post\PostResource;
 use App\Http\Resources\Api\v1\User\UserResource;
 use App\Services\PostService;
-use Symfony\Component\HttpFoundation\Response;
 
 class PostController extends BaseController
 {
@@ -20,6 +19,7 @@ class PostController extends BaseController
      *     schema="PostResponse",
      *     type="object",
      *     title="Post Response",
+     *
      *     @OA\Property(
      *          property="id",
      *          type="number",
@@ -65,11 +65,15 @@ class PostController extends BaseController
      *             "passport": {},
      *         },
      *     },
+     *
      *     @OA\RequestBody(
+     *
      *         @OA\MediaType(
      *             mediaType="application/json",
+     *
      *             @OA\Schema(
      *                 required={"content"},
+     *
      *                 @OA\Property(
      *                     property="content",
      *                     type="string",
@@ -80,46 +84,79 @@ class PostController extends BaseController
      *             ),
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Successfully.",
-     *         @OA\JsonContent(ref="#/components/schemas/PostResponse")
+     *
+     *         @OA\JsonContent(ref="#/components/schemas/PostResponse"),
      *     ),
+     *
      *     @OA\Response(
      *         response="400",
      *         description="Failed.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="error",
+     *                          property="code",
+     *                          type="string",
+     *                          example="501002",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="Post add failed",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
+     *                          example="{}",
      *                     ),
      *                 ),
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="422",
      *         description="Validation error.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
-     *                         property="message",
-     *                         type="string",
-     *                         format="string",
-     *                         description="message",
-     *                         example="The content field is required.",
+     *                          property="code",
+     *                          type="string",
+     *                          example="999001",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="The content field is required.",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
+     *                          example="{}",
      *                     ),
      *                 ),
      *             ),
      *         },
+     *     ),
+     *
+     *     @OA\Response(
+     *         response="401",
+     *         description="Unauthorized.",
+     *
+     *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse"),
      *     ),
      * )
      *
@@ -152,29 +189,37 @@ class PostController extends BaseController
      *             "passport": {},
      *         },
      *     },
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
      *         description="id",
+     *
      *         @OA\Schema(
      *             type="integer",
      *             format="int64",
      *             example=1,
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Successfully.",
+     *
      *         @OA\JsonContent(ref="#/components/schemas/PostResponse")
      *     ),
+     *
      *     @OA\Response(
      *         response="422",
      *         description="Failed.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -186,31 +231,12 @@ class PostController extends BaseController
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="401",
      *         description="Unauthorized.",
-     *         content={
-     *             @OA\MediaType(
-     *                 mediaType="application/json",
-     *                 @OA\Schema(
-     *                     @OA\Property(
-     *                          property="code",
-     *                          type="string",
-     *                          example="999002",
-     *                     ),
-     *                     @OA\Property(
-     *                          property="message",
-     *                          type="string",
-     *                          example="Unauthorized",
-     *                     ),
-     *                     @OA\Property(
-     *                          property="data",
-     *                          type="object",
-     *                          example="{}",
-     *                     ),
-     *                 ),
-     *             ),
-     *         },
+     *
+     *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse"),
      *     ),
      * )
      *
@@ -244,22 +270,28 @@ class PostController extends BaseController
      *             "passport": {},
      *         },
      *     },
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
      *         description="id",
+     *
      *         @OA\Schema(
      *             type="integer",
      *             format="int64",
      *             example=1,
      *         )
      *     ),
+     *
      *     @OA\RequestBody(
+     *
      *         @OA\MediaType(
      *             mediaType="application/json",
+     *
      *             @OA\Schema(
      *                 required={"content"},
+     *
      *                 @OA\Property(
      *                     property="content",
      *                     type="string",
@@ -270,18 +302,24 @@ class PostController extends BaseController
      *             ),
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Successfully.",
+     *
      *         @OA\JsonContent(ref="#/components/schemas/PostResponse")
      *     ),
+     *
      *     @OA\Response(
      *         response="422",
      *         description="Failed.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -293,31 +331,12 @@ class PostController extends BaseController
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="401",
      *         description="Unauthorized.",
-     *         content={
-     *             @OA\MediaType(
-     *                 mediaType="application/json",
-     *                 @OA\Schema(
-     *                     @OA\Property(
-     *                          property="code",
-     *                          type="string",
-     *                          example="999002",
-     *                     ),
-     *                     @OA\Property(
-     *                          property="message",
-     *                          type="string",
-     *                          example="Unauthorized",
-     *                     ),
-     *                     @OA\Property(
-     *                          property="data",
-     *                          type="object",
-     *                          example="{}",
-     *                     ),
-     *                 ),
-     *             ),
-     *         },
+     *
+     *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse"),
      *     ),
      * )
      *
@@ -351,24 +370,30 @@ class PostController extends BaseController
      *             "passport": {},
      *         },
      *     },
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
      *         description="id",
+     *
      *         @OA\Schema(
      *             type="integer",
      *             format="int64",
      *             example=1,
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Successfully.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -380,13 +405,17 @@ class PostController extends BaseController
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="400",
      *         description="Failed.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -398,31 +427,12 @@ class PostController extends BaseController
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="401",
      *         description="Unauthorized.",
-     *         content={
-     *             @OA\MediaType(
-     *                 mediaType="application/json",
-     *                 @OA\Schema(
-     *                     @OA\Property(
-     *                          property="code",
-     *                          type="string",
-     *                          example="999002",
-     *                     ),
-     *                     @OA\Property(
-     *                          property="message",
-     *                          type="string",
-     *                          example="Unauthorized",
-     *                     ),
-     *                     @OA\Property(
-     *                          property="data",
-     *                          type="object",
-     *                          example="{}",
-     *                     ),
-     *                 ),
-     *             ),
-     *         },
+     *
+     *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse"),
      *     ),
      * )
      *
@@ -452,24 +462,30 @@ class PostController extends BaseController
      *             "passport": {},
      *         },
      *     },
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
      *         description="id",
+     *
      *         @OA\Schema(
      *             type="integer",
      *             format="int64",
      *             example=1,
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Successfully.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -481,13 +497,17 @@ class PostController extends BaseController
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="400",
      *         description="Failed.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -499,13 +519,17 @@ class PostController extends BaseController
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="422",
      *         description="Validation error.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -517,31 +541,13 @@ class PostController extends BaseController
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="401",
      *         description="Unauthorized.",
-     *         content={
-     *             @OA\MediaType(
-     *                 mediaType="application/json",
-     *                 @OA\Schema(
-     *                     @OA\Property(
-     *                          property="code",
-     *                          type="string",
-     *                          example="999002",
-     *                     ),
-     *                     @OA\Property(
-     *                          property="message",
-     *                          type="string",
-     *                          example="Unauthorized",
-     *                     ),
-     *                     @OA\Property(
-     *                          property="data",
-     *                          type="object",
-     *                          example="{}",
-     *                     ),
-     *                 ),
-     *             ),
-     *         },
+     *
+     *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse"),
+     *     ),
      *     ),
      * )
      *
@@ -570,24 +576,30 @@ class PostController extends BaseController
      *             "passport": {},
      *         },
      *     },
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
      *         description="id",
+     *
      *         @OA\Schema(
      *             type="integer",
      *             format="int64",
      *             example=1,
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Successfully.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -599,13 +611,17 @@ class PostController extends BaseController
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="400",
      *         description="Failed.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -617,13 +633,17 @@ class PostController extends BaseController
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="422",
      *         description="Validation error.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -635,31 +655,12 @@ class PostController extends BaseController
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="401",
      *         description="Unauthorized.",
-     *         content={
-     *             @OA\MediaType(
-     *                 mediaType="application/json",
-     *                 @OA\Schema(
-     *                     @OA\Property(
-     *                          property="code",
-     *                          type="string",
-     *                          example="999002",
-     *                     ),
-     *                     @OA\Property(
-     *                          property="message",
-     *                          type="string",
-     *                          example="Unauthorized",
-     *                     ),
-     *                     @OA\Property(
-     *                          property="data",
-     *                          type="object",
-     *                          example="{}",
-     *                     ),
-     *                 ),
-     *             ),
-     *         },
+     *
+     *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse"),
      *     ),
      * )
      *
@@ -688,37 +689,47 @@ class PostController extends BaseController
      *             "passport": {},
      *         },
      *     },
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
      *         description="id",
+     *
      *         @OA\Schema(
      *             type="integer",
      *             format="int64",
      *             example=1,
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Successfully.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
      *                     type="array",
+     *
      *                     @OA\Items(ref="#/components/schemas/UserResponse"),
      *                 ),
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="400",
      *         description="Failed.",
      *         content={
+     *
      *             @OA\MediaType(
      *                 mediaType="application/json",
+     *
      *                 @OA\Schema(
+     *
      *                     @OA\Property(
      *                         property="message",
      *                         type="string",
@@ -730,31 +741,12 @@ class PostController extends BaseController
      *             ),
      *         },
      *     ),
+     *
      *     @OA\Response(
      *         response="401",
      *         description="Unauthorized.",
-     *         content={
-     *             @OA\MediaType(
-     *                 mediaType="application/json",
-     *                 @OA\Schema(
-     *                     @OA\Property(
-     *                          property="code",
-     *                          type="string",
-     *                          example="999002",
-     *                     ),
-     *                     @OA\Property(
-     *                          property="message",
-     *                          type="string",
-     *                          example="Unauthorized",
-     *                     ),
-     *                     @OA\Property(
-     *                          property="data",
-     *                          type="object",
-     *                          example="{}",
-     *                     ),
-     *                 ),
-     *             ),
-     *         },
+     *
+     *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse"),
      *     ),
      * )
      *
