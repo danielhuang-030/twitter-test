@@ -64,7 +64,7 @@ class UserController extends BaseController
      *     @OA\Property(
      *          property="message",
      *          type="string",
-     *          example="User does not exist",
+     *          example="User does not exist.",
      *     ),
      *     @OA\Property(
      *          property="data",
@@ -136,7 +136,7 @@ class UserController extends BaseController
      *                     @OA\Property(
      *                          property="message",
      *                          type="string",
-     *                          example="success",
+     *                          example="Success.",
      *                     ),
      *                     @OA\Property(
      *                          property="data",
@@ -221,7 +221,7 @@ class UserController extends BaseController
      *                     @OA\Property(
      *                          property="message",
      *                          type="string",
-     *                          example="success",
+     *                          example="Success.",
      *                     ),
      *                     @OA\Property(
      *                          property="data",
@@ -308,7 +308,7 @@ class UserController extends BaseController
      *                     @OA\Property(
      *                          property="message",
      *                          type="string",
-     *                          example="success",
+     *                          example="Success.",
      *                     ),
      *                     @OA\Property(
      *                          property="data",
@@ -424,7 +424,7 @@ class UserController extends BaseController
      *                             @OA\Property(
      *                                  property="message",
      *                                  type="string",
-     *                                  example="success",
+     *                                  example="Success.",
      *                             ),
      *                             @OA\Property(
      *                                  property="data",
@@ -542,7 +542,7 @@ class UserController extends BaseController
      *                     @OA\Property(
      *                          property="message",
      *                          type="string",
-     *                          example="success",
+     *                          example="Success.",
      *                     ),
      *                     @OA\Property(
      *                          property="data",

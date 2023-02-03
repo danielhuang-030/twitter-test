@@ -26,26 +26,26 @@ enum ApiResponseCode: string
     public function message(): string
     {
         return match ($this) {
-            static::SUCCESS => 'success',
+            static::SUCCESS => 'Success.',
 
-            static::ERROR_UNEXPECTED => 'Unexpected error',
-            static::ERROR_VALIDATION => 'Validation error',
-            static::ERROR_UNAUTHORIZED => 'Unauthorized',
+            static::ERROR_UNEXPECTED => 'Unexpected error.',
+            static::ERROR_VALIDATION => 'Validation error.',
+            static::ERROR_UNAUTHORIZED => 'Unauthorized.',
 
-            static::ERROR_USER_NOT_EXIST => 'User does not exist',
-            static::ERROR_USER_ADD => 'User add failed',
+            static::ERROR_USER_NOT_EXIST => 'User does not exist.',
+            static::ERROR_USER_ADD => 'User add failed.',
 
-            static::ERROR_POST_NOT_EXIST => 'Post does not exist',
-            static::ERROR_POST_ADD => 'Post add failed',
-            static::ERROR_POST_EDIT => 'Post update failed',
-            static::ERROR_POST_DEL => 'Post delete failed',
-            static::ERROR_POST_LIKE => 'Post like failed',
-            static::ERROR_POST_DISLIKE => 'Post dislike failed',
+            static::ERROR_POST_NOT_EXIST => 'Post does not exist.',
+            static::ERROR_POST_ADD => 'Post add failed.',
+            static::ERROR_POST_EDIT => 'Post update failed.',
+            static::ERROR_POST_DEL => 'Post delete failed.',
+            static::ERROR_POST_LIKE => 'Post like failed.',
+            static::ERROR_POST_DISLIKE => 'Post dislike failed.',
 
-            static::ERROR_FOLLOW_FOLLOWING => 'Following failed',
-            static::ERROR_FOLLOW_UNFOLLOW => 'Unfollow failed',
+            static::ERROR_FOLLOW_FOLLOWING => 'Following failed.',
+            static::ERROR_FOLLOW_UNFOLLOW => 'Unfollow failed.',
 
-            default => 'Unexpected code',
+            default => 'Unexpected code.',
         };
     }
 }

@@ -88,7 +88,7 @@ class FollowController extends BaseController
      *                     @OA\Property(
      *                          property="message",
      *                          type="string",
-     *                          example="Following failed",
+     *                          example="Following failed.",
      *                     ),
      *                     @OA\Property(
      *                          property="data",
@@ -199,7 +199,7 @@ class FollowController extends BaseController
      *                     @OA\Property(
      *                          property="message",
      *                          type="string",
-     *                          example="Unfollow failed",
+     *                          example="Unfollow failed.",
      *                     ),
      *                     @OA\Property(
      *                          property="data",
