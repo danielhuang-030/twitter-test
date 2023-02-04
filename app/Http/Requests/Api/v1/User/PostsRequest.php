@@ -15,9 +15,11 @@ class PostsRequest extends JsonRequest
 
     public const SORT_BY_CREATED_AT = 'created_at';
     public const SORT_BY_UPDATED_AT = 'updated_at';
+    public const SORT_BY_AUTHOR = 'author';
     public const SORT_BY_KEYS = [
         PostsRequest::SORT_BY_CREATED_AT,
         PostsRequest::SORT_BY_UPDATED_AT,
+        PostsRequest::SORT_BY_AUTHOR,
     ];
 
     public function rules(): array
