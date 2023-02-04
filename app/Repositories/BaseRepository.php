@@ -94,7 +94,7 @@ abstract class BaseRepository
         $sortBy = $param->getSortBy();
         if (!empty($sortBy)) {
             foreach ($sortBy as $sort => $isDesc) {
-                $query->orderBy($sort, $isDesc ? 'desc' : 'asc');
+                $query->orderBy($this->getSortByFullColumnName($sort), $isDesc ? 'desc' : 'asc');
             }
         }
 
@@ -122,10 +122,15 @@ abstract class BaseRepository
         }
 
         return [
-            'perPage'  => $perPage,
-            'columns'  => ['*'],
+            'perPage' => $perPage,
+            'columns' => ['*'],
             'pageName' => 'page',
-            'page'     => $page,
+            'page' => $page,
         ];
+    }
+
+    protected function getSortByFullColumnName(string $sortBy): string
+    {
+        return $this->model->qualifyColumn($sortBy);
     }
 }
