@@ -54,7 +54,7 @@ abstract class BaseCommand extends Command
     {
         $monitors = static::getMonitors();
         if (empty($monitors)) {
-            return Command::FAILURE;
+            return static::FAILURE;
         }
 
         foreach ($monitors as $monitor) {
@@ -83,11 +83,11 @@ abstract class BaseCommand extends Command
                     static::getCheckedUrl($monitor),
                 ]), $monitor);
 
-                return Command::FAILURE;
+                return static::FAILURE;
             }
         }
 
-        return Command::SUCCESS;
+        return static::SUCCESS;
     }
 
     public static function getRedisKeyForStopLineNotity(string $monitor, string $crawler = ''): string

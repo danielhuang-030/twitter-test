@@ -24,10 +24,10 @@ class RutenCampaign extends BaseCommand
     protected static function getMonitorDataList(): array
     {
         return [
-            'order-buy0923617020' => [
-                'monitor'   => static::URL_MONITOR,
+            '123' => [
+                'monitor' => static::URL_MONITOR,
                 'promotion' => static::URL_STORE,
-                'total'     => 1,
+                'total' => 1,
             ],
         ];
     }

@@ -24,9 +24,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('crawler:dokii')->everyMinute();
         // $schedule->command('crawler:ruten_c')->everyMinute();
         // $schedule->command('crawler:ruten_i')->everyMinute();
+        // $schedule->command('crawler:ruten_p')->everyMinute();
     }
 
     /**

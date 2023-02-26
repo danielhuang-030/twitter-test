@@ -24,15 +24,10 @@ class RutenItem extends BaseCommand
     protected static function getMonitorDataList(): array
     {
         return [
-            314827 => [
-                'monitor'   => static::URL_MONITOR,
+            123 => [
+                'monitor' => static::URL_MONITOR,
                 'promotion' => static::URL_PROMOTION,
-                'total'     => 89,
-            ],
-            314896 => [
-                'monitor'   => static::URL_MONITOR,
-                'promotion' => static::URL_PROMOTION,
-                'total'     => 372,
+                'total' => 213,
             ],
         ];
     }
