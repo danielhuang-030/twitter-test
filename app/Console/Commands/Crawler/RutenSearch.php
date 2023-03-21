@@ -21,7 +21,7 @@ class RutenSearch extends BaseCommand
      *
      * @var string
      */
-    protected $description = 'crawler ruten product';
+    protected $description = 'crawler ruten search';
 
     public function handle()
     {
@@ -55,7 +55,6 @@ class RutenSearch extends BaseCommand
 
                 $this->executeAndNotify($responseData, $monitor);
             } catch (\Throwable $th) {
-                // dd($th->getMessage());
                 // notity stopping
                 $this->notityByLine(vsprintf("notity stopping. %s \n( checked: %s )", [
                     $th->getMessage(),
@@ -86,12 +85,13 @@ class RutenSearch extends BaseCommand
         // check total
         $total = data_get($responseData, 'TotalRows', 0);
 
+        // get monitor data
+        $monitorData = data_get(static::getMonitorDataList(), $monitor);
+
         // rules
         if (
-            data_get($monitor, 'total') < $total
+            data_get($monitorData, 'total') < $total
         ) {
-            $monitorData = data_get(static::getMonitorDataList(), $monitor);
-
             // notity
             $this->notityByLine(vsprintf("search have been added. %s \n( checked: %s )", [
                 vsprintf(static::URL_SEARCH, [

@@ -53,7 +53,6 @@ class RutenProduct extends BaseCommand
 
                 $this->executeAndNotify($responseData, $monitor);
             } catch (\Throwable $th) {
-                // dd($th->getMessage());
                 // notity stopping
                 $this->notityByLine(vsprintf("notity stopping. %s \n( checked: %s )", [
                     $th->getMessage(),
