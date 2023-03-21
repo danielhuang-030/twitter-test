@@ -27,6 +27,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('crawler:ruten_c')->everyMinute();
         // $schedule->command('crawler:ruten_i')->everyMinute();
         // $schedule->command('crawler:ruten_p')->everyMinute();
+        // $schedule->command('crawler:ruten_s')->everyMinute();
     }
 
     /**

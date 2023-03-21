@@ -12,7 +12,9 @@ class CrawlerController extends Controller
     {
         $redisKey = CrawlerCommand::getRedisKeyForStopLineNotity($monitor, $crawler);
         if (!Redis::exists($redisKey)) {
-            return 'not exist.';
+            return view('crawler.index', [
+                'not_exist' => true,
+            ]);
         }
 
         return view('crawler.index', [

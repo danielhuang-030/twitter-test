@@ -4,17 +4,17 @@ namespace App\Console\Commands\Crawler;
 
 use Illuminate\Support\Facades\Redis;
 
-class RutenProduct extends BaseCommand
+class RutenSearch extends BaseCommand
 {
-    public const URL_MONITOR = 'https://www.ruten.com.tw/item/show?%s';
-    public const HTML_PATTERN = '#RT\.context = (\{.+\});#m';
+    public const URL_MONITOR = 'https://rtapi.ruten.com.tw/api/search/v3/index.php/core/seller/%d/prod?%s';
+    public const URL_SEARCH = 'https://www.ruten.com.tw/store/%s/find?%s';
 
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'crawler:ruten_p';
+    protected $signature = 'crawler:ruten_s';
 
     /**
      * The console command description.
@@ -35,21 +35,23 @@ class RutenProduct extends BaseCommand
                 continue;
             }
 
-            $url = sprintf(data_get(static::getMonitorDataList(), sprintf('%s.monitor', $monitor)), $monitor);
+            $monitorData = data_get(static::getMonitorDataList(), $monitor);
+            $url = vsprintf(data_get($monitorData, 'monitor'), [
+                data_get($monitorData, 'seller'),
+                http_build_query([
+                    'sort' => 'new/dc',
+                    'q' => data_get($monitorData, 'query'),
+                    'limit' => 30,
+                    'offset' => 1,
+                ]),
+            ]);
             try {
                 $response = $this->client->get($url, [
                     'headers' => [
                         'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36',
                     ],
                 ]);
-
-                // for HTML
-                $html = (string) $response->getBody();
-                preg_match(static::HTML_PATTERN, $html, $matches);
-                if (empty($matches[1])) {
-                    throw new \Exception('Unable to get response data');
-                }
-                $responseData = json_decode($matches[1], true);
+                $responseData = json_decode($response->getBody(), true);
 
                 $this->executeAndNotify($responseData, $monitor);
             } catch (\Throwable $th) {
@@ -72,7 +74,9 @@ class RutenProduct extends BaseCommand
         return [
             '123' => [
                 'monitor' => static::URL_MONITOR,
-                'total' => 0,
+                'seller' => 123,
+                'query' => '關鍵字',
+                'total' => 1,
             ],
         ];
     }
@@ -80,16 +84,24 @@ class RutenProduct extends BaseCommand
     protected function executeAndNotify(array $responseData = [], $monitor): bool
     {
         // check total
-        $total = data_get($responseData, 'item.remainNum', 0);
+        $total = data_get($responseData, 'TotalRows', 0);
 
         // rules
         if (
-            !data_get($responseData, 'item.isSoldEnd', true) &&
             data_get($monitor, 'total') < $total
         ) {
+            $monitorData = data_get(static::getMonitorDataList(), $monitor);
+
             // notity
-            $this->notityByLine(vsprintf("items arrived. %s \n( checked: %s )", [
-                sprintf((string) data_get(static::getMonitorDataList(), sprintf(sprintf('%s.monitor', $monitor), $monitor)), $monitor),
+            $this->notityByLine(vsprintf("search have been added. %s \n( checked: %s )", [
+                vsprintf(static::URL_SEARCH, [
+                    $monitor,
+                    http_build_query([
+                        'sort' => 'new/dc',
+                        'q' => data_get($monitorData, 'query'),
+                        'p' => 1,
+                    ]),
+                ]),
                 static::getCheckedUrl($monitor),
             ]), $monitor);
         }
