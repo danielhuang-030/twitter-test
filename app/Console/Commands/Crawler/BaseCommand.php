@@ -34,7 +34,7 @@ abstract class BaseCommand extends Command
         $logger = new Logger($loggerName);
         $handler = new RotatingFileHandler(
             sprintf('%s/%s/log.log', storage_path('logs'), $loggerName),
-            60
+            14
         );
         $handler->setFormatter(new JsonFormatter());
         $logger->pushHandler($handler);
