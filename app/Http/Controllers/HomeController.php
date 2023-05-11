@@ -11,7 +11,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        // $this->middleware('auth');
     }
 
     /**
@@ -21,7 +21,12 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $user = app()->make(\App\Models\User::class);
+        // /** @var \App\Models\User $userModel */
+        // $userModel = app()->make(\App\Models\User::class);
+        // /** @var \App\Models\User $user */
+        // $user = $userModel->find(2);
+        // $user->update(['name' => 'test002_updated1145']);
+        // dd($user);
 
         return view('home');
     }
