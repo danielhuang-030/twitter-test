@@ -23,6 +23,7 @@ services:
             "--innodb-use-native-aio=0",
             "--server-id=1",
             "--log_bin=ON",
+            "--max_binlog_size=100M",
             "--default-authentication-plugin=mysql_native_password"
         ]
         volumes:
@@ -30,6 +31,34 @@ services:
             - ./conf/mysql/custom.cnf:/etc/mysql/conf.d/custom.cnf
         networks:
             - twitter-test-network
+
+#twitter-test-db-slave
+    # twitter-test-db-slave:
+    #     image: mysql:5.7
+    #     container_name: ${DB_SLAVE_HOST:-twitter-test-db-slave}
+    #     restart: always
+    #     ports:
+    #         - "${DB_SLAVE_PORT:-12007}:3306"
+    #     environment:
+    #         MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
+    #         TZ: ${TZ:-Asia/Taipei}
+    #     command: [
+    #         "--character-set-server=utf8mb4",
+    #         "--collation-server=utf8mb4_general_ci",
+    #         "--innodb-use-native-aio=0",
+    #         "--server-id=2",
+    #         "--log_bin=ON",
+    #         "--replicate-do-db=${DB_DATABASE:-twitter_test}",
+    #         "--max_binlog_size=100M",
+    #         "--default-authentication-plugin=mysql_native_password"
+    #     ]
+    #     volumes:
+    #         - ./data/mysql_slave:/var/lib/mysql
+    #         - ./conf/mysql/custom.cnf:/etc/mysql/conf.d/custom.cnf
+    #     networks:
+    #         - twitter-test-network
+    #     depends_on:
+    #         - ${DB_HOST:-twitter-test-db}
 
 #twitter-test-redis
     twitter-test-redis:

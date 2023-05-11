@@ -1,6 +1,7 @@
 # Ignore folders
 log/nginx/*
 data/mysql/*
+data/mysql_slave/*
 data/redis/*
 
 # others
