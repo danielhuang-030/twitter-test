@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 class UserFollow extends Pivot
 {
     /**
-     * updated at
+     * updated at.
      *
      * @var string
      */
-    const UPDATED_AT = null;
+    public const UPDATED_AT = null;
 
     /**
      * user.

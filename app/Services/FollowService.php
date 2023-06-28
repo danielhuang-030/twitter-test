@@ -12,8 +12,16 @@ class FollowService
 
     public function follow(int $followId, int $userId): bool
     {
-        $user = $this->userRepository->getById($userId);
+        $user = $this->userRepository->getById($userId, [
+            'following',
+        ]);
         if (empty($user)) {
+            return false;
+        }
+        if ($user->id == $followId) {
+            return false;
+        }
+        if ($user->following->pluck('id')->contains($followId)) {
             return false;
         }
         $user->following()->syncWithoutDetaching((array) $followId);
@@ -23,13 +31,19 @@ class FollowService
 
     public function unfollow(int $followId, int $userId): bool
     {
-        $user = $this->userRepository->getById($userId);
+        $user = $this->userRepository->getById($userId, [
+            'following',
+        ]);
         if (empty($user)) {
             return false;
         }
-        if (0 === $user->following()->detach((array) $followId)) {
+        if ($user->id == $followId) {
             return false;
         }
+        if (!$user->following->pluck('id')->contains($followId)) {
+            return false;
+        }
+        $user->following()->detach((array) $followId);
 
         return true;
     }
