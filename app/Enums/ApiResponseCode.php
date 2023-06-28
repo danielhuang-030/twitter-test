@@ -20,8 +20,13 @@ enum ApiResponseCode: string
     case ERROR_POST_LIKE = '501005';
     case ERROR_POST_DISLIKE = '501006';
 
-    case ERROR_FOLLOW_FOLLOWING = '502001';
-    case ERROR_FOLLOW_UNFOLLOW = '502002';
+    case ERROR_FOLLOW = '502001';
+    case ERROR_FOLLOW_SELF = '502002';
+    case ERROR_FOLLOW_HAVE_FOLLOWED = '502003';
+
+    case ERROR_UNFOLLOW = '503001';
+    case ERROR_UNFOLLOW_SELF = '503002';
+    case ERROR_UNFOLLOW_NOT_FOLLOWED = '503003';
 
     public function message(): string
     {
@@ -42,8 +47,13 @@ enum ApiResponseCode: string
             static::ERROR_POST_LIKE => 'Post like failed.',
             static::ERROR_POST_DISLIKE => 'Post dislike failed.',
 
-            static::ERROR_FOLLOW_FOLLOWING => 'Following failed.',
-            static::ERROR_FOLLOW_UNFOLLOW => 'Unfollow failed.',
+            static::ERROR_FOLLOW => 'Following failed.',
+            static::ERROR_FOLLOW_SELF => 'Can not follow yourself.',
+            static::ERROR_FOLLOW_HAVE_FOLLOWED => 'You have followed.',
+
+            static::ERROR_UNFOLLOW => 'Unfollow failed.',
+            static::ERROR_UNFOLLOW_SELF => 'Can not unfollow yourself.',
+            static::ERROR_UNFOLLOW_NOT_FOLLOWED => 'You have not followed.',
 
             default => 'Unexpected code.',
         };

@@ -3,7 +3,6 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-Use Throwable;
 
 class Handler extends ExceptionHandler
 {
@@ -13,7 +12,6 @@ class Handler extends ExceptionHandler
      * @var array
      */
     protected $dontReport = [
-        //
     ];
 
     /**
@@ -29,10 +27,11 @@ class Handler extends ExceptionHandler
     /**
      * Report or log an exception.
      *
-     * @param  \Throwable  $exception
+     * @param \Throwable $exception
+     *
      * @return void
      */
-    public function report(Throwable $exception)
+    public function report(\Throwable $exception)
     {
         parent::report($exception);
     }
@@ -40,12 +39,19 @@ class Handler extends ExceptionHandler
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Throwable  $exception
+     * @param \Illuminate\Http\Request $request
+     * @param \Throwable               $exception
+     *
      * @return \Illuminate\Http\Response
      */
-    public function render($request, Throwable $exception)
+    public function render($request, \Throwable $exception)
     {
+        // If the request wants JSON (AJAX doesn't always want JSON)
+        if (!$request->wantsJson() || $exception instanceof CustomException) {
+            // Default to the parent class' implementation of handler
+            return parent::render($request, $exception);
+        }
+
         return parent::render($request, $exception);
     }
 }
