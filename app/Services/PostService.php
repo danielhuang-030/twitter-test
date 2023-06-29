@@ -22,12 +22,21 @@ class PostService
     {
         $requestData['user_id'] = $userId;
 
-        return $this->postRepository->create($requestData);
+        $post = $this->postRepository->create($requestData);
+        if (empty($post)) {
+            return null;
+        }
+
+        return $post->load([
+            'user',
+        ]);
     }
 
     public function find(int $id): ?Post
     {
-        return $this->postRepository->getById($id);
+        return $this->postRepository->getById($id, [
+            'user',
+        ]);
     }
 
     public function edit(array $requestData, int $id, int $userId): ?Post

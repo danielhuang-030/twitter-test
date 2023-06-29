@@ -513,7 +513,12 @@ class UserController extends BaseController
      */
     public function posts(PostsRequest $request, $id)
     {
-        $paginator = $this->postService->getPosts((new PostParam($request))->setUserId($id));
+        $paginator = $this->postService->getPosts(
+            (new PostParam($request))->setUserId($id)
+                ->setWiths([
+                    'user',
+                ])
+        );
 
         return $this->responseSuccessWithPagination(
             paginator: $paginator,
