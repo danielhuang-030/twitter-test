@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\BaseModel;
 use App\Models\Post;
 use App\Models\UserFollow;
 use App\Observers\PostObserver;
@@ -26,6 +27,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        // enabling eloquent "Strict Mode"
+        BaseModel::shouldBeStrict(!$this->app->isProduction());
+
         // observe
         UserFollow::observe(UserFollowObserver::class);
         Post::observe(PostObserver::class);
