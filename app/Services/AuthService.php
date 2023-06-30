@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Enums\ApiResponseCode;
+use App\Exceptions\CustomException;
 use App\Models\User;
 use App\Repositories\UserRepository;
 
@@ -17,10 +19,18 @@ class AuthService
     {
         $user = $this->userRepository->getByEmail((string) data_get($credentials, 'email'));
         if (empty($user)) {
+            throw app(CustomException::class, [
+                'apiCode' => ApiResponseCode::ERROR_USER_NOT_EXIST,
+            ]);
+
             return null;
         }
 
         if (!\Hash::check(data_get($credentials, 'password'), $user->password)) {
+            throw app(CustomException::class, [
+                'apiCode' => ApiResponseCode::ERROR_UNAUTHORIZED,
+            ]);
+
             return null;
         }
 
@@ -30,7 +40,7 @@ class AuthService
         $user->withAccessToken($tokenResult->accessToken);
 
         // set user
-        \Auth::setUser($user);
+        auth()->setUser($user);
 
         return $user;
     }

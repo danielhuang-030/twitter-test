@@ -190,10 +190,7 @@ class PostController extends BaseController
      */
     public function store(StoreRequest $request)
     {
-        $post = $this->postService->add($request->validated(), (int) data_get(\Auth::user(), 'id'));
-        if (empty($post)) {
-            return $this->responseFail(code: ApiResponseCode::ERROR_POST_ADD->value);
-        }
+        $post = $this->postService->add($request->validated(), (int) auth()->user()?->id);
 
         return $this->responseSuccess([
             'post' => PostResource::make($post),
@@ -291,9 +288,6 @@ class PostController extends BaseController
     public function show(ShowRequest $request, int $id)
     {
         $post = $this->postService->find($id);
-        if (empty($post)) {
-            return $this->responseFail(code: ApiResponseCode::ERROR_POST_NOT_EXIST->value);
-        }
 
         return $this->responseSuccess(data: [
             'post' => PostResource::make($post),
@@ -402,10 +396,7 @@ class PostController extends BaseController
      */
     public function update(UpdateRequest $request, $id)
     {
-        $post = $this->postService->edit($request->validated(), $id, (int) data_get(\Auth::user(), 'id'));
-        if (empty($post)) {
-            return $this->responseFail(code: ApiResponseCode::ERROR_POST_EDIT->value);
-        }
+        $post = $this->postService->edit($request->validated(), $id, (int) auth()->user()?->id);
 
         return $this->responseSuccess(data: [
             'post' => PostResource::make($post),
@@ -512,7 +503,7 @@ class PostController extends BaseController
      */
     public function destroy($id)
     {
-        if (!$this->postService->del($id, (int) data_get(\Auth::user(), 'id'))) {
+        if (!$this->postService->del($id, (int) auth()->user()?->id)) {
             return $this->responseFail(code: ApiResponseCode::ERROR_POST_DEL->value);
         }
 
@@ -624,7 +615,7 @@ class PostController extends BaseController
      */
     public function like(LikeRequest $request, $id)
     {
-        if (!$this->postService->like($id, data_get(\Auth::user(), 'id', 0))) {
+        if (!$this->postService->like($id, (int) auth()->user()?->id)) {
             return $this->responseFail(code: ApiResponseCode::ERROR_POST_LIKE->value);
         }
 
@@ -736,7 +727,7 @@ class PostController extends BaseController
      */
     public function dislike(DislikeRequest $request, $id)
     {
-        if (!$this->postService->dislike($id, data_get(\Auth::user(), 'id', 0))) {
+        if (!$this->postService->dislike($id, (int) auth()->user()?->id)) {
             return $this->responseFail(code: ApiResponseCode::ERROR_POST_DISLIKE->value);
         }
 
@@ -825,9 +816,6 @@ class PostController extends BaseController
     public function likedUsers($id)
     {
         $post = $this->postService->find($id);
-        if (empty($post)) {
-            return $this->responseFail(code: ApiResponseCode::ERROR_POST_NOT_EXIST->value);
-        }
 
         return $this->responseSuccess(data: [
             'users' => UserResource::collection($post->load([

@@ -31,6 +31,19 @@ class PostObserver
     }
 
     /**
+     * Handle the post "deleting" event.
+     *
+     * @param \App\Models\Post $post
+     *
+     * @return void
+     */
+    public function deleting(Post $post)
+    {
+        // delete like post association
+        $post->likedUsers()->detach();
+    }
+
+    /**
      * Handle the post "deleted" event.
      *
      * @param \App\Models\Post $post

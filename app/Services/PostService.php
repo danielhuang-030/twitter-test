@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Enums\ApiResponseCode;
+use App\Exceptions\CustomException;
 use App\Models\Post;
 use App\Params\PostParam;
 use App\Repositories\PostRepository;
@@ -24,6 +26,10 @@ class PostService
 
         $post = $this->postRepository->create($requestData);
         if (empty($post)) {
+            throw app(CustomException::class, [
+                'apiCode' => ApiResponseCode::ERROR_POST_ADD,
+            ]);
+
             return null;
         }
 
@@ -34,31 +40,54 @@ class PostService
 
     public function find(int $id): ?Post
     {
-        return $this->postRepository->getById($id, [
+        $post = $this->postRepository->getById($id, [
             'user',
         ]);
+
+        if (empty($post)) {
+            throw app(CustomException::class, [
+                'apiCode' => ApiResponseCode::ERROR_POST_NOT_EXIST,
+            ]);
+
+            return null;
+        }
+
+        return $post;
     }
 
     public function edit(array $requestData, int $id, int $userId): ?Post
     {
         $post = $this->find($id);
-        if (empty($post)) {
-            return null;
-        }
+
         if ($post->user_id != $userId) {
+            throw app(CustomException::class, [
+                'apiCode' => ApiResponseCode::ERROR_POST_NOT_AUTHOR,
+            ]);
+
             return null;
         }
 
-        return $this->postRepository->update($requestData, $id);
+        $postUpdated = $this->postRepository->update($requestData, $id);
+        if (empty($postUpdated)) {
+            throw app(CustomException::class, [
+                'apiCode' => ApiResponseCode::ERROR_POST_EDIT,
+            ]);
+
+            return null;
+        }
+
+        return $postUpdated;
     }
 
     public function del(int $id, int $userId): bool
     {
         $post = $this->find($id);
-        if (empty($post)) {
-            return false;
-        }
+
         if ($post->user_id != $userId) {
+            throw app(CustomException::class, [
+                'apiCode' => ApiResponseCode::ERROR_POST_NOT_AUTHOR,
+            ]);
+
             return false;
         }
         $this->postRepository->delete($id);
@@ -69,7 +98,12 @@ class PostService
     public function like(int $id, int $userId): bool
     {
         $post = $this->find($id);
-        if (empty($post) || $post->user_id == $userId) {
+
+        if ($post->user_id == $userId) {
+            throw app(CustomException::class, [
+                'apiCode' => ApiResponseCode::ERROR_POST_AUTHOR_CAN_NOT_LIKE,
+            ]);
+
             return false;
         }
         $post->likedUsers()->syncWithoutDetaching((array) $userId);
@@ -80,7 +114,12 @@ class PostService
     public function dislike(int $id, int $userId): bool
     {
         $post = $this->find($id);
-        if (empty($post) || $post->user_id == $userId) {
+
+        if ($post->user_id == $userId) {
+            throw app(CustomException::class, [
+                'apiCode' => ApiResponseCode::ERROR_POST_AUTHOR_CAN_NOT_LIKE,
+            ]);
+
             return false;
         }
         $post->likedUsers()->detach((array) $userId);

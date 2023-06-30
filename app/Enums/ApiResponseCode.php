@@ -20,6 +20,9 @@ enum ApiResponseCode: string
     case ERROR_POST_LIKE = '501005';
     case ERROR_POST_DISLIKE = '501006';
 
+    case ERROR_POST_NOT_AUTHOR = '501007';
+    case ERROR_POST_AUTHOR_CAN_NOT_LIKE = '501008';
+
     case ERROR_FOLLOW = '502001';
     case ERROR_FOLLOW_SELF = '502002';
     case ERROR_FOLLOW_HAVE_FOLLOWED = '502003';
@@ -46,6 +49,9 @@ enum ApiResponseCode: string
             static::ERROR_POST_DEL => 'Post delete failed.',
             static::ERROR_POST_LIKE => 'Post like failed.',
             static::ERROR_POST_DISLIKE => 'Post dislike failed.',
+
+            static::ERROR_POST_NOT_AUTHOR => 'Not the original author of the post cannot edit.',
+            static::ERROR_POST_AUTHOR_CAN_NOT_LIKE => 'The original author can not like/dislike their own posts.',
 
             static::ERROR_FOLLOW => 'Following failed.',
             static::ERROR_FOLLOW_SELF => 'Can not follow yourself.',

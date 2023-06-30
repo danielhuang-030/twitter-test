@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Enums\ApiResponseCode;
+use App\Exceptions\CustomException;
 use App\Models\User;
 use App\Repositories\UserRepository;
 
@@ -19,11 +21,29 @@ class UserService
             'password' => \Hash::make((string) data_get($data, 'password')),
         ];
 
-        return $this->userRepository->create($userData);
+        $user = $this->userRepository->create($userData);
+        if (empty($user)) {
+            throw app(CustomException::class, [
+                'apiCode' => ApiResponseCode::ERROR_USER_ADD,
+            ]);
+
+            return null;
+        }
+
+        return $user;
     }
 
     public function getUser(int $id): ?User
     {
-        return $this->userRepository->getById($id);
+        $user = $this->userRepository->getById($id);
+        if (empty($user)) {
+            throw app(CustomException::class, [
+                'apiCode' => ApiResponseCode::ERROR_USER_NOT_EXIST,
+            ]);
+
+            return null;
+        }
+
+        return $user;
     }
 }

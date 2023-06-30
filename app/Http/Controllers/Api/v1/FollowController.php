@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api\v1;
 
-use App\Enums\ApiResponseCode;
 use App\Http\Requests\Api\v1\Follow\FollowingRequest;
 use App\Http\Requests\Api\v1\Follow\UnfollowRequest;
 use App\Services\FollowService;
@@ -118,9 +117,7 @@ class FollowController extends BaseController
      */
     public function following(FollowingRequest $request, $id)
     {
-        if (!$this->followService->follow($id, (int) data_get(\Auth::user(), 'id'))) {
-            return $this->responseFail(code: ApiResponseCode::ERROR_FOLLOW_FOLLOWING->value);
-        }
+        $this->followService->follow($id, (int) auth()->user()?->id);
 
         return $this->responseSuccess(message: 'Successfully followed user!');
     }
@@ -230,9 +227,7 @@ class FollowController extends BaseController
      */
     public function unfollow(UnfollowRequest $request, $id)
     {
-        if (!$this->followService->unfollow($id, (int) data_get(\Auth::user(), 'id'))) {
-            return $this->responseFail(code: ApiResponseCode::ERROR_FOLLOW_UNFOLLOW->value);
-        }
+        $this->followService->unfollow($id, (int) auth()->user()?->id);
 
         return $this->responseSuccess(message: 'Successfully unfollowed user!');
     }

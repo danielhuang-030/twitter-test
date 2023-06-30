@@ -6,6 +6,7 @@ use App\Enums\ApiResponseCode;
 use App\Http\Requests\Api\v1\User\PostsRequest;
 use App\Http\Resources\Api\v1\Post\PostResource;
 use App\Http\Resources\Api\v1\User\UserResource;
+use App\Models\User;
 use App\Params\PostParam;
 use App\Services\PostService;
 use App\Services\UserService;
@@ -14,6 +15,8 @@ use Illuminate\Http\Request;
 class UserController extends BaseController
 {
     /**
+     * @var User
+     *
      * @OA\Schema(
      *     schema="UserResponse",
      *     type="object",
@@ -81,7 +84,7 @@ class UserController extends BaseController
         // get user
         $this->middleware(function ($request, $next) {
             $id = (int) $request->route('id');
-            $this->user = (empty($id) ? \Auth::user() : $this->userService->getUser($id));
+            $this->user = (empty($id) ? auth()->user() : $this->userService->getUser($id));
             if (empty($this->user)) {
                 return $this->responseFail(code: ApiResponseCode::ERROR_USER_NOT_EXIST->value);
             }
@@ -258,8 +261,12 @@ class UserController extends BaseController
      */
     public function following(Request $request, $id)
     {
+        $following = $this->user->load([
+            'following',
+        ])->following;
+
         return $this->responseSuccess(data: [
-            'following' => UserResource::collection($this->user->following),
+            'following' => UserResource::collection($following),
         ]);
     }
 
@@ -345,8 +352,12 @@ class UserController extends BaseController
      */
     public function followers(Request $request, $id)
     {
+        $followers = $this->user->load([
+            'followers',
+        ])->followers;
+
         return $this->responseSuccess(data: [
-            'followers' => UserResource::collection($this->user->followers),
+            'followers' => UserResource::collection($followers),
         ]);
     }
 
