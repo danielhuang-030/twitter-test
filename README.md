@@ -3,7 +3,18 @@
 [online Swagger UI demo](https://twitter-test.333030.xyz/api-docs/)
 
 ### Introduction
-Simple implementation of the basic functions of twitter: including member login/logout, post, follow and like.
+Simple implementation of the basic functions of twitter: including member login/logout, post, follow and like. (Back-end only)
+
+### Features
+- Member registration, login, logout, and CURD functions for posts
+- Members can click like on posts or cancel
+- Members can follow other members or be followed by other members
+- Instant notification to members via websocket
+  - Notify all followers when a member posts a new post
+  - Notify members when the status of following is changed
+
+### Tech Stack
+- Using Laravel 10(PHP 8.1 with swoole) + MySQL 5.7 + Redis + soketi(websocket)
 
 ### Packages
 - [laravel/octane](https://github.com/laravel/octane) - Laravel Octane
