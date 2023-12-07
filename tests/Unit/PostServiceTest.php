@@ -5,12 +5,9 @@ namespace App\Services;
 use App\Enums\ApiResponseCode;
 use App\Exceptions\CustomException;
 use App\Models\Post;
-use App\Models\User;
 use App\Params\PostParam;
 use App\Repositories\PostRepository;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Mockery;
 use PHPUnit\Framework\TestCase;
 
 class PostServiceTest extends TestCase
@@ -22,13 +19,13 @@ class PostServiceTest extends TestCase
     {
         parent::setUp();
 
-        $this->postRepository = Mockery::mock(PostRepository::class);
+        $this->postRepository = \Mockery::mock(PostRepository::class);
         $this->postService = new PostService($this->postRepository);
     }
 
     protected function tearDown(): void
     {
-        Mockery::close();
+        \Mockery::close();
 
         parent::tearDown();
     }
@@ -56,7 +53,7 @@ class PostServiceTest extends TestCase
             'content' => 'Lorem ipsum dolor sit amet',
             'user_id' => $userId,
         ];
-        $postMock = Mockery::mock(Post::class);
+        $postMock = \Mockery::mock(Post::class);
         $postMock->shouldReceive('getAttribute')
             ->with('title')
             ->andReturn($requestData['title'])
