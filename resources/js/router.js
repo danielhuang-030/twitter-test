@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeComponent from './components/HomeComponent.vue';
 import LoginComponent from './components/LoginComponent.vue';
+import UserPostsComponent from './components/UserPostsComponent.vue';
 
 const routes = [
     {
@@ -12,8 +13,12 @@ const routes = [
         path: '/login',
         name: 'login',
         component: LoginComponent
+    },
+    {
+      path: '/user/:userId/posts',
+      name: 'UserPosts',
+      component: UserPostsComponent
     }
-    // 其他路由...
 ];
 
 const router = createRouter({

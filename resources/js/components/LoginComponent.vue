@@ -31,14 +31,13 @@
     },
     methods: {
       async login() {
-        console.log('login');
         try {
           const response = await apiService.login(this.loginForm);
           localStorage.setItem('user-token', response.data.data.token);
           localStorage.setItem('user-data', JSON.stringify(response.data.data.user));
           this.$router.push({ name: 'home' });
         } catch (error) {
-          console.log(error);
+          // console.log(error);
         }
       }
     }

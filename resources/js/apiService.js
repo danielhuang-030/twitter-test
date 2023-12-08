@@ -52,12 +52,41 @@ export default {
   logout() {
     return apiClient.get('/logout');
   },
-  getPosts({ page, per_page }) {
+  getPosts({ page, perPage }) {
     return apiClient.get('/posts', {
       params: {
         page: page,
-        per_page: per_page
+        per_page: perPage
       }
     });
+  },
+  getUserPosts({ userId, page, perPage }) {
+    return apiClient.get(`/users/${userId}/posts`, {
+      params: {
+        page: page,
+        per_page: perPage
+      }
+    });
+  },
+  createPost(postData) {
+    return apiClient.post('/posts', postData);
+  },
+  updatePost(postId, postData) {
+    return apiClient.put(`/posts/${postId}`, postData);
+  },
+  deletePost(postId) {
+    return apiClient.delete(`/posts/${postId}`);
+  },
+  likePost(postId) {
+    return apiClient.patch(`/posts/${postId}/like`);
+  },
+  unlikePost(postId) {
+    return apiClient.delete(`/posts/${postId}/like`);
+  },
+  followUser(userId) {
+    return apiClient.patch(`/following/${userId}`);
+  },
+  unfollowUser(userId) {
+    return apiClient.delete(`/following/${userId}`);
   }
 };

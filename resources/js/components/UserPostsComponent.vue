@@ -15,7 +15,7 @@
 <script>
 import PostsList from './PostsList.vue';
 import PostForm from './PostForm.vue';
-import apiService from '../apiService';
+import apiService from '../apiService.js';
 
 export default {
   components: {
@@ -31,13 +31,19 @@ export default {
       editingPost: null
     };
   },
+  computed: {
+    userId() {
+      return this.$route.params.userId;
+    }
+  },
   created() {
     this.fetchPosts(this.currentPage);
   },
   methods: {
     async fetchPosts(page) {
       try {
-        const response = await apiService.getPosts({
+        const response = await apiService.getUserPosts({
+          userId: this.userId,
           page: page,
           perPage: this.pageSize
         });
@@ -45,7 +51,7 @@ export default {
         this.totalPosts = response.data.data.pagination.total;
         this.currentPage = page;
       } catch (error) {
-        console.error('Error fetching posts:', error);
+        console.error('Error fetching user posts:', error);
       }
     },
     handleEditPost(post) {
@@ -54,6 +60,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-</style>

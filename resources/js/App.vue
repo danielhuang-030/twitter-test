@@ -14,8 +14,8 @@
               <a href="#">{{ userData.name }}</a> <!-- 父選項 -->
               <ul class="submenu">
                 <li><a href="#" @click="openPostDialog">Create New Post</a></li>
-                <post-form ref="postForm" @post-submitted="handlePostSubmit"></post-form>
-                <li><a href="/posts">Posts</a></li>
+                <post-form ref="postForm" @post-submitted="handlePostSubmit" :isEditMode="false"></post-form>
+                <li><router-link :to="`/user/${userData.id}/posts`">Posts</router-link></li>
                 <li><a href="#" @click="logout">Logout</a></li>
               </ul>
             </li>
