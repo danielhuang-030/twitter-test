@@ -1,6 +1,7 @@
 // apiService.js
 import axios from 'axios';
 import { ElMessageBox } from 'element-plus';
+import router from './router'
 
 const apiClient = axios.create({
   baseURL: '/api/v1',
@@ -23,17 +24,17 @@ apiClient.interceptors.response.use(
   error => {
     if (error.response.status === 401) {
       localStorage.removeItem('user-token');
-      router.push({ name: 'Login' });
+      router.push({ name: 'login' });
+    } else {
+      ElMessageBox.alert(
+        error.response.data.message || 'An error occurred',
+        'Error',
+        {
+          confirmButtonText: 'OK',
+          type: 'error'
+        }
+      );
     }
-
-    ElMessageBox.alert(
-      error.response.data.message || 'An error occurred',
-      'Error',
-      {
-        confirmButtonText: 'OK',
-        type: 'error'
-      }
-    );
 
     return Promise.reject(error);
   }
