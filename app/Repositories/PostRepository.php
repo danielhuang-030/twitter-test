@@ -6,9 +6,24 @@ use App\Http\Requests\Api\v1\User\PostsRequest;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 
 class PostRepository extends BaseRepository
 {
+    public function getUserLikedPostsByUserIdAndPostIds(int $userId, array $postIds): Collection
+    {
+        return $this->model->query()
+            ->with([
+                'likedUsers' => function ($query) use ($userId) {
+                    $query->where('user_id', $userId);
+                },
+            ])->whereIn($this->model->qualifyColumn('id'), $postIds)
+            ->get()
+            ->filter(function ($post) {
+                return !$post->likedUsers->isEmpty();
+            })->values();
+    }
+
     protected function model(): string
     {
         return Post::class;

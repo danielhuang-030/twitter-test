@@ -33,9 +33,24 @@ class PostController extends BaseController
      *          example="test001",
      *     ),
      *     @OA\Property(
+     *          property="author_id",
+     *          type="number",
+     *          example=1,
+     *     ),
+     *     @OA\Property(
      *          property="content",
      *          type="string",
      *          example="test\ntest2",
+     *     ),
+     *     @OA\Property(
+     *          property="is_liked",
+     *          type="boolean",
+     *          example=false,
+     *     ),
+     *     @OA\Property(
+     *          property="is_followed",
+     *          type="boolean",
+     *          example=false,
      *     ),
      *     @OA\Property(
      *          property="created_at",
@@ -222,9 +237,24 @@ class PostController extends BaseController
             'user',
         ]));
 
+        $likedPostIds = $this->postService->getUserLikedPostIds(
+            (int) auth()->user()?->id,
+            $paginator->pluck('id')->toArray()
+        );
+        $followedUserIds = $this->postService->getFollowedUserIds(
+            (int) auth()->user()?->id,
+            $paginator->pluck('user.id')->unique()->toArray()
+        );
+        request()->request->add([
+            'liked_post_ids' => $likedPostIds,
+            'followed_user_ids' => $followedUserIds,
+        ]);
+
         return $this->responseSuccessWithPagination(
             paginator: $paginator,
-            data: PostResource::collection($paginator)
+            data: PostResource::collection($paginator)->additional([
+                'liked_post_ids' => $likedPostIds,
+            ])
         );
     }
 

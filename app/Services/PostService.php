@@ -7,17 +7,34 @@ use App\Exceptions\CustomException;
 use App\Models\Post;
 use App\Params\PostParam;
 use App\Repositories\PostRepository;
+use App\Repositories\UserRepository;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class PostService
 {
-    public function __construct(protected PostRepository $postRepository)
-    {
+    public function __construct(
+        protected PostRepository $postRepository,
+        protected UserRepository $userRepository
+    ) {
     }
 
     public function getPosts(PostParam $param): LengthAwarePaginator
     {
         return $this->postRepository->getPaginatorByParam($param);
+    }
+
+    public function getUserLikedPostIds(int $userId, array $postIds): array
+    {
+        return $this->postRepository->getUserLikedPostsByUserIdAndPostIds($userId, $postIds)
+            ->pluck('id')
+            ->toArray();
+    }
+
+    public function getFollowedUserIds(int $userId, array $authorIds): array
+    {
+        return $this->userRepository->getUserFollowedAuthorsByUserIdAndAuthorIds($userId, $authorIds)
+            ->pluck('id')
+            ->toArray();
     }
 
     public function add(array $requestData, int $userId): ?Post
@@ -26,9 +43,7 @@ class PostService
 
         $post = $this->postRepository->create($requestData);
         if (empty($post)) {
-            throw app(CustomException::class, [
-                'apiCode' => ApiResponseCode::ERROR_POST_ADD,
-            ]);
+            throw app(CustomException::class, ['apiCode' => ApiResponseCode::ERROR_POST_ADD]);
 
             return null;
         }
@@ -45,9 +60,7 @@ class PostService
         ]);
 
         if (empty($post)) {
-            throw app(CustomException::class, [
-                'apiCode' => ApiResponseCode::ERROR_POST_NOT_EXIST,
-            ]);
+            throw app(CustomException::class, ['apiCode' => ApiResponseCode::ERROR_POST_NOT_EXIST]);
 
             return null;
         }
@@ -60,18 +73,14 @@ class PostService
         $post = $this->find($id);
 
         if ($post->user_id != $userId) {
-            throw app(CustomException::class, [
-                'apiCode' => ApiResponseCode::ERROR_POST_NOT_AUTHOR,
-            ]);
+            throw app(CustomException::class, ['apiCode' => ApiResponseCode::ERROR_POST_NOT_AUTHOR]);
 
             return null;
         }
 
         $postUpdated = $this->postRepository->update($requestData, $id);
         if (empty($postUpdated)) {
-            throw app(CustomException::class, [
-                'apiCode' => ApiResponseCode::ERROR_POST_EDIT,
-            ]);
+            throw app(CustomException::class, ['apiCode' => ApiResponseCode::ERROR_POST_EDIT]);
 
             return null;
         }
@@ -84,9 +93,7 @@ class PostService
         $post = $this->find($id);
 
         if ($post->user_id != $userId) {
-            throw app(CustomException::class, [
-                'apiCode' => ApiResponseCode::ERROR_POST_NOT_AUTHOR,
-            ]);
+            throw app(CustomException::class, ['apiCode' => ApiResponseCode::ERROR_POST_NOT_AUTHOR]);
 
             return false;
         }
@@ -100,9 +107,7 @@ class PostService
         $post = $this->find($id);
 
         if ($post->user_id == $userId) {
-            throw app(CustomException::class, [
-                'apiCode' => ApiResponseCode::ERROR_POST_AUTHOR_CAN_NOT_LIKE,
-            ]);
+            throw app(CustomException::class, ['apiCode' => ApiResponseCode::ERROR_POST_AUTHOR_CAN_NOT_LIKE]);
 
             return false;
         }
@@ -116,9 +121,7 @@ class PostService
         $post = $this->find($id);
 
         if ($post->user_id == $userId) {
-            throw app(CustomException::class, [
-                'apiCode' => ApiResponseCode::ERROR_POST_AUTHOR_CAN_NOT_LIKE,
-            ]);
+            throw app(CustomException::class, ['apiCode' => ApiResponseCode::ERROR_POST_AUTHOR_CAN_NOT_LIKE]);
 
             return false;
         }
