@@ -4,7 +4,6 @@ jobs:
   build:
     docker:
       - image: cimg/php:8.1
-      - image: cimg/node:14.17
       - image: mysql:5.7
         command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --innodb-use-native-aio=0 --server-id=1 --log_bin=ON
         environment:
@@ -32,6 +31,13 @@ jobs:
           key: composer-v1-{{ checksum "composer.lock" }}
           paths:
               - vendor
+      - run:
+        name: Install Node.js and NPM
+        command: |
+          curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+          sudo apt-get install -y nodejs
+          node -v
+          npm -v
       - restore_cache: # special step to restore the dependency cache if `package.json` does not change
          keys:
              - node-v1-{{ checksum "package.json" }}
