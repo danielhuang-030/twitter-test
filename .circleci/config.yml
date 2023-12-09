@@ -32,12 +32,12 @@ jobs:
           paths:
               - vendor
       - run:
-        name: Install Node.js and NPM
-        command: |
-          curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
-          sudo apt-get install -y nodejs
-          node -v
-          npm -v
+          name: Install Node.js and NPM
+          command: |
+            curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+            sudo apt-get install -y nodejs
+            node -v
+            npm -v
       - restore_cache: # special step to restore the dependency cache if `package.json` does not change
          keys:
              - node-v1-{{ checksum "package.json" }}
