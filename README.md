@@ -1,6 +1,7 @@
 # twitter test
 [![CircleCI](https://circleci.com/gh/danielhuang-030/twitter-test/tree/master.svg?style=svg)](https://circleci.com/gh/danielhuang-030/twitter-test/tree/master)
-[online Swagger UI demo](https://twitter-test.333030.xyz/api-docs/)
+- [online demo](https://twitter-test.333030.xyz/)
+- [Swagger UI](https://twitter-test.333030.xyz/api-docs/)
 
 ### Introduction
 Simple implementation of the basic functions of twitter: including member login/logout, post, follow and like. (Back-end only)
@@ -14,7 +15,7 @@ Simple implementation of the basic functions of twitter: including member login/
   - Notify members when the status of following is changed
 
 ### Tech Stack
-- Using Laravel 10(PHP 8.1 with swoole) + MySQL 5.7 + Redis + soketi(websocket)
+- Using Laravel 10(PHP 8.1 with swoole) + MySQL 5.7 + Redis + soketi(websocket) + Vue 3
 
 ### Packages
 - [laravel/octane](https://github.com/laravel/octane) - Laravel Octane
@@ -58,6 +59,12 @@ php artisan passport:install
 
 # run horizon
 php artisan horizon
+
+# npm install
+npm install
+
+# npm run production
+npm run production
 
 ```
 ### Tools
