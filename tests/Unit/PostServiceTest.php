@@ -7,6 +7,7 @@ use App\Exceptions\CustomException;
 use App\Models\Post;
 use App\Params\PostParam;
 use App\Repositories\PostRepository;
+use App\Repositories\UserRepository;
 use Illuminate\Pagination\LengthAwarePaginator;
 use PHPUnit\Framework\TestCase;
 
@@ -14,13 +15,15 @@ class PostServiceTest extends TestCase
 {
     protected PostService $postService;
     protected PostRepository $postRepository;
+    protected UserRepository $userRepository;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->postRepository = \Mockery::mock(PostRepository::class);
-        $this->postService = new PostService($this->postRepository);
+        $this->userRepository = \Mockery::mock(UserRepository::class);
+        $this->postService = new PostService($this->postRepository, $this->userRepository);
     }
 
     protected function tearDown(): void
