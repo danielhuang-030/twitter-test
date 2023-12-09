@@ -34,7 +34,7 @@ $docker_command php artisan up
 # npm install
 $docker_command npm install
 
-# npm run prod
-$docker_command npm run prod
+# npm run production
+$docker_command npm run production
 
 echo 'Deploy finished.'
