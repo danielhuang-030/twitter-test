@@ -31,4 +31,10 @@ $docker_command php artisan octane:stop
 # rise from the ashes
 $docker_command php artisan up
 
+# npm install
+$docker_command npm install
+
+# npm run prod
+$docker_command npm run prod
+
 echo 'Deploy finished.'

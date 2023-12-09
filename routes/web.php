@@ -13,12 +13,12 @@
 
 use App\Http\Controllers\CrawlerController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/crawler/index/{crawler}/{monitor}', [CrawlerController::class, 'index']);
 Route::get('/crawler/checked/{crawler}/{monitor}', [CrawlerController::class, 'checked']);
+
+Route::get('/{any}', function () {
+    return view('welcome');
+})->where('any', '.*');

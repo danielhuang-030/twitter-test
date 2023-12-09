@@ -94,6 +94,72 @@ class UserController extends BaseController
     }
 
     /**
+     * profile.
+     *
+     * @OA\Get(
+     *     path="/api/v1/profile",
+     *     summary="User Profile",
+     *     description="User Profile",
+     *     tags={"User"},
+     *     security={
+     *         {
+     *             "passport": {},
+     *         },
+     *     },
+     *
+     *     @OA\Response(
+     *         response="200",
+     *         description="Successfully.",
+     *
+     *         content={
+     *
+     *             @OA\MediaType(
+     *                 mediaType="application/json",
+     *
+     *                 @OA\Schema(
+     *
+     *                     @OA\Property(
+     *                          property="code",
+     *                          type="string",
+     *                          example="000000",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="message",
+     *                          type="string",
+     *                          example="Success.",
+     *                     ),
+     *                     @OA\Property(
+     *                          property="data",
+     *                          type="object",
+     *                          @OA\Property(
+     *                               property="user",
+     *                               ref="#/components/schemas/UserResponse",
+     *                          ),
+     *                     ),
+     *                 ),
+     *             ),
+     *         },
+     *     ),
+     *
+     *     @OA\Response(
+     *         response="401",
+     *         description="Unauthorized.",
+     *
+     *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse"),
+     *     ),
+     * )
+     *
+     * @param Request $request
+     * @param int     $id
+     */
+    public function profile(Request $request)
+    {
+        return $this->responseSuccess(data: [
+            'user' => UserResource::make($this->user),
+        ]);
+    }
+
+    /**
      * info.
      *
      * @OA\Get(

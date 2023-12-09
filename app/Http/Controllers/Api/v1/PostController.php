@@ -10,7 +10,9 @@ use App\Http\Requests\Api\v1\Post\StoreRequest;
 use App\Http\Requests\Api\v1\Post\UpdateRequest;
 use App\Http\Resources\Api\v1\Post\PostResource;
 use App\Http\Resources\Api\v1\User\UserResource;
+use App\Params\PostParam;
 use App\Services\PostService;
+use Illuminate\Http\Request;
 
 class PostController extends BaseController
 {
@@ -31,9 +33,24 @@ class PostController extends BaseController
      *          example="test001",
      *     ),
      *     @OA\Property(
+     *          property="author_id",
+     *          type="number",
+     *          example=1,
+     *     ),
+     *     @OA\Property(
      *          property="content",
      *          type="string",
      *          example="test\ntest2",
+     *     ),
+     *     @OA\Property(
+     *          property="is_liked",
+     *          type="boolean",
+     *          example=false,
+     *     ),
+     *     @OA\Property(
+     *          property="is_followed",
+     *          type="boolean",
+     *          example=false,
      *     ),
      *     @OA\Property(
      *          property="created_at",
@@ -71,6 +88,174 @@ class PostController extends BaseController
     public function __construct(protected PostService $postService)
     {
         parent::__construct();
+    }
+
+    /**
+     * posts.
+     *
+     * @OA\Get(
+     *     path="/api/v1/posts",
+     *     summary="Posts",
+     *     description="Post list",
+     *     tags={"Post"},
+     *     security={
+     *         {
+     *             "passport": {},
+     *         },
+     *     },
+     *
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         required=false,
+     *         description="page",
+     *
+     *         @OA\Schema(
+     *             type="integer",
+     *             format="int64",
+     *             example=1,
+     *         )
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="per_page",
+     *         in="query",
+     *         required=false,
+     *         description="page size",
+     *
+     *         @OA\Schema(
+     *             type="integer",
+     *             format="int64",
+     *             example=10,
+     *         )
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="sort_by",
+     *         in="query",
+     *         required=false,
+     *         description="sort by",
+     *
+     *         @OA\Schema(
+     *             type="string",
+     *             example="updated_at",
+     *         )
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="is_desc",
+     *         in="query",
+     *         required=false,
+     *         description="is sort by desc",
+     *
+     *         @OA\Schema(
+     *             type="integer",
+     *             example=1,
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response="200",
+     *         description="Successfully.",
+     *         content={
+     *
+     *             @OA\MediaType(
+     *                 mediaType="application/json",
+     *
+     *                 @OA\Schema(
+     *                     type="object",
+     *                     allOf={
+     *                         @OA\Schema(
+     *
+     *                             @OA\Property(
+     *                                  property="code",
+     *                                  type="string",
+     *                                  example="000000",
+     *                             ),
+     *                             @OA\Property(
+     *                                  property="message",
+     *                                  type="string",
+     *                                  example="Success.",
+     *                             ),
+     *                             @OA\Property(
+     *                                  property="data",
+     *                                  type="object",
+     *                                  @OA\Property(
+     *                                       property="pagination",
+     *                                       type="object",
+     *                                       @OA\Property(
+     *                                            property="page",
+     *                                            type="number",
+     *                                            example=1,
+     *                                       ),
+     *                                       @OA\Property(
+     *                                            property="per_page",
+     *                                            type="number",
+     *                                            example=20,
+     *                                       ),
+     *                                       @OA\Property(
+     *                                            property="total",
+     *                                            type="number",
+     *                                            example=5,
+     *                                       ),
+     *                                  ),
+     *                                  @OA\Property(
+     *                                       property="data",
+     *                                       type="array",
+     *
+     *                                       @OA\Items(ref="#/components/schemas/PostResponse"),
+     *                                  ),
+     *                             ),
+     *                         ),
+     *                     },
+     *                 ),
+     *             ),
+     *         },
+     *     ),
+     *
+     *     @OA\Response(
+     *         response="401",
+     *         description="Unauthorized.",
+     *
+     *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse"),
+     *     ),
+     *
+     *     @OA\Response(
+     *         response="422",
+     *         description="Validation error.",
+     *
+     *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse"),
+     *     ),
+     * )
+     *
+     * @param Request $request
+     * @param int     $id
+     */
+    public function index(Request $request)
+    {
+        $paginator = $this->postService->getPosts((new PostParam($request))->setWiths([
+            'user',
+        ]));
+
+        $likedPostIds = $this->postService->getUserLikedPostIds(
+            (int) auth()->user()?->id,
+            $paginator->pluck('id')->toArray()
+        );
+        $followedUserIds = $this->postService->getFollowedUserIds(
+            (int) auth()->user()?->id,
+            $paginator->pluck('user.id')->unique()->toArray()
+        );
+        request()->request->add([
+            'liked_post_ids' => $likedPostIds,
+            'followed_user_ids' => $followedUserIds,
+        ]);
+
+        return $this->responseSuccessWithPagination(
+            paginator: $paginator,
+            data: PostResource::collection($paginator)->additional([
+                'liked_post_ids' => $likedPostIds,
+            ])
+        );
     }
 
     /**

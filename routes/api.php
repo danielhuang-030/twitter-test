@@ -22,15 +22,19 @@ Route::get('docs', [ApiController::class, 'getJSON']);
 
 // v1
 Route::prefix('v1')->group(function () {
-    // auth
+    // withourt auth
     Route::post('login', [AuthController::class, 'login']);
     Route::post('signup', [AuthController::class, 'signup']);
+    Route::get('posts', [PostController::class, 'index']);
 
     Route::group([
         'middleware' => 'auth:api',
     ], function () {
         // auth
         Route::get('logout', [AuthController::class, 'logout']);
+
+        // profile
+        Route::get('profile', [UserController::class, 'profile']);
 
         // user
         Route::controller(UserController::class)
