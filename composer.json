@@ -15,6 +15,7 @@
         "laravel/legacy-factories": "^1.3",
         "laravel/octane": "^1.3",
         "laravel/passport": "^11.0",
+        "laravel/pulse": "^1.0@beta",
         "laravel/tinker": "^2.7",
         "laravel/ui": "^4.0",
         "phattarachai/line-notify": "^2.0",

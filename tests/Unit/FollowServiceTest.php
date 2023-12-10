@@ -2,14 +2,11 @@
 
 namespace Tests\Unit\Services;
 
-use App\Enums\ApiResponseCode;
-use App\Exceptions\CustomException;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Services\FollowService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Mockery;
 use PHPUnit\Framework\TestCase;
 
 class FollowServiceTest extends TestCase
@@ -20,24 +17,32 @@ class FollowServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->userRepository = Mockery::mock(UserRepository::class);
+        $this->userRepository = \Mockery::mock(UserRepository::class);
         $this->followService = new FollowService($this->userRepository);
     }
 
-    public function testFollow_WhenFollowerExistsAndUserExistsAndNotAlreadyFollowed_ReturnsTrue()
+    // Add more test methods to cover different scenarios...
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        \Mockery::close();
+    }
+
+    public function testFollowWhenFollowerExistsAndUserExistsAndNotAlreadyFollowedReturnsTrue()
     {
         // Arrange
         $followId = 1;
         $userId = 2;
 
-        $follower = Mockery::mock(User::class);
+        $follower = \Mockery::mock(User::class);
         $follower->shouldReceive('getAttribute')
             ->with('id')
             ->andReturn($followId);
-        $belongsToMany = Mockery::mock(BelongsToMany::class);
+        $belongsToMany = \Mockery::mock(BelongsToMany::class);
         $belongsToMany->shouldReceive('syncWithoutDetaching')
             ->andReturn(Collection::make());
-        $user = Mockery::mock(User::class);
+        $user = \Mockery::mock(User::class);
         $user->shouldReceive('getAttribute')
             ->with('id')
             ->andReturn($userId);
@@ -62,13 +67,13 @@ class FollowServiceTest extends TestCase
 
     // Add more test methods to cover different scenarios...
 
-    public function testUnfollow_WhenFollowerExistsAndUserExistsAndAlreadyFollowed_ReturnsTrue()
+    public function testUnfollowWhenFollowerExistsAndUserExistsAndAlreadyFollowedReturnsTrue()
     {
         // Arrange
         $followId = 1;
         $userId = 2;
 
-        $follower = Mockery::mock(User::class);
+        $follower = \Mockery::mock(User::class);
         $follower->shouldReceive('getAttribute')
             ->with('id')
             ->andReturn($followId)
@@ -76,10 +81,10 @@ class FollowServiceTest extends TestCase
             ->andReturn(true)
             ->shouldReceive('offsetGet')
             ->andReturn($followId);
-        $belongsToMany = Mockery::mock(BelongsToMany::class);
+        $belongsToMany = \Mockery::mock(BelongsToMany::class);
         $belongsToMany->shouldReceive('detach')
             ->andReturn(1);
-        $user = Mockery::mock(User::class);
+        $user = \Mockery::mock(User::class);
         $user->shouldReceive('getAttribute')
             ->with('id')
             ->andReturn($userId)
@@ -100,13 +105,5 @@ class FollowServiceTest extends TestCase
 
         // Assert
         $this->assertTrue($result);
-    }
-
-    // Add more test methods to cover different scenarios...
-
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-        Mockery::close();
     }
 }
