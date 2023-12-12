@@ -13,7 +13,7 @@
 
 use App\Http\Controllers\CrawlerController;
 
-Auth::routes();
+// Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/crawler/index/{crawler}/{monitor}', [CrawlerController::class, 'index']);
