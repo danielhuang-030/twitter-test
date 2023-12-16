@@ -12,51 +12,45 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted, computed } from 'vue';
+import { useRoute } from 'vue-router';
 import PostsList from './PostsList.vue';
 import PostForm from './PostForm.vue';
 import apiService from '../apiService.js';
 
-export default {
-  components: {
-    PostsList,
-    PostForm
-  },
-  data() {
-    return {
-      posts: [],
-      currentPage: 1,
-      pageSize: 10, // 每頁顯示的文章數量
-      totalPosts: 0, // 總文章數量
-      editingPost: null
-    };
-  },
-  computed: {
-    userId() {
-      return this.$route.params.userId;
-    }
-  },
-  created() {
-    this.fetchPosts(this.currentPage);
-  },
-  methods: {
-    async fetchPosts(page) {
-      try {
-        const response = await apiService.getUserPosts({
-          userId: this.userId,
-          page: page,
-          perPage: this.pageSize
-        });
-        this.posts = response.data.data.data;
-        this.totalPosts = response.data.data.pagination.total;
-        this.currentPage = page;
-      } catch (error) {
-        console.error('Error fetching user posts:', error);
-      }
-    },
-    handleEditPost(post) {
-      this.editingPost = post;
-    }
+const posts = ref([]);
+const currentPage = ref(1);
+const pageSize = 10; // 每頁顯示的文章數量
+const totalPosts = ref(0); // 總文章數量
+const editingPost = ref(null);
+
+const route = useRoute();
+const userId = computed(() => route.params.userId);
+
+const fetchPosts = async (page) => {
+  try {
+    const response = await apiService.getUserPosts({
+      userId: userId.value,
+      page: page,
+      perPage: pageSize
+    });
+    posts.value = response.data.data.data;
+    totalPosts.value = response.data.data.pagination.total;
+    currentPage.value = page;
+  } catch (error) {
+    console.error('Error fetching user posts:', error);
   }
 };
+
+const handleEditPost = (post) => {
+  editingPost.value = post;
+};
+
+onMounted(() => {
+  fetchPosts(currentPage.value);
+});
 </script>
+
+<style scoped>
+</style>
