@@ -32,11 +32,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, watch, onMounted, onUnmounted } from 'vue';
 import { useStore } from 'vuex';
 import apiService from './apiService';
 import router from './router';
 import PostForm from './components/PostForm.vue';
+// import { ElNotification } from 'element-plus';
 
 const store = useStore();
 const currentYear = new Date().getFullYear();
@@ -50,9 +51,38 @@ watch(() => store.state.userData, (newUserData) => {
   isLoggedIn.value = !!newUserData;
 });
 
-onMounted(() => {
-  store.dispatch('checkLogin');
-});
+// onMounted(async () => {
+//   try {
+//     await store.dispatch('checkLogin');
+//     setupEchoListener();
+//   } catch (error) {
+//     console.error('Login check failed:', error);
+//   }
+// });
+
+// onUnmounted(() => {
+//   if (isLoggedIn.value) {
+//     window.Echo.leave(`new-user-following-user-${userData.value.id}`);
+//   }
+// });
+
+// const setupEchoListener = () => {
+//   if (isLoggedIn.value) {
+//     const userId = store.state.userData.id;
+//     Echo.channel(`new-user-following-user-${userId}`)
+//       .listen('UserFollowCreated', (event) => {
+//         console.log('UserFollowCreated', event);
+
+//         ElNotification({
+//           title: 'New Follower',
+//           message: `${event.name} has just started following you.`,
+//           type: 'success',
+//         });
+//       });
+
+//     console.log('setupEchoListener');
+//   }
+// };
 
 const logout = async () => {
   try {
