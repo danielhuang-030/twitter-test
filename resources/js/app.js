@@ -16,7 +16,7 @@ window.Echo = new Echo({
   wsHost: window.location.hostname,
   wsPort: window.location.port,
   wssPort: window.location.port,
-  wsPath: '/ws/',
+  wsPath: '/ws',
   forceTLS: false,
   disableStats: true,
   enabledTransports: ['ws', 'wss']
