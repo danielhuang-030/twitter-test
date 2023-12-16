@@ -27,7 +27,7 @@
         "element-plus": "^2.4.3",
         "jquery": "^3.6.0",
         "laravel-echo": "^1.11.3",
-        "pusher-js": "^7.0.6",
+        "pusher-js": "^7.6.0",
         "vue": "^3.3.10",
         "vue-router": "^4.2.5",
         "vuex": "^4.0.2"

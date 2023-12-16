@@ -1,24 +1,36 @@
 require('./bootstrap');
 
-// window.Echo.channel('new-user-following-uesr-2')
-//     .listen('UserFollowCreated', (e) => {
-//         console.log("UserFollowCreated");
-//         console.log(e);
-//     });
-
-// window.Echo.channel('new-user-unfollow-uesr-2')
-//     .listen('UserFollowDeleted', (e) => {
-//         console.log("UserFollowDeleted");
-//         console.log(e);
-//     });
-
 import { createApp } from 'vue'
 import store from './store';
 import router from './router'
 import App from './App.vue'
 import ElementPlus from 'element-plus'
+// import Echo from 'laravel-echo';
 import 'element-plus/dist/index.css'
 import '@fortawesome/fontawesome-free/css/all.css'
+
+// window.Pusher = require('pusher-js');
+// window.Echo = new Echo({
+//   broadcaster: 'pusher',
+//   key: process.env.MIX_PUSHER_APP_KEY,
+//   wsHost: window.location.hostname,
+// //   wsPort: 12000,
+// //   wssPort: 12000,
+// //   path: '/ws/',
+//   wsPort: 12001,
+//   wssPort: 12001,
+//   forceTLS: false,
+//   disableStats: true,
+//   enabledTransports: ['ws', 'wss']
+// });
+
+// window.Echo.connector.pusher.connection.bind('connected', () => {
+//   console.log('Connected to Soketi!');
+// });
+
+// window.Echo.connector.pusher.connection.bind('disconnected', () => {
+//   console.log('Disconnected from Soketi.');
+// });
 
 const app = createApp(App)
 
