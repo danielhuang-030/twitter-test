@@ -26,19 +26,19 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 // });
 
 // Soketi
-import Echo from 'laravel-echo';
+// import Echo from 'laravel-echo';
 
-window.Pusher = require('pusher-js');
-window.Echo = new Echo({
-    broadcaster: 'pusher',
-    key: process.env.MIX_PUSHER_APP_KEY,
-    wsHost: process.env.MIX_PUSHER_HOST,
-    wsPort: process.env.MIX_PUSHER_PORT,
-    // wsHost: window.location.hostname + ':' + window.location.port,
-    // wsPort: null,
-    // wsPath: '/ws',
-    forceTLS: false,
-    encrypted: true,
-    disableStats: true,
-    // nabledTransports: ['ws', 'wss'],
-});
+// window.Pusher = require('pusher-js');
+// window.Echo = new Echo({
+//     broadcaster: 'pusher',
+//     key: process.env.MIX_PUSHER_APP_KEY,
+//     wsHost: '/',
+//     wsPort: process.env.MIX_PUSHER_PORT,
+//     // wsHost: window.location.hostname + ':' + window.location.port,
+//     // wsPort: null,
+//     // wsPath: '/ws',
+//     forceTLS: false,
+//     encrypted: true,
+//     disableStats: true,
+//     // nabledTransports: ['ws', 'wss'],
+// });

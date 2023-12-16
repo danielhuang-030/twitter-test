@@ -1,162 +1,149 @@
 <template>
-    <div class="posts-list">
-      <ul>
-        <li v-for="post in posts" :key="post.id" class="post-item">
-          <div class="post-header">
-            <p class="author-name">{{ post.author }}</p>
-            <p class="post-date" :title="formatDate(post.updated_at).absolute">
-              {{ formatDate(post.updated_at).relative }}
-            </p>
-          </div>
-          <p class="post-content">{{ truncateContent(post.content) }}</p>
-          <div class="post-actions">
-            <!-- Like Icon -->
-            <i class="fa fa-heart action-icon" :class="{ 'liked': post.is_liked, 'not-liked': !post.is_liked }" @click="toggleLike(post)" v-if="!isAuthor(post.author_id)"></i>
-            <!-- Follow Icon -->
-            <i class="fa fa-user-plus action-icon" :class="{ 'followed': post.is_followed, 'not-followed': !post.is_followed }" @click="toggleFollow(post)" v-if="!isAuthor(post.author_id)"></i>
-            <!-- Edit and Delete Icons for Author -->
-            <i class="fa fa-edit action-icon" @click="editPost(post)" v-if="isAuthor(post.author_id)"></i>
-            <i class="fa fa-trash action-icon" @click="confirmDelete(post.id)" v-if="isAuthor(post.author_id)"></i>
-          </div>
-        </li>
-      </ul>
-      <el-pagination
-        @current-change="handlePageChange"
-        :current-page="currentPage"
-        :page-size="pageSize"
-        layout="prev, pager, next"
-        :total="totalPosts">
-      </el-pagination>
-    </div>
-  </template>
+  <div class="posts-list">
+    <ul>
+      <li v-for="post in posts" :key="post.id" class="post-item">
+        <div class="post-header">
+          <p class="author-name">{{ post.author }}</p>
+          <p class="post-date" :title="formatDate(post.updated_at).absolute">
+            {{ formatDate(post.updated_at).relative }}
+          </p>
+        </div>
+        <p class="post-content">{{ truncateContent(post.content) }}</p>
+        <div class="post-actions">
+          <!-- Like Icon -->
+          <i class="fa fa-heart action-icon" :class="{ 'liked': post.is_liked, 'not-liked': !post.is_liked }" @click="toggleLike(post)" v-if="!isAuthor(post.author_id)"></i>
+          <!-- Follow Icon -->
+          <i class="fa fa-user-plus action-icon" :class="{ 'followed': post.is_followed, 'not-followed': !post.is_followed }" @click="toggleFollow(post)" v-if="!isAuthor(post.author_id)"></i>
+          <!-- Edit and Delete Icons for Author -->
+          <i class="fa fa-edit action-icon" @click="editPost(post)" v-if="isAuthor(post.author_id)"></i>
+          <i class="fa fa-trash action-icon" @click="confirmDelete(post.id)" v-if="isAuthor(post.author_id)"></i>
+        </div>
+      </li>
+    </ul>
+    <el-pagination
+      @current-change="handlePageChange"
+      :current-page="currentPage"
+      :page-size="pageSize"
+      layout="prev, pager, next"
+      :total="totalPosts">
+    </el-pagination>
+  </div>
+</template>
 
-  <script>
-  import { formatDistanceToNow, format, differenceInDays } from 'date-fns';
-  import { ElMessageBox } from 'element-plus';
-  import apiService from '../apiService';
+<script setup>
+import { useStore } from 'vuex';
+import { computed } from 'vue';
+import { formatDistanceToNow, format, differenceInDays } from 'date-fns';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import apiService from '../apiService';
+import { defineProps, defineEmits } from 'vue';
 
-  export default {
-    props: {
-      posts: {
-        type: Array,
-        required: true
-      },
-      currentPage: {
-        type: Number,
-        required: true
-      },
-      pageSize: {
-        type: Number,
-        required: true
-      },
-      totalPosts: {
-        type: Number,
-        required: true
-      }
-    },
-    methods: {
-      truncateContent(content, maxLength = 100) {
-        if (content.length <= maxLength) {
-          return content;
-        }
-        let truncated = content.slice(0, maxLength);
+const props = defineProps({
+  posts: Array,
+  currentPage: Number,
+  pageSize: Number,
+  totalPosts: Number
+});
 
-        // 尋找最後一個換行符號之前的位置
-        const lastNewline = truncated.lastIndexOf('\n');
-        if (lastNewline > -1) {
-          truncated = truncated.slice(0, lastNewline);
-        }
+const store = useStore();
+const userData = computed(() => store.state.userData);
+const emit = defineEmits(['page-changed', 'edit-post']);
 
-        return truncated + '...';
-      },
-      formatDate(dateString) {
-        const date = new Date(dateString);
-        const now = new Date();
+const truncateContent = (content, maxLength = 50) => {
+  if (content.length <= maxLength) {
+    return content;
+  }
+  let truncated = content.slice(0, maxLength);
 
-        return {
-          relative: differenceInDays(now, date) > 7
-            ? format(date, 'yyyy-MM-dd HH:mm:ss')
-            : formatDistanceToNow(date, { addSuffix: true }),
-          absolute: format(date, 'yyyy-MM-dd HH:mm:ss')
-        };
-      },
-      handlePageChange(newPage) {
-        this.$emit('page-changed', newPage);
-      },
-      isAuthor(authorId) {
-        const userData = JSON.parse(localStorage.getItem('user-data'));
+  const lastNewline = truncated.lastIndexOf('\n');
+  if (lastNewline > -1) {
+    truncated = truncated.slice(0, lastNewline);
+  }
 
-        if (userData && userData.id) {
-          return authorId === userData.id;
-        }
+  return truncated + '...';
+};
 
-        return false;
-      },
-      confirmDelete(postId) {
-        ElMessageBox.confirm('Are you sure you want to delete this post?', 'Warning', {
-          confirmButtonText: 'Yes',
-          cancelButtonText: 'No',
-          type: 'warning'
-        }).then(() => {
-          this.deletePost(postId);
-        }).catch(() => {
-          // 取消或關閉對話框時的處理（如果需要）
-        });
-      },
-      async deletePost(postId) {
-        try {
-          const response = await apiService.deletePost(postId);
-          this.$message.success(response.data.message);
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const now = new Date();
 
-          setTimeout(() => {
-            window.location.reload();
-          }, 2000);
-        } catch (error) {
-          // 錯誤處理已經在 apiService.js 的攔截器中處理
-        }
-      },
-      editPost(post) {
-        this.$emit('edit-post', post);
-      },
-      async toggleLike(post) {
-        try {
-          if (post.is_liked) {
-            const response = await apiService.unlikePost(post.id);
-            this.$message.success(response.data.message);
-            post.is_liked = false;
-          } else {
-            const response = await apiService.likePost(post.id);
-            this.$message.success(response.data.message);
-            post.is_liked = true;
-          }
-        } catch (error) {
-          console.error(error);
-        }
-      },
-      async toggleFollow(post) {
-        try {
-          if (post.is_followed) {
-            const response = await apiService.unfollowUser(post.author_id);
-            this.$message.success(response.data.message);
-            post.is_followed = false;
-          } else {
-            const response = await apiService.followUser(post.author_id);
-            this.$message.success(response.data.message);
-            post.is_followed = true;
-          }
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    }
+  return {
+    relative: differenceInDays(now, date) > 7
+      ? format(date, 'yyyy-MM-dd HH:mm:ss')
+      : formatDistanceToNow(date, { addSuffix: true }),
+    absolute: format(date, 'yyyy-MM-dd HH:mm:ss')
   };
-  </script>
+};
+
+const handlePageChange = (newPage) => {
+  emit('page-changed', newPage);
+};
+
+const isAuthor = (authorId) => {
+  return userData.value && userData.value.id === authorId;
+};
+
+const confirmDelete = async (postId) => {
+  ElMessageBox.confirm('Are you sure you want to delete this post?', 'Warning', {
+    confirmButtonText: 'Yes',
+    cancelButtonText: 'No',
+    type: 'warning'
+  }).then(() => {
+    deletePost(postId);
+  }).catch(() => {
+  });
+};
+
+const deletePost = async (postId) => {
+  try {
+    const response = await apiService.deletePost(postId);
+    ElMessage.success(response.data.message);
+
+    setTimeout(() => {
+      window.location.reload();
+    }, 2000);
+  } catch (error) {
+  }
+};
+
+const editPost = (post) => {
+  emit('edit-post', post);
+};
+
+const toggleLike = async (post) => {
+  try {
+    if (post.is_liked) {
+      const response = await apiService.unlikePost(post.id);
+      ElMessage.success(response.data.message);
+      post.is_liked = false;
+    } else {
+      const response = await apiService.likePost(post.id);
+      ElMessage.success(response.data.message);
+      post.is_liked = true;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const toggleFollow = async (post) => {
+  try {
+    if (post.is_followed) {
+      const response = await apiService.unfollowUser(post.author_id);
+      ElMessage.success(response.data.message);
+      post.is_followed = false;
+    } else {
+      const response = await apiService.followUser(post.author_id);
+      ElMessage.success(response.data.message);
+      post.is_followed = true;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+</script>
 
 <style scoped>
-.posts-list {
-  /* Add styles for the overall layout */
-}
-
 ul {
   list-style-type: none; /* 移除列表項目前的點 */
   padding: 0;
