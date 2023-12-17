@@ -64,7 +64,7 @@ export default createStore({
         wsPort: window.location.port,
         wssPort: window.location.port,
         wsPath: '/ws',
-        forceTLS: false,
+        forceTLS: window.location.protocol === 'https:',
         encrypted: true,
         disableStats: true,
         enabledTransports: ['ws', 'wss']
@@ -87,7 +87,6 @@ export default createStore({
             type: 'warning',
           });
         });
-
 
       apiService.getFollowingUsers(userId)
         .then(response => {
