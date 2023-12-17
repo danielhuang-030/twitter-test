@@ -143,11 +143,11 @@ services:
         container_name: twitter-test-soketi
         restart: always
         environment:
-            DEBUG: '1'
-            DEFAULT_APP_ID: ${SOKETI_APP_ID:-app-id}
-            DEFAULT_APP_KEY: ${SOKETI_APP_KEY:-app-key}
-            DEFAULT_APP_SECRET: ${SOKETI_APP_SECRET:-app-secret}
-            PORT: 6001
+            SOKETI_DEBUG: '1'
+            SOKETI_DEFAULT_APP_ID: ${SOKETI_APP_ID:-app-id}
+            SOKETI_DEFAULT_APP_KEY: ${SOKETI_APP_KEY:-app-key}
+            SOKETI_DEFAULT_APP_SECRET: ${SOKETI_APP_SECRET:-app-secret}
+            SOKETI_PORT: 6001
         ports:
             - '${WEBSOCKET_PORT:-12001}:6001'
         networks:
