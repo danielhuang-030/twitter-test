@@ -20,7 +20,7 @@ class UserFollowDeleted implements ShouldBroadcast
      *
      * @var string
      */
-    const CHANNEL_FORMAT = 'new-user-unfollow-uesr-%d';
+    const CHANNEL_FORMAT = 'new-user-unfollow-user-%d';
 
     /**
      * user.
