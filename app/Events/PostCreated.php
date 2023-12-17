@@ -56,6 +56,8 @@ class PostCreated implements ShouldBroadcast
      */
     public function broadcastWith()
     {
-        return $this->post->toArray();
+        return $this->post->load([
+            'user',
+        ])->toArray();
     }
 }
