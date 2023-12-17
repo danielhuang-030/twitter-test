@@ -20,7 +20,7 @@ class UserFollowCreated implements ShouldBroadcast
      *
      * @var string
      */
-    const CHANNEL_FORMAT = 'new-user-following-uesr-%d';
+    const CHANNEL_FORMAT = 'new-user-following-user-%d';
 
     /**
      * user.
