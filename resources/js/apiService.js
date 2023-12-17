@@ -91,5 +91,8 @@ export default {
   },
   unfollowUser(userId) {
     return apiClient.delete(`/following/${userId}`);
+  },
+  getFollowingUsers(userId) {
+    return apiClient.get(`/users/${userId}/following`);
   }
 };
