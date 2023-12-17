@@ -18,6 +18,7 @@ window.Echo = new Echo({
   wssPort: window.location.port,
   wsPath: '/ws',
   forceTLS: false,
+  encrypted: true,
   disableStats: true,
   enabledTransports: ['ws', 'wss']
 });
