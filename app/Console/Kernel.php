@@ -18,17 +18,12 @@ class Kernel extends ConsoleKernel
     /**
      * Define the application's command schedule.
      *
-     * @param \Illuminate\Console\Scheduling\Schedule $schedule
+     * @param Schedule $schedule
      *
      * @return void
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('crawler:ruten_c')->everyMinute();
-        // $schedule->command('crawler:ruten_i')->everyMinute();
-        // $schedule->command('crawler:ruten_p')->everyMinute();
-        // $schedule->command('crawler:ruten_s')->everyMinute();
-        // $schedule->command('crawler:ruten_store')->everyMinute();
     }
 
     /**
