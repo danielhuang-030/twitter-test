@@ -17,7 +17,9 @@ class ApiController extends Controller
      */
     public function getJSON()
     {
-        $swagger = \OpenApi\scan(app_path('Http/Controllers/'));
+        $swagger = \OpenApi\Generator::scan([
+            app_path('Http/Controllers/'),
+        ]);
 
         return response()->json($swagger, 200);
     }

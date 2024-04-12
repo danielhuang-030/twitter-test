@@ -11,14 +11,11 @@
 |
 */
 
-use App\Http\Controllers\CrawlerController;
+// API DOCS
+\Route::get('/api-docs', function () {
+    return file_get_contents(public_path('api-docs/index.html'));
+});
 
-// Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');
-Route::get('/crawler/index/{crawler}/{monitor}', [CrawlerController::class, 'index']);
-Route::get('/crawler/checked/{crawler}/{monitor}', [CrawlerController::class, 'checked']);
-
-Route::get('/{any}', function () {
+\Route::get('/{any}', function () {
     return view('welcome');
 })->where('any', '.*');
