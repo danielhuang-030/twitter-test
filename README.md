@@ -15,13 +15,12 @@ Simple implementation of the basic functions of twitter: including member login/
   - Notify members when the status of following is changed
 
 ### Tech Stack
-- Using Laravel 10(PHP 8.1 with swoole) + MySQL 5.7 + Redis + soketi(websocket) + Vue 3
+- Using Laravel 11(PHP 8.2 with swoole) + MySQL 5.7 + Redis + soketi(websocket) + Vue 3
 
 ### Packages
 - [laravel/octane](https://github.com/laravel/octane) - Laravel Octane
 - [laravel/passport](https://github.com/laravel/passport) - Laravel Passport
 - [laravel/horizon](https://github.com/laravel/horizon) - Laravel Horizon
-- [pusher/pusher-http-php](https://github.com/pusher/pusher-http-php) - Pusher Channels HTTP PHP Library
 - [zircote/swagger-php](https://github.com/zircote/swagger-php) - swagger-php
 - [swagger-api/swagger-ui](https://github.com/swagger-api/swagger-ui) - Swagger UI
 
