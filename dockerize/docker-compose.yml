@@ -97,6 +97,7 @@ services:
             #   target: /etc/crontabs/root
         ports:
             - "${SUPERVISORD_PORT:-12008}:9001"
+            - "${WEBPACK_BUNDLE_ANALYZER_PORT:-12005}:9090"
         networks:
             - twitter-test-network
         depends_on:
