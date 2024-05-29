@@ -2,8 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Laravel\Passport\HasApiTokens;
+
 class User extends BaseModelAuthenticatable
 {
+    use HasApiTokens;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -34,22 +40,12 @@ class User extends BaseModelAuthenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    /**
-     * posts.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function posts()
+    public function posts(): HasMany
     {
         return $this->hasMany(Post::class);
     }
 
-    /**
-     * following.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function following()
+    public function following(): BelongsToMany
     {
         return $this->belongsToMany(User::class, UserFollow::class, 'user_id', 'follow_id')
             ->withPivot([
@@ -57,12 +53,7 @@ class User extends BaseModelAuthenticatable
             ]);
     }
 
-    /**
-     * followers.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function followers()
+    public function followers(): BelongsToMany
     {
         return $this->belongsToMany(User::class, UserFollow::class, 'follow_id', 'user_id')
             ->withPivot([
@@ -70,12 +61,7 @@ class User extends BaseModelAuthenticatable
             ]);
     }
 
-    /**
-     * like posts.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function likePosts()
+    public function likePosts(): BelongsToMany
     {
         return $this->belongsToMany(Post::class, PostLike::class)
             ->where('liked', PostLike::LIKED_LIKE)

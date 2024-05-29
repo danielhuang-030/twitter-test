@@ -56,6 +56,9 @@ php artisan horizon:install
 # passport install
 php artisan passport:install
 
+# passport init personal client
+php artisan passport:client --personal
+
 # run horizon
 php artisan horizon
 

@@ -11,7 +11,7 @@ class UserFollowObserver
     /**
      * Handle the user follow "created" event.
      *
-     * @param \App\Models\UserFollow $userFollow
+     * @param UserFollow $userFollow
      *
      * @return void
      */
@@ -23,7 +23,7 @@ class UserFollowObserver
     /**
      * Handle the user follow "updated" event.
      *
-     * @param \App\Models\UserFollow $userFollow
+     * @param UserFollow $userFollow
      *
      * @return void
      */
@@ -34,7 +34,7 @@ class UserFollowObserver
     /**
      * Handle the user follow "deleted" event.
      *
-     * @param \App\Models\UserFollow $userFollow
+     * @param UserFollow $userFollow
      *
      * @return void
      */
@@ -46,7 +46,7 @@ class UserFollowObserver
     /**
      * Handle the user follow "restored" event.
      *
-     * @param \App\Models\UserFollow $userFollow
+     * @param UserFollow $userFollow
      *
      * @return void
      */
@@ -57,7 +57,7 @@ class UserFollowObserver
     /**
      * Handle the user follow "force deleted" event.
      *
-     * @param \App\Models\UserFollow $userFollow
+     * @param UserFollow $userFollow
      *
      * @return void
      */

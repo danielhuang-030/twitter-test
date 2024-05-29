@@ -20,7 +20,7 @@ class UserFollowCreated implements ShouldBroadcast
      *
      * @var string
      */
-    const CHANNEL_FORMAT = 'new-user-following-user-%d';
+    public const CHANNEL_FORMAT = 'new-user-following-user-%d';
 
     /**
      * user.
@@ -50,9 +50,9 @@ class UserFollowCreated implements ShouldBroadcast
     /**
      * Get the channels the event should broadcast on.
      *
-     * @return \Illuminate\Broadcasting\Channel|array
+     * @return Channel|array
      */
-    public function broadcastOn()
+    public function broadcastOn(): Channel|array
     {
         return new Channel(sprintf(static::CHANNEL_FORMAT, $this->following->id));
     }
@@ -62,7 +62,7 @@ class UserFollowCreated implements ShouldBroadcast
      *
      * @return array
      */
-    public function broadcastWith()
+    public function broadcastWith(): array
     {
         return $this->user->toArray();
     }

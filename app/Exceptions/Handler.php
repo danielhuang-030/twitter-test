@@ -2,10 +2,17 @@
 
 namespace App\Exceptions;
 
+use App\Enums\ApiResponseCode;
+use App\Http\Traits\FormatJsonResponses;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 class Handler extends ExceptionHandler
 {
+    use FormatJsonResponses;
+
     /**
      * A list of the exception types that are not reported.
      *
@@ -25,18 +32,6 @@ class Handler extends ExceptionHandler
     ];
 
     /**
-     * Report or log an exception.
-     *
-     * @param \Throwable $exception
-     *
-     * @return void
-     */
-    public function report(\Throwable $exception)
-    {
-        parent::report($exception);
-    }
-
-    /**
      * Render an exception into an HTTP response.
      *
      * @param \Illuminate\Http\Request $request
@@ -48,10 +43,27 @@ class Handler extends ExceptionHandler
     {
         // If the request wants JSON (AJAX doesn't always want JSON)
         if (!$request->wantsJson() || $exception instanceof CustomException) {
-            // Default to the parent class' implementation of handler
             return parent::render($request, $exception);
         }
 
-        return parent::render($request, $exception);
+        // check exceptions
+        switch (get_class($exception)) {
+            // 401
+            case UnauthorizedHttpException::class:
+            case AuthenticationException::class:
+                $code = Response::HTTP_UNAUTHORIZED;
+                $apiCode = ApiResponseCode::ERROR_UNAUTHORIZED;
+                break;
+
+            default:
+                $code = Response::HTTP_BAD_REQUEST;
+                $apiCode = ApiResponseCode::ERROR_UNEXPECTED;
+                break;
+        }
+
+        return parent::render($request, app(CustomException::class, [
+            'statusCode' => $code,
+            'apiCode' => $apiCode,
+        ]));
     }
 }

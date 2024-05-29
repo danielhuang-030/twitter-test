@@ -10,7 +10,7 @@ class PostObserver
     /**
      * Handle the post "created" event.
      *
-     * @param \App\Models\Post $post
+     * @param Post $post
      *
      * @return void
      */
@@ -22,7 +22,7 @@ class PostObserver
     /**
      * Handle the post "updated" event.
      *
-     * @param \App\Models\Post $post
+     * @param Post $post
      *
      * @return void
      */
@@ -33,7 +33,7 @@ class PostObserver
     /**
      * Handle the post "deleting" event.
      *
-     * @param \App\Models\Post $post
+     * @param Post $post
      *
      * @return void
      */
@@ -46,7 +46,7 @@ class PostObserver
     /**
      * Handle the post "deleted" event.
      *
-     * @param \App\Models\Post $post
+     * @param Post $post
      *
      * @return void
      */
@@ -57,7 +57,7 @@ class PostObserver
     /**
      * Handle the post "restored" event.
      *
-     * @param \App\Models\Post $post
+     * @param Post $post
      *
      * @return void
      */
@@ -68,7 +68,7 @@ class PostObserver
     /**
      * Handle the post "force deleted" event.
      *
-     * @param \App\Models\Post $post
+     * @param Post $post
      *
      * @return void
      */
