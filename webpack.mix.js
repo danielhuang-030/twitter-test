@@ -1,14 +1,17 @@
 const mix = require('laravel-mix');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-mix.webpackConfig({
-    plugins: [
-        new BundleAnalyzerPlugin({
-            analyzerMode: 'server',
-            analyzerHost: '0.0.0.0',
-            analyzerPort: 9090 // 確保這個端口在你的伺服器上是開放的
-        })
-    ]
-});
+
+if (!mix.inProduction()) {
+    const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+    mix.webpackConfig({
+        plugins: [
+            new BundleAnalyzerPlugin({
+                analyzerMode: 'server',
+                analyzerHost: '0.0.0.0',
+                analyzerPort: 9090 // 確保這個端口在你的伺服器上是開放的
+            })
+        ]
+    });
+}
 
 /*
  |--------------------------------------------------------------------------
