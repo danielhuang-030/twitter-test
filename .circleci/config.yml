@@ -60,7 +60,7 @@ jobs:
       - run: php artisan key:generate
       - run: php artisan migrate --env=circleci
       - run: php artisan horizon:install
-      - run: php artisan passport:install
+      # - run: php artisan passport:install
       - run:
           name: Run Laravel Server
           command: php artisan serve --port=8000
