@@ -8,7 +8,7 @@ services:
 
 #twitter-test-db
     twitter-test-db:
-        image: mysql:5.7
+        image: mysql:5.7.44
         container_name: ${DB_HOST:-twitter-test-db}
         restart: always
         ports:
@@ -32,53 +32,21 @@ services:
         networks:
             - twitter-test-network
 
-#twitter-test-db-slave
-    # twitter-test-db-slave:
-    #     image: mysql:5.7
-    #     container_name: ${DB_SLAVE_HOST:-twitter-test-db-slave}
-    #     restart: always
-    #     ports:
-    #         - "${DB_SLAVE_PORT:-12007}:3306"
-    #     environment:
-    #         MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
-    #         TZ: ${TZ:-Asia/Taipei}
-    #     command: [
-    #         "--character-set-server=utf8mb4",
-    #         "--collation-server=utf8mb4_general_ci",
-    #         "--innodb-use-native-aio=0",
-    #         "--server-id=2",
-    #         "--log_bin=ON",
-    #         "--replicate-do-db=${DB_DATABASE:-twitter_test}",
-    #         "--max_binlog_size=100M",
-    #         "--default-authentication-plugin=mysql_native_password"
-    #     ]
-    #     volumes:
-    #         - ./data/mysql_slave:/var/lib/mysql
-    #         - ./conf/mysql/custom.cnf:/etc/mysql/conf.d/custom.cnf
-    #     networks:
-    #         - twitter-test-network
-    #     depends_on:
-    #         - ${DB_HOST:-twitter-test-db}
-
 #twitter-test-redis
     twitter-test-redis:
-        build:
-            context: .
-            dockerfile: ./dockerfile/redis.dockerfile
-        image: danielhuang030/twitter-test-redis:0.0.1
+        image: redis:6.0.20
         container_name: ${REDIS_HOST:-twitter-test-redis}
         restart: always
         ports:
             - "${REDIS_PORT:-12009}:6379"
         volumes:
             - ./data/redis:/data
-            - ./conf/redis/redis.conf:/usr/local/etc/redis/redis.conf
         networks:
             - twitter-test-network
 
 #phpMyAdmin
     pma:
-        image: phpmyadmin/phpmyadmin:latest
+        image: phpmyadmin/phpmyadmin:5.2
         container_name: twitter-test-pma
         restart: always
         volumes:
@@ -95,16 +63,14 @@ services:
         depends_on:
             - ${DB_HOST:-twitter-test-db}
 
-#phpRedisAdmin
-    pra:
-        image: erikdubbelboer/phpredisadmin:latest
-        container_name: twitter-test-pra
-        restart: always
+#RedisInsight
+    redisinsight:
+        image: redislabs/redisinsight:v2
+        container_name: twitter-test-ri
         ports:
-            - "${PRA_PORT:-12020}:80"
-        environment:
-            REDIS_1_HOST: ${REDIS_HOST:-twitter-test-redis}
-            REDIS_1_NAME: ${REDIS_HOST:-twitter-test-redis}
+            - "${RI_PORT:-12020}:5540"
+        volumes:
+            - ./data/redis_insight:/db
         networks:
             - twitter-test-network
         depends_on:
@@ -115,7 +81,7 @@ services:
         build:
             context: .
             dockerfile: ./dockerfile/app.dockerfile
-        image: danielhuang030/twitter-test:0.0.6
+        image: danielhuang030/twitter-test:0.0.7
         container_name: ${APP:-twitter-test-app}
         restart: always
         volumes:
@@ -131,6 +97,7 @@ services:
             #   target: /etc/crontabs/root
         ports:
             - "${SUPERVISORD_PORT:-12008}:9001"
+            - "${WEBPACK_BUNDLE_ANALYZER_PORT:-12005}:9090"
         networks:
             - twitter-test-network
         depends_on:
@@ -155,7 +122,7 @@ services:
 
 #twitter-test-web-server
     twitter-test-web-server:
-        image: nginx:alpine
+        image: nginx:1.25-alpine
         container_name: twitter-test-web-server
         restart: always
         volumes:

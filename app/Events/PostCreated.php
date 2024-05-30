@@ -20,7 +20,7 @@ class PostCreated implements ShouldBroadcast
      *
      * @var string
      */
-    const CHANNEL_FORMAT = 'new-post-from-user-%d';
+    public const CHANNEL_FORMAT = 'new-post-from-user-%d';
 
     /**
      * Post.
@@ -42,9 +42,9 @@ class PostCreated implements ShouldBroadcast
     /**
      * Get the channels the event should broadcast on.
      *
-     * @return \Illuminate\Broadcasting\Channel|array
+     * @return Channel|array
      */
-    public function broadcastOn()
+    public function broadcastOn(): Channel|array
     {
         return new Channel(sprintf(static::CHANNEL_FORMAT, $this->post->user_id));
     }
@@ -54,7 +54,7 @@ class PostCreated implements ShouldBroadcast
      *
      * @return array
      */
-    public function broadcastWith()
+    public function broadcastWith(): array
     {
         return $this->post->load([
             'user',

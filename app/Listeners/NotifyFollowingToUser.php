@@ -5,7 +5,6 @@ namespace App\Listeners;
 use App\Events\UserFollowCreated;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
-use Log;
 
 class NotifyFollowingToUser implements ShouldQueue
 {
@@ -20,7 +19,7 @@ class NotifyFollowingToUser implements ShouldQueue
      */
     public function handle(UserFollowCreated $event)
     {
-        Log::info(sprintf('%s following %s', data_get($event, 'user.name'), data_get($event, 'following.name')));
+        \Log::info(sprintf('%s following %s', data_get($event, 'user.name'), data_get($event, 'following.name')));
 
         return;
     }

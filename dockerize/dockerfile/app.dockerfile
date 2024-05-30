@@ -1,37 +1,25 @@
-FROM php:8.1-fpm-alpine
+FROM php:8.2-fpm-alpine
 
-LABEL maintainer=""
+LABEL maintainer="danielhuang-030"
 
+ARG REDIS_VERSION=6.0.2
+ARG SWOOLE_VERSION=5.1.1
 ARG TZ=Asia/Taipei
-ENV TZ=${TZ}
+
+ENV TZ=$TZ
 RUN echo $TZ > /etc/timezone
 
-RUN apk update && apk upgrade && apk add bash git vim libxml2-dev oniguruma-dev tzdata && \
-  apk --update add supervisor nodejs npm
+RUN apk update && apk upgrade && \
+    apk add --no-cache bash git vim supervisor curl freetype libpng libjpeg-turbo freetype-dev libpng-dev libjpeg-turbo-dev libzip-dev libwebp-dev imagemagick imagemagick-dev build-base nodejs npm tzdata
 
-RUN docker-php-ext-install pdo_mysql bcmath pcntl mbstring sockets
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+RUN chmod +x /usr/local/bin/install-php-extensions
 
-RUN apk add --no-cache freetype libpng libjpeg-turbo freetype-dev libpng-dev libjpeg-turbo-dev libzip-dev libwebp-dev curl && \
-  docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg --with-webp
+RUN install-php-extensions pdo_mysql bcmath pcntl mbstring sockets zip gd imagick redis-$REDIS_VERSION swoole-$SWOOLE_VERSION
 
-## 安裝PHP-GD
-RUN docker-php-ext-install gd
+RUN apk del --purge freetype-dev libpng-dev libjpeg-turbo-dev libzip-dev libwebp-dev imagemagick-dev build-base musl-dev g++ && \
+    rm -rf /var/cache/apk/* /tmp/* /var/tmp/*
 
-## 安裝PHP-ZIP
-RUN docker-php-ext-install zip
-
-## install redis, swoole
-RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS
-RUN pecl install -o -f redis \
-    && pecl install swoole \
-	&& rm -rf /tmp/pear \
-	&& docker-php-ext-enable redis swoole
-
-RUN rm /var/cache/apk/* && \
-    mkdir -p /var/www && \
-	  mkdir -m 777 -p /var/log/supervisor
-
-## 安裝composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 COPY ./conf/cron/root /etc/crontabs/root
