@@ -6,9 +6,7 @@ use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Services\AuthService;
 use App\Services\UserService;
-use Hash;
 use Illuminate\Foundation\Testing\WithFaker;
-use Mockery;
 use Tests\TestCase;
 
 class AuthTest extends TestCase
@@ -26,6 +24,14 @@ class AuthTest extends TestCase
     {
         parent::setUp();
 
+        // init passport
+        $this->artisan('passport:client', [
+            '--personal' => true,
+            '--name' => config('app.name'),
+            '--redirect_uri' => config('app.url'),
+            '--no-interaction' => true,
+        ]);
+
         $this->name = $this->faker->name();
         $this->email = $this->faker->email();
         $this->password = $this->faker->password(6, 12);
@@ -41,8 +47,8 @@ class AuthTest extends TestCase
         $userFaker = new User();
         $userFaker->name = $this->name;
         $userFaker->email = $this->email;
-        $userFaker->password = Hash::make($this->password);
-        $userRepositoryMock = Mockery::mock(UserRepository::class);
+        $userFaker->password = \Hash::make($this->password);
+        $userRepositoryMock = \Mockery::mock(UserRepository::class);
         $userRepositoryMock->shouldReceive('create')
             ->once()
             ->andReturn($userFaker);
@@ -70,8 +76,8 @@ class AuthTest extends TestCase
         $userFaker->id = 999;
         $userFaker->name = $this->name;
         $userFaker->email = $this->email;
-        $userFaker->password = Hash::make($this->password);
-        $userRepositoryMock = Mockery::mock(UserRepository::class);
+        $userFaker->password = \Hash::make($this->password);
+        $userRepositoryMock = \Mockery::mock(UserRepository::class);
         $userRepositoryMock->shouldReceive('getByEmail')
             ->once()
             ->with($this->email)

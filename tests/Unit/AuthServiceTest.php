@@ -1,12 +1,13 @@
 <?php
 
-use App\Services\AuthService;
-use App\Repositories\UserRepository;
-use App\Models\User;
-use App\Exceptions\CustomException;
 use App\Enums\ApiResponseCode;
-use Illuminate\Support\Facades\Hash;
+use App\Exceptions\CustomException;
+use App\Models\User;
+use App\Repositories\UserRepository;
+use App\Services\AuthService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
+use Laravel\Passport\Passport;
 use Tests\TestCase;
 
 class AuthServiceTest extends TestCase
@@ -22,9 +23,17 @@ class AuthServiceTest extends TestCase
 
         $this->userRepository = $this->mock(UserRepository::class);
         $this->authService = new AuthService($this->userRepository);
+
+        // init passport
+        $this->artisan('passport:client', [
+            '--personal' => true,
+            '--name' => config('app.name'),
+            '--redirect_uri' => config('app.url'),
+            '--no-interaction' => true,
+        ]);
     }
 
-    public function testAttempt_ThrowsCustomExceptionIfUserDoesNotExist()
+    public function testAttemptThrowsCustomExceptionIfUserDoesNotExist()
     {
         $credentials = [
             'email' => 'test@example.com',
@@ -43,7 +52,7 @@ class AuthServiceTest extends TestCase
         $this->authService->attempt($credentials);
     }
 
-    public function testAttempt_ThrowsCustomExceptionIfPasswordIsIncorrect()
+    public function testAttemptThrowsCustomExceptionIfPasswordIsIncorrect()
     {
         $credentials = [
             'email' => 'test@example.com',
@@ -65,7 +74,7 @@ class AuthServiceTest extends TestCase
         $this->authService->attempt($credentials);
     }
 
-    public function testAttempt_SetsUserTokenAndAuthenticatesUser()
+    public function testAttemptSetsUserTokenAndAuthenticatesUser()
     {
         $credentials = [
             'email' => 'test@example.com',
