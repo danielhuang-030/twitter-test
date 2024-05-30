@@ -38,3 +38,6 @@ $docker_command php artisan up
 # $docker_command npm run production
 
 echo 'Deploy finished.'
+
+# exit
+exit 0
