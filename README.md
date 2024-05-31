@@ -53,11 +53,9 @@ php artisan migrate
 # horizon install
 php artisan horizon:install
 
-# passport install
-php artisan passport:install
-
-# passport init personal client
-php artisan passport:client --personal
+# passport init
+php artisan passport:keys
+php artisan passport:client --personal --no-interaction
 
 # run horizon
 php artisan horizon
