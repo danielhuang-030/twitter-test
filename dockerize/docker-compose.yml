@@ -10,7 +10,7 @@ services:
     twitter-test-db:
         image: mysql:5.7.44
         container_name: ${DB_HOST:-twitter-test-db}
-        restart: always
+        restart: unless-stopped
         ports:
             - "${DB_PORT:-12006}:3306"
         environment:
@@ -36,7 +36,7 @@ services:
     twitter-test-redis:
         image: redis:6.0.20
         container_name: ${REDIS_HOST:-twitter-test-redis}
-        restart: always
+        restart: unless-stopped
         ports:
             - "${REDIS_PORT:-12009}:6379"
         volumes:
@@ -48,7 +48,7 @@ services:
     pma:
         image: phpmyadmin/phpmyadmin:5.2
         container_name: twitter-test-pma
-        restart: always
+        restart: unless-stopped
         volumes:
             - type: bind
               source: ./conf/phpMyAdmin/config.user.inc.php
@@ -67,6 +67,7 @@ services:
     redisinsight:
         image: redislabs/redisinsight:v2
         container_name: twitter-test-ri
+        restart: unless-stopped
         ports:
             - "${RI_PORT:-12020}:5540"
         volumes:
@@ -83,7 +84,7 @@ services:
             dockerfile: ./dockerfile/app.dockerfile
         image: danielhuang030/twitter-test:0.0.7
         container_name: ${APP:-twitter-test-app}
-        restart: always
+        restart: unless-stopped
         volumes:
             - ../:/var/www/html/
             - type: bind
@@ -108,7 +109,7 @@ services:
     twitter-test-soketi:
         image: 'quay.io/soketi/soketi:latest-16-alpine'
         container_name: twitter-test-soketi
-        restart: always
+        restart: unless-stopped
         environment:
             SOKETI_DEBUG: '1'
             SOKETI_DEFAULT_APP_ID: ${SOKETI_APP_ID:-app-id}
@@ -124,7 +125,7 @@ services:
     twitter-test-web-server:
         image: nginx:1.25-alpine
         container_name: twitter-test-web-server
-        restart: always
+        restart: unless-stopped
         volumes:
             - ../:/var/www/html
             - ./log/nginx/:/var/log/nginx
