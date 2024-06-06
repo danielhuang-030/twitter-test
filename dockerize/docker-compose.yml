@@ -71,7 +71,7 @@ services:
         ports:
             - "${RI_PORT:-12020}:5540"
         volumes:
-            - ./data/redis_insight:/db
+            - ./data/redis_insight:/data
         networks:
             - twitter-test-network
         depends_on:

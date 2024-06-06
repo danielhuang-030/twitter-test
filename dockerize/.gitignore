@@ -1,8 +1,9 @@
 # Ignore folders
 log/nginx/*
-data/mysql/*
-data/mysql_slave/*
-data/redis/*
+data/*
+!/data/mysql/.gitignore
+!/data/redis/.gitignore
+!/data/redis_insight/.gitignore
 
 # others
 *.DS_Store
