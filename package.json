@@ -1,26 +1,24 @@
 {
-    "private": true,
+    "type": "module",
     "scripts": {
-        "dev": "npm run development",
-        "development": "mix",
-        "watch": "mix watch",
-        "watch-poll": "mix watch -- --watch-options-poll=1000",
-        "hot": "mix watch --hot",
-        "prod": "npm run production",
-        "production": "mix --production"
+        "dev": "vite",
+        "build": "vite build"
     },
     "devDependencies": {
-        "axios": "^1.6",
+        "@rollup/plugin-commonjs": "^26.0.1",
+        "@vitejs/plugin-vue": "^5.0.5",
+        "axios": "^1.7.2",
         "babel-plugin-import": "^1.13.8",
         "chokidar": "^3.5.3",
         "laravel-mix": "^6.0.6",
+        "laravel-vite-plugin": "^1.0.4",
         "lodash": "^4.17.19",
         "postcss": "^8.4.31",
         "resolve-url-loader": "^5.0.0",
         "sass": "^1.49.9",
         "sass-loader": "^12.6.0",
-        "vue-loader": "^16.8.3",
-        "webpack-bundle-analyzer": "^4.10.2"
+        "vite": "^5.2.12",
+        "vue-loader": "^16.8.3"
     },
     "dependencies": {
         "@fortawesome/fontawesome-free": "^6.5.1",
@@ -28,7 +26,7 @@
         "date-fns": "^2.30.0",
         "element-plus": "^2.4.3",
         "jquery": "^3.6.0",
-        "laravel-echo": "^1.11.3",
+        "laravel-echo": "^1.16.1",
         "pusher-js": "^7.6.0",
         "vue": "^3.3.10",
         "vue-router": "^4.2.5",
