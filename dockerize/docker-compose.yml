@@ -76,6 +76,7 @@ services:
             - twitter-test-network
         depends_on:
             - ${REDIS_HOST:-twitter-test-redis}
+        user: "0:0"
 
 #twitter-test
     twitter-test:
