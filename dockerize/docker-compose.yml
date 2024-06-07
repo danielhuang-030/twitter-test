@@ -86,6 +86,8 @@ services:
         image: danielhuang030/twitter-test:0.0.7
         container_name: ${APP:-twitter-test-app}
         restart: unless-stopped
+        environment:
+            VITE_DEV_PORT: ${VITE_DEV_PORT:-12002}
         volumes:
             - ../:/var/www/html/
             - type: bind
@@ -100,6 +102,7 @@ services:
         ports:
             - "${SUPERVISORD_PORT:-12008}:9001"
             - "${WEBPACK_BUNDLE_ANALYZER_PORT:-12005}:9090"
+            - "${VITE_DEV_PORT:-12002}:${VITE_DEV_PORT:-12002}"
         networks:
             - twitter-test-network
         depends_on:
