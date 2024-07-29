@@ -33,6 +33,12 @@ class AuthServiceTest extends TestCase
         ]);
     }
 
+    protected function tearDown(): void
+    {
+        \Mockery::close();
+        parent::tearDown();
+    }
+
     public function testAttemptThrowsCustomExceptionIfUserDoesNotExist()
     {
         $credentials = [

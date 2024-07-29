@@ -37,6 +37,12 @@ class AuthTest extends TestCase
         $this->password = $this->faker->password(6, 12);
     }
 
+    protected function tearDown(): void
+    {
+        \Mockery::close();
+        parent::tearDown();
+    }
+
     /**
      * signup.
      *
@@ -52,9 +58,8 @@ class AuthTest extends TestCase
         $userRepositoryMock->shouldReceive('create')
             ->once()
             ->andReturn($userFaker);
-        $userService = resolve(UserService::class, [
-            'userRepository' => $userRepositoryMock,
-        ]);
+        $this->app->instance(UserRepository::class, $userRepositoryMock);
+        $userService = app(UserService::class);
         $postData = [
             'name' => $this->name,
             'email' => $this->email,
@@ -82,6 +87,8 @@ class AuthTest extends TestCase
             ->once()
             ->with($this->email)
             ->andReturn($userFaker);
+        // $this->app->instance(UserRepository::class, $userRepositoryMock);
+        // $authService = app(AuthService::class);
         $authService = resolve(AuthService::class, [
             'userRepository' => $userRepositoryMock,
         ]);
