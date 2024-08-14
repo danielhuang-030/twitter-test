@@ -11,7 +11,7 @@ const url = new URL(appUrl);
 const hostWithoutPort = url.hostname;
 
 export default defineConfig({
-    base: '/',
+    base: '/build/',
     plugins: [
         laravel({
             input: ['resources/js/app.js'],
@@ -27,20 +27,30 @@ export default defineConfig({
         },
     },
     build: {
-        outDir: 'public/build',
-        manifest: true,
+        minify: 'terser',
+        terserOptions: {
+            compress: {
+                // 正式環境時移除 console
+                drop_console: true,
+                drop_debugger: true
+            }
+        },
         rollupOptions: {
-            input: 'resources/js/app.js',
             output: {
-                manualChunks(id) {
-                    if (id.includes('node_modules')) {
-                        return id.toString().split('node_modules/')[1].split('/')[0].toString();
-                    }
-                },
                 assetFileNames: 'assets/[name].[hash][extname]',
                 chunkFileNames: 'assets/[name].[hash].js',
                 entryFileNames: 'assets/[name].[hash].js',
-            },
+                manualChunks(id) {
+                    if (id.includes('node_modules')) {
+                        return id
+                            .toString()
+                            .split('node_modules/')[1]
+                            .split('/')[0]
+                            .toString();
+                    }
+                }
+            }
         },
+        chunkSizeWarningLimit: 1600,
     },
 });
