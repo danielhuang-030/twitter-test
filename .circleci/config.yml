@@ -57,7 +57,6 @@ jobs:
       - run:
           name: Mysql database
           command: mysql -h 127.0.0.1 -uroot -proot -e "CREATE DATABASE circleci;"
-      - run: php artisan key:generate
       - run: php artisan migrate --env=circleci
       - run: php artisan horizon:install
       - run: php artisan passport:keys
