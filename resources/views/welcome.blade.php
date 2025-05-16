@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-    <!-- Head Contents -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Laravel</title>
+    @vite(['resources/js/app.js'])
 </head>
 <body>
-    <div id="app">
-        <router-view></router-view>
-    </div>
-
-    <script src="{{ mix('/js/app.js') }}"></script>
+    <div id="app"></div>
 </body>
 </html>

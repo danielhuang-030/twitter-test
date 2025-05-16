@@ -59,7 +59,7 @@ export default createStore({
     async setupWebSocket({ commit }, userId) {
       const echo = new Echo({
         broadcaster: 'pusher',
-        key: process.env.MIX_PUSHER_APP_KEY,
+        key: import.meta.env.VITE_PUSHER_APP_KEY,
         wsHost: window.location.hostname,
         wsPort: window.location.port,
         wssPort: window.location.port,
