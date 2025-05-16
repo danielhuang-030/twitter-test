@@ -53,7 +53,7 @@ jobs:
          key: node-v1-{{ checksum "package.json" }}
          paths:
              - node_modules
-      - run: npm run production
+      - run: npm run build
       - run:
           name: Mysql database
           command: mysql -h 127.0.0.1 -uroot -proot -e "CREATE DATABASE circleci;"
