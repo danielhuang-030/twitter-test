@@ -1,9 +1,9 @@
-FROM php:8.2-fpm-alpine
+FROM php:8.4-fpm-alpine
 
 LABEL maintainer="danielhuang-030"
 
-ARG REDIS_VERSION=6.0.2
-ARG SWOOLE_VERSION=5.1.1
+ARG REDIS_VERSION=6.2.0
+ARG SWOOLE_VERSION=6.0.2
 ARG TZ=Asia/Taipei
 
 ENV TZ=$TZ
