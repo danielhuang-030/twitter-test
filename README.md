@@ -15,7 +15,7 @@ Simple implementation of the basic functions of twitter: including member login/
   - Notify members when the status of following is changed
 
 ### Tech Stack
-- Using Laravel 11(PHP 8.2 with swoole) + MySQL 5.7 + Redis + soketi(websocket) + Vue 3
+- Using Laravel 12(PHP 8.4 with swoole) + MySQL 5.7 + Redis + soketi(websocket) + Vue 3
 
 ### Packages
 - [laravel/octane](https://github.com/laravel/octane) - Laravel Octane
