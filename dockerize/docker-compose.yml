@@ -1,5 +1,3 @@
-version: '3.7'
-
 networks:
     twitter-test-network:
         driver: bridge
@@ -83,7 +81,7 @@ services:
         build:
             context: .
             dockerfile: ./dockerfile/app.dockerfile
-        image: danielhuang030/twitter-test:0.0.7
+        image: danielhuang030/twitter-test:0.0.8
         container_name: ${APP:-twitter-test-app}
         restart: unless-stopped
         environment:
