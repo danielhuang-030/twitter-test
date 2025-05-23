@@ -6,15 +6,19 @@ use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Services\AuthService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
+use App\Models\User;
 
 class AuthServiceTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase, WithFaker;
 
     protected $userRepository;
+    private $email;
+    private $password;
     protected $authService;
 
     protected function setUp(): void
@@ -25,12 +29,20 @@ class AuthServiceTest extends TestCase
         $this->authService = new AuthService($this->userRepository);
 
         // init passport
-        $this->artisan('passport:client', [
-            '--personal' => true,
-            '--name' => config('app.name'),
-            '--redirect_uri' => config('app.url'),
-            '--no-interaction' => true,
-        ]);
+        // Check if passport client already exists to avoid re-creating it
+        // This is a simplified check; a more robust check might query the database
+        // or use a flag if this setup runs multiple times in a test suite.
+        if (!\Laravel\Passport\Client::where('personal_access_client', 1)->exists()) {
+            $this->artisan('passport:client', [
+                '--personal' => true,
+                '--name' => config('app.name'),
+                '--redirect_uri' => config('app.url'),
+                '--no-interaction' => true,
+            ]);
+        }
+
+        $this->email = $this->faker->email();
+        $this->password = $this->faker->password(6, 12);
     }
 
     protected function tearDown(): void
@@ -112,5 +124,37 @@ class AuthServiceTest extends TestCase
         $result = $this->authService->attempt($credentials);
 
         $this->assertSame($user, $result);
+    }
+
+    /**
+     * login.
+     *
+     * @return void
+     */
+    public function testLogin()
+    {
+        $userFaker = new User();
+        $userFaker->id = 999;
+        $userFaker->name = $this->faker->name(); // Use faker for name consistency if needed, or a fixed name
+        $userFaker->email = $this->email;
+        $userFaker->password = \Hash::make($this->password);
+
+        $this->userRepository->shouldReceive('getByEmail')
+            ->once()
+            ->with($this->email)
+            ->andReturn($userFaker);
+
+        // Resolve AuthService with the mocked UserRepository
+        // The existing $this->authService is already instantiated with the mock.
+        // No need to resolve it again unless it's a different instance or specific context.
+
+        $postData = [
+            'email' => $this->email,
+            'password' => $this->password,
+        ];
+        $result = $this->authService->attempt($postData); // Use the class property $this->authService
+
+        $this->assertEquals($userFaker->name, $result->name);
+        $this->assertEquals($this->email, $result->email);
     }
 }
