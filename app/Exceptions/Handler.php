@@ -18,15 +18,14 @@ class Handler extends ExceptionHandler
      *
      * @var array
      */
-    protected array $dontReport = [
-    ];
+    protected $dontReport = [];
 
     /**
      * A list of the inputs that are never flashed for validation exceptions.
      *
      * @var array
      */
-    protected array $dontFlash = [
+    protected $dontFlash = [
         'password',
         'password_confirmation',
     ];
@@ -37,9 +36,9 @@ class Handler extends ExceptionHandler
      * @param \Illuminate\Http\Request $request
      * @param \Throwable               $exception
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
-    public function render(\Illuminate\Http\Request $request, \Throwable $exception): \Symfony\Component\HttpFoundation\Response
+    public function render($request, \Throwable $exception)
     {
         // If the request wants JSON (AJAX doesn't always want JSON)
         if (!$request->wantsJson() || $exception instanceof CustomException) {
