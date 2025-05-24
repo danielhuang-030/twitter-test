@@ -85,7 +85,7 @@ class PostController extends BaseController
      *     ),
      * ),
      */
-    public function __construct(protected PostService $postService)
+    public function __construct(protected readonly PostService $postService)
     {
         parent::__construct();
     }
@@ -579,7 +579,7 @@ class PostController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateRequest $request, $id)
+    public function update(UpdateRequest $request, int $id)
     {
         $post = $this->postService->edit($request->validated(), $id, (int) auth()->user()?->id);
 
@@ -686,7 +686,7 @@ class PostController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(int $id)
     {
         if (!$this->postService->del($id, (int) auth()->user()?->id)) {
             return $this->responseFail(code: ApiResponseCode::ERROR_POST_DEL->value);
@@ -798,7 +798,7 @@ class PostController extends BaseController
      * @param LikeRequest $request
      * @param int         $id
      */
-    public function like(LikeRequest $request, $id)
+    public function like(LikeRequest $request, int $id)
     {
         if (!$this->postService->like($id, (int) auth()->user()?->id)) {
             return $this->responseFail(code: ApiResponseCode::ERROR_POST_LIKE->value);
@@ -910,7 +910,7 @@ class PostController extends BaseController
      * @param DislikeRequest $request
      * @param int            $id
      */
-    public function dislike(DislikeRequest $request, $id)
+    public function dislike(DislikeRequest $request, int $id)
     {
         if (!$this->postService->dislike($id, (int) auth()->user()?->id)) {
             return $this->responseFail(code: ApiResponseCode::ERROR_POST_DISLIKE->value);
@@ -998,7 +998,7 @@ class PostController extends BaseController
      *
      * @param int $id
      */
-    public function likedUsers($id)
+    public function likedUsers(int $id)
     {
         $post = $this->postService->find($id);
 

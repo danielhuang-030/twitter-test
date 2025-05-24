@@ -9,5 +9,5 @@ abstract class BaseModel extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected array $guarded = [];
 }

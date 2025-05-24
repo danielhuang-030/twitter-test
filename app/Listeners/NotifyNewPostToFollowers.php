@@ -18,13 +18,13 @@ class NotifyNewPostToFollowers implements ShouldQueue
      *
      * @return void
      */
-    public function handle(PostCreated $event)
+    public function handle(PostCreated $event): void
     {
         $followers = data_get($event, 'post.user.followers', collect());
         if ($followers->isEmpty()) {
             return;
         }
-        $followers->each(function ($user) use ($event) {
+        $followers->each(function (\App\Models\User $user) use ($event): void {
             Log::info(sprintf('%s add a new post, notify %s', data_get($event, 'post.user.name', ''), $user->name));
         });
 

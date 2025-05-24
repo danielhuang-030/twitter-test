@@ -22,19 +22,8 @@ class UserFollowDeleted implements ShouldBroadcast
      */
     public const CHANNEL_FORMAT = 'new-user-unfollow-user-%d';
 
-    /**
-     * user.
-     *
-     * @var User
-     */
-    public $user;
-
-    /**
-     * following.
-     *
-     * @var User
-     */
-    public $following;
+    public readonly \App\Models\User $user;
+    public readonly \App\Models\User $following;
 
     /**
      * Create a new event instance.
@@ -43,6 +32,7 @@ class UserFollowDeleted implements ShouldBroadcast
      */
     public function __construct(UserFollow $userFollow)
     {
+        // Assuming $userFollow->user and $userFollow->following always return non-null User instances
         $this->user = $userFollow->user;
         $this->following = $userFollow->following;
     }

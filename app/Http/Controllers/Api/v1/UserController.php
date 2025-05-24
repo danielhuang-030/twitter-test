@@ -75,9 +75,9 @@ class UserController extends BaseController
      *     ),
      * ),
      */
-    protected $user;
+    protected ?User $user = null; // Initialize to null for clarity, or ensure middleware always sets it before use
 
-    public function __construct(protected UserService $userService, protected PostService $postService)
+    public function __construct(protected readonly UserService $userService, protected readonly PostService $postService)
     {
         parent::__construct();
 
@@ -238,7 +238,7 @@ class UserController extends BaseController
      * @param Request $request
      * @param int     $id
      */
-    public function info(Request $request, $id)
+    public function info(Request $request, int $id)
     {
         return $this->responseSuccess(data: [
             'user' => UserResource::make($this->user),
@@ -325,7 +325,7 @@ class UserController extends BaseController
      * @param Request $request
      * @param int     $id
      */
-    public function following(Request $request, $id)
+    public function following(Request $request, int $id)
     {
         $following = $this->user->load([
             'following',
@@ -416,7 +416,7 @@ class UserController extends BaseController
      * @param Request $request
      * @param int     $id
      */
-    public function followers(Request $request, $id)
+    public function followers(Request $request, int $id)
     {
         $followers = $this->user->load([
             'followers',
@@ -588,7 +588,7 @@ class UserController extends BaseController
      * @param PostsRequest $request
      * @param int          $id
      */
-    public function posts(PostsRequest $request, $id)
+    public function posts(PostsRequest $request, int $id)
     {
         $paginator = $this->postService->getPosts(
             (new PostParam($request))->setUserId($id)
@@ -683,7 +683,7 @@ class UserController extends BaseController
      * @param Request $request
      * @param int     $id
      */
-    public function likedPosts(Request $request, $id)
+    public function likedPosts(Request $request, int $id)
     {
         $likePosts = $this->user->load([
             'likePosts' => function ($query) {

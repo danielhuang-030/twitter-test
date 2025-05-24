@@ -11,7 +11,7 @@ class AuthLoginRequest extends JsonRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'email' => [

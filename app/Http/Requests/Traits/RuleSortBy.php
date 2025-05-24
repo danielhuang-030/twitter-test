@@ -20,7 +20,7 @@ trait RuleSortBy
         return $rules;
     }
 
-    public function getSortByMessages(string $sortByName = 'sort_by', string $isDescName = 'is_desc')
+    public function getSortByMessages(string $sortByName = 'sort_by', string $isDescName = 'is_desc'): array
     {
         return [
             sprintf('%s.in', $sortByName) => ':attribute must be one of the following values: :values',

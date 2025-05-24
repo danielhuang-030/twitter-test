@@ -20,7 +20,7 @@ trait FormatJsonResponses
      * @return JsonResponse
      */
     protected function responseSuccess(
-        $data = [],
+        array $data = [],
         string $code = '',
         string $message = '',
         int $httpStatusCode = Response::HTTP_OK
@@ -45,8 +45,8 @@ trait FormatJsonResponses
      */
     protected function responseSuccessWithPagination(
         LengthAwarePaginator $paginator,
-        $data = [],
-        $extraData = [],
+        array $data = [],
+        array $extraData = [],
         string $code = '',
         string $message = '',
         int $httpStatusCode = Response::HTTP_OK
@@ -82,7 +82,7 @@ trait FormatJsonResponses
      * @return JsonResponse
      */
     protected function responseFail(
-        $data = [],
+        array $data = [],
         string $code = '',
         string $message = '',
         int $httpStatusCode = Response::HTTP_BAD_REQUEST

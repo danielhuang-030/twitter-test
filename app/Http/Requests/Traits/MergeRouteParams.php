@@ -9,7 +9,7 @@ trait MergeRouteParams
      *
      * @return array
      */
-    public function validationData()
+    public function validationData(): array
     {
         return array_merge($this->route()->parameters, parent::validationData());
     }

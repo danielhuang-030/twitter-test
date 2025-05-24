@@ -29,7 +29,7 @@ class PostRepository extends BaseRepository
         return Post::class;
     }
 
-    protected function getQueryByParam($param): Builder
+    protected function getQueryByParam(\App\Params\BaseParam $param): Builder
     {
         /** @var \App\Params\PostParam $param */
         $query = parent::getQueryByParam($param);

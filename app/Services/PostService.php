@@ -13,8 +13,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class PostService
 {
     public function __construct(
-        protected PostRepository $postRepository,
-        protected UserRepository $userRepository
+        protected readonly PostRepository $postRepository,
+        protected readonly UserRepository $userRepository
     ) {
     }
 

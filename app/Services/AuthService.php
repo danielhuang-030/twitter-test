@@ -11,7 +11,7 @@ class AuthService
 {
     public const TOKEN_KEY = 'user';
 
-    public function __construct(protected UserRepository $userRepository)
+    public function __construct(protected readonly UserRepository $userRepository)
     {
     }
 

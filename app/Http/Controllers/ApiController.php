@@ -15,7 +15,7 @@ class ApiController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getJSON()
+    public function getJSON(): \Illuminate\Http\JsonResponse
     {
         $swagger = \OpenApi\Generator::scan([
             app_path('Http/Controllers/'),

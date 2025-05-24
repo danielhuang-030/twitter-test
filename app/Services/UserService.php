@@ -9,7 +9,7 @@ use App\Repositories\UserRepository;
 
 class UserService
 {
-    public function __construct(protected UserRepository $userRepository)
+    public function __construct(protected readonly UserRepository $userRepository)
     {
     }
 

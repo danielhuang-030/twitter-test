@@ -8,7 +8,7 @@ use App\Repositories\UserRepository;
 
 class FollowService
 {
-    public function __construct(protected UserRepository $userRepository)
+    public function __construct(protected readonly UserRepository $userRepository)
     {
     }
 
