@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests\Unit;
+
 use App\Enums\ApiResponseCode;
 use App\Exceptions\CustomException;
 use App\Models\User;

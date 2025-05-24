@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class UserFollow extends Pivot
@@ -18,7 +19,7 @@ class UserFollow extends Pivot
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
@@ -28,7 +29,7 @@ class UserFollow extends Pivot
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function following(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function following(): BelongsTo
     {
         return $this->belongsTo(User::class, 'follow_id');
     }

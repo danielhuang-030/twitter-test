@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Http\Requests\Api\v1\User\PostsRequest;
 use App\Models\Post;
 use App\Models\User;
+use App\Params\BaseParam; // Added this line
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -29,7 +30,7 @@ class PostRepository extends BaseRepository
         return Post::class;
     }
 
-    protected function getQueryByParam(\App\Params\BaseParam $param): Builder
+    protected function getQueryByParam(BaseParam $param): Builder
     {
         /** @var \App\Params\PostParam $param */
         $query = parent::getQueryByParam($param);

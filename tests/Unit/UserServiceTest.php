@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Services;
+namespace Tests\Unit;
 
 use App\Enums\ApiResponseCode;
 use App\Exceptions\CustomException;
