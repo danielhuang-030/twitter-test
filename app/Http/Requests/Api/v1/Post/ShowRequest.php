@@ -14,7 +14,7 @@ class ShowRequest extends JsonRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'id' => [

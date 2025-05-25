@@ -23,20 +23,12 @@ class PostCreated implements ShouldBroadcast
     public const CHANNEL_FORMAT = 'new-post-from-user-%d';
 
     /**
-     * Post.
-     *
-     * @var Post
-     */
-    public $post;
-
-    /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(Post $post)
+    public function __construct(public readonly Post $post)
     {
-        $this->post = $post;
     }
 
     /**

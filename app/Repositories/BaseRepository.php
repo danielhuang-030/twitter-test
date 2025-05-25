@@ -12,10 +12,8 @@ abstract class BaseRepository
 {
     /**
      * BaseModel.
-     *
-     * @var BaseModel
      */
-    protected $model;
+    protected BaseModel $model;
 
     /**
      * construct.

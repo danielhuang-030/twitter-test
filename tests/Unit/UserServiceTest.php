@@ -1,19 +1,30 @@
 <?php
 
-namespace Tests\Unit\Services;
+namespace Tests\Unit;
 
 use App\Enums\ApiResponseCode;
 use App\Exceptions\CustomException;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Services\UserService;
+use Illuminate\Foundation\Testing\WithFaker;
 use Mockery;
 use Tests\TestCase;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+
 
 class UserServiceTest extends TestCase
 {
+    use WithFaker;
+
     protected UserService $userService;
     protected UserRepository $userRepository;
+
+    protected UserRepository $userRepository;
+    private $name;
+    private $email;
+    private $password;
 
     protected function setUp(): void
     {
@@ -21,6 +32,10 @@ class UserServiceTest extends TestCase
 
         $this->userRepository = Mockery::mock(UserRepository::class);
         $this->userService = new UserService($this->userRepository);
+
+        $this->name = $this->faker->name();
+        $this->email = $this->faker->email();
+        $this->password = $this->faker->password(6, 12);
     }
 
     protected function tearDown(): void
@@ -94,5 +109,36 @@ class UserServiceTest extends TestCase
 
         // Call the method being tested
         $this->userService->getUser($userId);
+    }
+
+    /**
+     * signup.
+     *
+     * @return void
+     */
+    public function testSignup()
+    {
+        $userFaker = new User();
+        $userFaker->name = $this->name;
+        $userFaker->email = $this->email;
+        $userFaker->password = Hash::make($this->password); // Use Hash facade
+
+        $this->userRepository->shouldReceive('create')
+            ->once()
+            // ->with($this->data) // This was commented out, ensure it's correct or remove
+            ->andReturn($userFaker);
+
+        // $this->app->instance(UserRepository::class, $userRepositoryMock); // Not needed as it's injected
+        // $userService = app(UserService::class); // Use $this->userService
+
+        $postData = [
+            'name' => $this->name,
+            'email' => $this->email,
+            'password' => $this->password,
+        ];
+        $result = $this->userService->create($postData);
+
+        $this->assertEquals($this->name, $result->name);
+        $this->assertEquals($this->email, $result->email);
     }
 }

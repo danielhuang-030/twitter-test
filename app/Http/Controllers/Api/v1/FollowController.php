@@ -8,7 +8,7 @@ use App\Services\FollowService;
 
 class FollowController extends BaseController
 {
-    public function __construct(protected FollowService $followService)
+    public function __construct(protected readonly FollowService $followService)
     {
         parent::__construct();
     }
@@ -115,7 +115,7 @@ class FollowController extends BaseController
      *
      * @param FollowingRequest $request
      */
-    public function following(FollowingRequest $request, $id)
+    public function following(FollowingRequest $request, int $id)
     {
         $this->followService->follow($id, (int) auth()->user()?->id);
 
@@ -225,7 +225,7 @@ class FollowController extends BaseController
      * @param UnfollowRequest $request
      * @param int             $id
      */
-    public function unfollow(UnfollowRequest $request, $id)
+    public function unfollow(UnfollowRequest $request, int $id)
     {
         $this->followService->unfollow($id, (int) auth()->user()?->id);
 

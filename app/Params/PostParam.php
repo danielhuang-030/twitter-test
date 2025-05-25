@@ -7,10 +7,10 @@ use Illuminate\Http\Request;
 
 class PostParam extends BaseParam
 {
-    private $userId;
-    private $author;
+    private ?int $userId = null;
+    private ?string $author = null;
 
-    public function __construct(Request $request = null)
+    public function __construct(?Request $request = null)
     {
         if (empty($request)) {
             return;
@@ -31,10 +31,10 @@ class PostParam extends BaseParam
 
     public function getUserId(): int
     {
-        return (int) $this->userId;
+        return (int) $this->userId; // Casting to int handles null, returning 0. If null should be possible, return type is ?int
     }
 
-    public function setUserId($userId): self
+    public function setUserId(int $userId): self
     {
         $this->userId = $userId;
 
@@ -43,10 +43,10 @@ class PostParam extends BaseParam
 
     public function getAuthor(): string
     {
-        return (string) $this->author;
+        return (string) $this->author; // Casting to string handles null, returning "". If null should be possible, return type is ?string
     }
 
-    public function setAuthor($author): self
+    public function setAuthor(string $author): self
     {
         $this->author = $author;
 

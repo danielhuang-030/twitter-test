@@ -17,7 +17,7 @@ class NotifyFollowingToUser implements ShouldQueue
      *
      * @return void
      */
-    public function handle(UserFollowCreated $event)
+    public function handle(UserFollowCreated $event): void
     {
         \Log::info(sprintf('%s following %s', data_get($event, 'user.name'), data_get($event, 'following.name')));
 

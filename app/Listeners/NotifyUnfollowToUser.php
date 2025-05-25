@@ -17,7 +17,7 @@ class NotifyUnfollowToUser implements ShouldQueue
      *
      * @return void
      */
-    public function handle(UserFollowDeleted $event)
+    public function handle(UserFollowDeleted $event): void
     {
         \Log::info(sprintf('%s unfollow %s', data_get($event, 'user.name'), data_get($event, 'following.name')));
 

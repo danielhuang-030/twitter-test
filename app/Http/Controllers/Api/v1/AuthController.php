@@ -62,7 +62,7 @@ class AuthController extends BaseController
      *     ),
      * ),
      */
-    public function __construct(protected AuthService $service, protected UserService $userService)
+    public function __construct(protected readonly AuthService $service, protected readonly UserService $userService)
     {
         parent::__construct();
     }

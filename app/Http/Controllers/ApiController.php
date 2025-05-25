@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\JsonResponse; // Added this line
+
 class ApiController extends Controller
 {
     /**
@@ -15,7 +17,7 @@ class ApiController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getJSON()
+    public function getJSON(): JsonResponse
     {
         $swagger = \OpenApi\Generator::scan([
             app_path('Http/Controllers/'),

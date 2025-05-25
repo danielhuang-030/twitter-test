@@ -22,7 +22,7 @@ abstract class JsonRequest extends FormRequest
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    protected function failedValidation(Validator $validator)
+    protected function failedValidation(Validator $validator): void
     {
         throw new HttpResponseException($this->responseFail(code: ApiResponseCode::ERROR_VALIDATION->value, message: collect($validator->errors()->getMessages())->flatten()->implode("\n"), httpStatusCode: Response::HTTP_UNPROCESSABLE_ENTITY));
     }

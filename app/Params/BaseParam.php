@@ -4,11 +4,11 @@ namespace App\Params;
 
 abstract class BaseParam
 {
-    private $page;
-    private $perPage;
-    private $sortBy;
-    private $withs;
-    private $withCounts;
+    private ?int $page = null;
+    private ?int $perPage = null;
+    private array $sortBy = [];
+    private array $withs = [];
+    private array $withCounts = [];
 
     public function getPage(): int
     {
@@ -36,7 +36,7 @@ abstract class BaseParam
 
     public function getSortBy(): array
     {
-        return $this->sortBy ?? [];
+        return $this->sortBy; // Already initialized to []
     }
 
     public function setSortBy(string $sortBy, bool $isDesc = false): self
@@ -48,10 +48,10 @@ abstract class BaseParam
 
     public function getWiths(): array
     {
-        return $this->withs ?? [];
+        return $this->withs; // Already initialized to []
     }
 
-    public function setWiths($withs): self
+    public function setWiths(array $withs): self
     {
         $this->withs = $withs;
 
@@ -60,10 +60,10 @@ abstract class BaseParam
 
     public function getWithCounts(): array
     {
-        return $this->withCounts ?? [];
+        return $this->withCounts; // Already initialized to []
     }
 
-    public function setWithCounts($withCounts): self
+    public function setWithCounts(array $withCounts): self
     {
         $this->withCounts = $withCounts;
 

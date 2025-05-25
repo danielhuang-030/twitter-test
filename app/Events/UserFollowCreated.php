@@ -22,19 +22,8 @@ class UserFollowCreated implements ShouldBroadcast
      */
     public const CHANNEL_FORMAT = 'new-user-following-user-%d';
 
-    /**
-     * user.
-     *
-     * @var User
-     */
-    public $user;
-
-    /**
-     * following.
-     *
-     * @var User
-     */
-    public $following;
+    public readonly \App\Models\User $user;
+    public readonly \App\Models\User $following;
 
     /**
      * Create a new event instance.
@@ -43,6 +32,10 @@ class UserFollowCreated implements ShouldBroadcast
      */
     public function __construct(UserFollow $userFollow)
     {
+        // Assuming $userFollow->user and $userFollow->following always return non-null User instances
+        // If they can be null, the property types should be ?User and checks added.
+        // Based on typical Eloquent relationships, they should be User instances or null if not loaded/set.
+        // For an event like UserFollowCreated, it's reasonable to assume these are valid.
         $this->user = $userFollow->user;
         $this->following = $userFollow->following;
     }

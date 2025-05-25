@@ -6,6 +6,7 @@ use App\Repositories\UserRepository;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Laravel\Passport\Events\AccessTokenCreated;
+use Laravel\Passport\Token;
 
 class RevokeExistingTokens implements ShouldQueue
 {
@@ -19,20 +20,10 @@ class RevokeExistingTokens implements ShouldQueue
     public const LIMIT = 100;
 
     /**
-     * UserRepository.
-     *
-     * @var UserRepository
-     */
-    protected $userRepository;
-
-    /**
      * Create the event listener.
-     *
-     * @param UserRepository $userRepository
      */
-    public function __construct(UserRepository $userRepository)
+    public function __construct(protected readonly UserRepository $userRepository)
     {
-        $this->userRepository = $userRepository;
     }
 
     /**
@@ -42,7 +33,7 @@ class RevokeExistingTokens implements ShouldQueue
      *
      * @return void
      */
-    public function handle(AccessTokenCreated $event)
+    public function handle(AccessTokenCreated $event): void
     {
         $user = $this->userRepository->getById($event->userId);
         if (empty($user)) {
@@ -53,7 +44,7 @@ class RevokeExistingTokens implements ShouldQueue
             ->offset(1)
             ->limit(static::LIMIT)
             ->get()
-            ->map(function ($token) {
+            ->map(function (\Laravel\Passport\Token $token): void {
                 $token->delete();
             });
     }

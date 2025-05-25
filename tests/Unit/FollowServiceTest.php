@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Services;
+namespace Tests\Unit;
 
 use App\Models\User;
 use App\Repositories\UserRepository;
@@ -65,7 +65,198 @@ class FollowServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
+    public function testFollowThrowsExceptionWhenFollowIdDoesNotExist()
+    {
+        $followId = 1;
+        $userId = 2;
+
+        $this->userRepository->shouldReceive('getById')
+            ->once()
+            ->with($followId)
+            ->andReturnNull(); // Simulate followId not found
+
+        $this->expectException(\App\Exceptions\CustomException::class);
+        $this->expectExceptionMessage(\App\Enums\ApiResponseCode::ERROR_USER_NOT_EXIST->message());
+
+        $this->followService->follow($followId, $userId);
+    }
+
+    public function testFollowThrowsExceptionWhenUserIdDoesNotExist()
+    {
+        $followId = 1;
+        $userId = 2;
+
+        $followerMock = \Mockery::mock(User::class); // User to be followed
+
+        $this->userRepository->shouldReceive('getById')
+            ->once()
+            ->with($followId)
+            ->andReturn($followerMock); // followId exists
+
+        $this->userRepository->shouldReceive('getById')
+            ->once()
+            ->with($userId, ['following']) // Correctly check for userId with relations
+            ->andReturnNull(); // Simulate userId not found
+
+        $this->expectException(\App\Exceptions\CustomException::class);
+        $this->expectExceptionMessage(\App\Enums\ApiResponseCode::ERROR_USER_NOT_EXIST->message());
+
+        $this->followService->follow($followId, $userId);
+    }
+
+    public function testFollowThrowsExceptionWhenFollowingSelf()
+    {
+        $userId = 1; // followId and userId are the same
+
+        $userMock = \Mockery::mock(User::class);
+        $userMock->shouldReceive('getAttribute')->with('id')->andReturn($userId);
+
+        $this->userRepository->shouldReceive('getById')
+            ->once()
+            ->with($userId) // For followId
+            ->andReturn($userMock);
+
+        $this->userRepository->shouldReceive('getById')
+            ->once()
+            ->with($userId, ['following']) // For userId
+            ->andReturn($userMock);
+
+        $this->expectException(\App\Exceptions\CustomException::class);
+        $this->expectExceptionMessage(\App\Enums\ApiResponseCode::ERROR_FOLLOW_SELF->message());
+
+        $this->followService->follow($userId, $userId);
+    }
+
+    public function testFollowThrowsExceptionWhenAlreadyFollowing()
+    {
+        $followId = 1;
+        $userId = 2;
+
+        $followerMock = \Mockery::mock(User::class); // User to be followed
+        $followerMock->shouldReceive('getAttribute')->with('id')->andReturn($followId);
+
+        $userMock = \Mockery::mock(User::class); // Current user
+        $userMock->shouldReceive('getAttribute')->with('id')->andReturn($userId);
+
+        // Mock the 'following' relationship and its methods
+        $followingCollectionMock = \Mockery::mock(\Illuminate\Database\Eloquent\Collection::class);
+        $followingCollectionMock->shouldReceive('pluck->contains')->with($followId)->andReturn(true);
+        $userMock->shouldReceive('getAttribute')->with('following')->andReturn($followingCollectionMock);
+
+
+        $this->userRepository->shouldReceive('getById')
+            ->once()
+            ->with($followId)
+            ->andReturn($followerMock);
+
+        $this->userRepository->shouldReceive('getById')
+            ->once()
+            ->with($userId, ['following'])
+            ->andReturn($userMock);
+
+        $this->expectException(\App\Exceptions\CustomException::class);
+        $this->expectExceptionMessage(\App\Enums\ApiResponseCode::ERROR_FOLLOW_HAVE_FOLLOWED->message());
+
+        $this->followService->follow($followId, $userId);
+    }
+
     // Add more test methods to cover different scenarios...
+
+    public function testUnfollowThrowsExceptionWhenFollowIdDoesNotExist()
+    {
+        $followId = 1;
+        $userId = 2;
+
+        $this->userRepository->shouldReceive('getById')
+            ->once()
+            ->with($followId)
+            ->andReturnNull(); // Simulate followId not found
+
+        $this->expectException(\App\Exceptions\CustomException::class);
+        $this->expectExceptionMessage(\App\Enums\ApiResponseCode::ERROR_USER_NOT_EXIST->message());
+
+        $this->followService->unfollow($followId, $userId);
+    }
+
+    public function testUnfollowThrowsExceptionWhenUserIdDoesNotExist()
+    {
+        $followId = 1;
+        $userId = 2;
+
+        $followerMock = \Mockery::mock(User::class); // User to be unfollowed
+
+        $this->userRepository->shouldReceive('getById')
+            ->once()
+            ->with($followId)
+            ->andReturn($followerMock); // followId exists
+
+        $this->userRepository->shouldReceive('getById')
+            ->once()
+            ->with($userId, ['following']) // Correctly check for userId with relations
+            ->andReturnNull(); // Simulate userId not found
+
+        $this->expectException(\App\Exceptions\CustomException::class);
+        $this->expectExceptionMessage(\App\Enums\ApiResponseCode::ERROR_USER_NOT_EXIST->message());
+
+        $this->followService->unfollow($followId, $userId);
+    }
+
+    public function testUnfollowThrowsExceptionWhenUnfollowingSelf()
+    {
+        $userId = 1; // followId and userId are the same
+
+        $userMock = \Mockery::mock(User::class);
+        $userMock->shouldReceive('getAttribute')->with('id')->andReturn($userId);
+
+        $this->userRepository->shouldReceive('getById')
+            ->once()
+            ->with($userId) // For followId
+            ->andReturn($userMock);
+
+        $this->userRepository->shouldReceive('getById')
+            ->once()
+            ->with($userId, ['following']) // For userId
+            ->andReturn($userMock);
+
+        $this->expectException(\App\Exceptions\CustomException::class);
+        $this->expectExceptionMessage(\App\Enums\ApiResponseCode::ERROR_UNFOLLOW_SELF->message());
+
+        $this->followService->unfollow($userId, $userId);
+    }
+
+    public function testUnfollowThrowsExceptionWhenNotFollowing()
+    {
+        $followId = 1;
+        $userId = 2;
+
+        $followerMock = \Mockery::mock(User::class); // User to be unfollowed
+        $followerMock->shouldReceive('getAttribute')->with('id')->andReturn($followId);
+
+
+        $userMock = \Mockery::mock(User::class); // Current user
+        $userMock->shouldReceive('getAttribute')->with('id')->andReturn($userId);
+
+        // Mock the 'following' relationship to simulate not following
+        $followingCollectionMock = \Mockery::mock(\Illuminate\Database\Eloquent\Collection::class);
+        $followingCollectionMock->shouldReceive('pluck->contains')->with($followId)->andReturn(false);
+        $userMock->shouldReceive('getAttribute')->with('following')->andReturn($followingCollectionMock);
+
+
+        $this->userRepository->shouldReceive('getById')
+            ->once()
+            ->with($followId)
+            ->andReturn($followerMock);
+
+        $this->userRepository->shouldReceive('getById')
+            ->once()
+            ->with($userId, ['following'])
+            ->andReturn($userMock);
+
+        $this->expectException(\App\Exceptions\CustomException::class);
+        $this->expectExceptionMessage(\App\Enums\ApiResponseCode::ERROR_UNFOLLOW_NOT_FOLLOWED->message());
+
+        $this->followService->unfollow($followId, $userId);
+    }
 
     public function testUnfollowWhenFollowerExistsAndUserExistsAndAlreadyFollowedReturnsTrue()
     {

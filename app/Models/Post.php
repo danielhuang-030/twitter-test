@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+
 class Post extends BaseModel
 {
     /**
@@ -9,7 +12,7 @@ class Post extends BaseModel
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
@@ -19,7 +22,7 @@ class Post extends BaseModel
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function likedUsers()
+    public function likedUsers(): BelongsToMany
     {
         return $this->belongsToMany(User::class, PostLike::class)
             ->where('liked', PostLike::LIKED_LIKE)
