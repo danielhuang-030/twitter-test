@@ -230,7 +230,7 @@ class PostServiceTest extends TestCase
         $postId = 1;
         $userId = 2;
 
-        $post = \Mockery::mock(Post::class);
+        $post = \Mockery::mock(Post::class)->makePartial();
         $post->user_id = 1;
         $relation = \Mockery::mock();
         $relation->shouldReceive('syncWithoutDetaching')
@@ -272,7 +272,7 @@ class PostServiceTest extends TestCase
         $postId = 1;
         $userId = 2;
 
-        $post = \Mockery::mock(Post::class);
+        $post = \Mockery::mock(Post::class)->makePartial();
         $post->user_id = 1;
         $relation = \Mockery::mock();
         $relation->shouldReceive('detach')
