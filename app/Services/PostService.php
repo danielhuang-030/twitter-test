@@ -44,8 +44,6 @@ class PostService
         $post = $this->postRepository->create($requestData);
         if (empty($post)) {
             throw app(CustomException::class, ['apiCode' => ApiResponseCode::ERROR_POST_ADD]);
-
-            return null;
         }
 
         return $post->load([
@@ -61,8 +59,6 @@ class PostService
 
         if (empty($post)) {
             throw app(CustomException::class, ['apiCode' => ApiResponseCode::ERROR_POST_NOT_EXIST]);
-
-            return null;
         }
 
         return $post;
@@ -74,15 +70,11 @@ class PostService
 
         if ($post->user_id != $userId) {
             throw app(CustomException::class, ['apiCode' => ApiResponseCode::ERROR_POST_NOT_AUTHOR]);
-
-            return null;
         }
 
         $postUpdated = $this->postRepository->update($requestData, $id);
         if (empty($postUpdated)) {
             throw app(CustomException::class, ['apiCode' => ApiResponseCode::ERROR_POST_EDIT]);
-
-            return null;
         }
 
         return $postUpdated;
@@ -94,8 +86,6 @@ class PostService
 
         if ($post->user_id != $userId) {
             throw app(CustomException::class, ['apiCode' => ApiResponseCode::ERROR_POST_NOT_AUTHOR]);
-
-            return false;
         }
         $this->postRepository->delete($id);
 
@@ -108,8 +98,6 @@ class PostService
 
         if ($post->user_id == $userId) {
             throw app(CustomException::class, ['apiCode' => ApiResponseCode::ERROR_POST_AUTHOR_CAN_NOT_LIKE]);
-
-            return false;
         }
         $post->likedUsers()->syncWithoutDetaching((array) $userId);
 
@@ -122,8 +110,6 @@ class PostService
 
         if ($post->user_id == $userId) {
             throw app(CustomException::class, ['apiCode' => ApiResponseCode::ERROR_POST_AUTHOR_CAN_NOT_LIKE]);
-
-            return false;
         }
         $post->likedUsers()->detach((array) $userId);
 

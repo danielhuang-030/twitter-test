@@ -62,13 +62,11 @@ class PostRepository extends BaseRepository
                 $tableUser = (new User())->getTable();
 
                 return sprintf('%s.name', $tableUser);
-                break;
 
             case PostsRequest::SORT_BY_CREATED_AT:
             case PostsRequest::SORT_BY_UPDATED_AT:
             default:
                 return parent::getSortByFullColumnName($sortBy);
-                break;
         }
     }
 }
