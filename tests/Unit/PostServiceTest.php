@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Services;
+namespace Tests\Unit\Services;
 
 use App\Enums\ApiResponseCode;
 use App\Exceptions\CustomException;
 use App\Models\Post;
 use App\Params\PostParam;
 use App\Repositories\PostRepository;
+use App\Services\PostService;
 use App\Repositories\UserRepository;
 use Illuminate\Pagination\LengthAwarePaginator;
 use PHPUnit\Framework\TestCase;
@@ -138,23 +139,173 @@ class PostServiceTest extends TestCase
         $this->postService->find($id);
     }
 
-    // public function testEdit(): void
-    // {
-    //     // Write your test logic for the `edit` method here
-    // }
 
-    // public function testDel(): void
-    // {
-    //     // Write your test logic for the `del` method here
-    // }
+    public function testEditSuccessfully(): void
+    {
+        $postId = 1;
+        $userId = 1;
+        $requestData = ['title' => 'update'];
 
-    // public function testLike(): void
-    // {
-    //     // Write your test logic for the `like` method here
-    // }
+        $post = new Post();
+        $post->user_id = $userId;
 
-    // public function testDislike(): void
-    // {
-    //     // Write your test logic for the `dislike` method here
-    // }
+        $this->postRepository->shouldReceive('getById')
+            ->once()
+            ->with($postId, ['user'])
+            ->andReturn($post);
+
+        $updatedPost = new Post();
+        $this->postRepository->shouldReceive('update')
+            ->once()
+            ->with($requestData, $postId)
+            ->andReturn($updatedPost);
+
+        $result = $this->postService->edit($requestData, $postId, $userId);
+        $this->assertSame($updatedPost, $result);
+    }
+
+    public function testEditThrowsExceptionWhenNotAuthor(): void
+    {
+        $postId = 1;
+        $userId = 1;
+        $requestData = ['title' => 'update'];
+
+        $post = new Post();
+        $post->user_id = 2;
+
+        $this->postRepository->shouldReceive('getById')
+            ->once()
+            ->with($postId, ['user'])
+            ->andReturn($post);
+        $this->postRepository->shouldNotReceive('update');
+
+        $this->expectException(CustomException::class);
+        $this->expectExceptionMessage(ApiResponseCode::ERROR_POST_NOT_AUTHOR->message());
+
+        $this->postService->edit($requestData, $postId, $userId);
+    }
+
+    public function testDeleteSuccessfully(): void
+    {
+        $postId = 1;
+        $userId = 1;
+
+        $post = new Post();
+        $post->user_id = $userId;
+
+        $this->postRepository->shouldReceive('getById')
+            ->once()
+            ->with($postId, ['user'])
+            ->andReturn($post);
+        $this->postRepository->shouldReceive('delete')
+            ->once()
+            ->with($postId);
+
+        $result = $this->postService->del($postId, $userId);
+        $this->assertTrue($result);
+    }
+
+    public function testDeleteThrowsExceptionWhenNotAuthor(): void
+    {
+        $postId = 1;
+        $userId = 1;
+
+        $post = new Post();
+        $post->user_id = 2;
+
+        $this->postRepository->shouldReceive('getById')
+            ->once()
+            ->with($postId, ['user'])
+            ->andReturn($post);
+        $this->postRepository->shouldNotReceive('delete');
+
+        $this->expectException(CustomException::class);
+        $this->expectExceptionMessage(ApiResponseCode::ERROR_POST_NOT_AUTHOR->message());
+
+        $this->postService->del($postId, $userId);
+    }
+
+    public function testLikeSuccessfully(): void
+    {
+        $postId = 1;
+        $userId = 2;
+
+        $post = \Mockery::mock(Post::class)->makePartial();
+        $post->user_id = 1;
+        $relation = \Mockery::mock();
+        $relation->shouldReceive('syncWithoutDetaching')
+            ->once()
+            ->with((array) $userId);
+        $post->shouldReceive('likedUsers')
+            ->once()
+            ->andReturn($relation);
+
+        $this->postRepository->shouldReceive('getById')
+            ->once()
+            ->with($postId, ['user'])
+            ->andReturn($post);
+
+        $this->assertTrue($this->postService->like($postId, $userId));
+    }
+
+    public function testLikeThrowsExceptionWhenAuthor(): void
+    {
+        $postId = 1;
+        $userId = 1;
+
+        $post = new Post();
+        $post->user_id = $userId;
+
+        $this->postRepository->shouldReceive('getById')
+            ->once()
+            ->with($postId, ['user'])
+            ->andReturn($post);
+
+        $this->expectException(CustomException::class);
+        $this->expectExceptionMessage(ApiResponseCode::ERROR_POST_AUTHOR_CAN_NOT_LIKE->message());
+
+        $this->postService->like($postId, $userId);
+    }
+
+    public function testDislikeSuccessfully(): void
+    {
+        $postId = 1;
+        $userId = 2;
+
+        $post = \Mockery::mock(Post::class)->makePartial();
+        $post->user_id = 1;
+        $relation = \Mockery::mock();
+        $relation->shouldReceive('detach')
+            ->once()
+            ->with((array) $userId);
+        $post->shouldReceive('likedUsers')
+            ->once()
+            ->andReturn($relation);
+
+        $this->postRepository->shouldReceive('getById')
+            ->once()
+            ->with($postId, ['user'])
+            ->andReturn($post);
+
+        $this->assertTrue($this->postService->dislike($postId, $userId));
+    }
+
+    public function testDislikeThrowsExceptionWhenAuthor(): void
+    {
+        $postId = 1;
+        $userId = 1;
+
+        $post = new Post();
+        $post->user_id = $userId;
+
+        $this->postRepository->shouldReceive('getById')
+            ->once()
+            ->with($postId, ['user'])
+            ->andReturn($post);
+
+        $this->expectException(CustomException::class);
+        $this->expectExceptionMessage(ApiResponseCode::ERROR_POST_AUTHOR_CAN_NOT_LIKE->message());
+
+        $this->postService->dislike($postId, $userId);
+    }
 }

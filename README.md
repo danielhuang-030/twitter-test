@@ -7,7 +7,7 @@
 Simple implementation of the basic functions of twitter: including member login/logout, post, follow and like. (Back-end only)
 
 ### Features
-- Member registration, login, logout, and CURD functions for posts
+- Member registration, login, logout, and CRUD functions for posts
 - Members can click like on posts or cancel
 - Members can follow other members or be followed by other members
 - Instant notification to members via websocket
