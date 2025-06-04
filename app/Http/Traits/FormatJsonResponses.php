@@ -91,6 +91,6 @@ trait FormatJsonResponses
             'code' => $code = (!empty($code) ? $code : ApiResponseCode::ERROR_UNEXPECTED->value),
             'message' => !empty($message) ? $message : ApiResponseCode::from($code)?->message(),
             'data' => !empty($data) ? $data : (object) $data,
-        ], status: $httpStatusCode, options: JSON_UNESCAPED_UNICODE);
+        ], status: $httpStatusCode, options: \JSON_UNESCAPED_UNICODE);
     }
 }

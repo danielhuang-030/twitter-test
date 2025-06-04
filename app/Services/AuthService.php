@@ -22,16 +22,12 @@ class AuthService
             throw app(CustomException::class, [
                 'apiCode' => ApiResponseCode::ERROR_USER_NOT_EXIST,
             ]);
-
-            return null;
         }
 
         if (!\Hash::check(data_get($credentials, 'password'), $user->password)) {
             throw app(CustomException::class, [
                 'apiCode' => ApiResponseCode::ERROR_UNAUTHORIZED,
             ]);
-
-            return null;
         }
 
         // set token
