@@ -229,7 +229,6 @@ class PostController extends BaseController
      * )
      *
      * @param Request $request
-     * @param int     $id
      */
     public function index(Request $request)
     {
