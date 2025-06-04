@@ -26,8 +26,6 @@ class UserService
             throw app(CustomException::class, [
                 'apiCode' => ApiResponseCode::ERROR_USER_ADD,
             ]);
-
-            return null;
         }
 
         return $user;
@@ -40,8 +38,6 @@ class UserService
             throw app(CustomException::class, [
                 'apiCode' => ApiResponseCode::ERROR_USER_NOT_EXIST,
             ]);
-
-            return null;
         }
 
         return $user;

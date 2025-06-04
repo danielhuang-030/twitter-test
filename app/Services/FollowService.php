@@ -19,8 +19,6 @@ class FollowService
             throw app(CustomException::class, [
                 'apiCode' => ApiResponseCode::ERROR_USER_NOT_EXIST,
             ]);
-
-            return false;
         }
 
         $user = $this->userRepository->getById($userId, [
@@ -30,24 +28,18 @@ class FollowService
             throw app(CustomException::class, [
                 'apiCode' => ApiResponseCode::ERROR_USER_NOT_EXIST,
             ]);
-
-            return false;
         }
 
         if ($user->id == $followId) {
             throw app(CustomException::class, [
                 'apiCode' => ApiResponseCode::ERROR_FOLLOW_SELF,
             ]);
-
-            return false;
         }
 
         if ($user->following->pluck('id')->contains($followId)) {
             throw app(CustomException::class, [
                 'apiCode' => ApiResponseCode::ERROR_FOLLOW_HAVE_FOLLOWED,
             ]);
-
-            return false;
         }
         $user->following()->syncWithoutDetaching((array) $followId);
 
@@ -61,8 +53,6 @@ class FollowService
             throw app(CustomException::class, [
                 'apiCode' => ApiResponseCode::ERROR_USER_NOT_EXIST,
             ]);
-
-            return false;
         }
 
         $user = $this->userRepository->getById($userId, [
@@ -72,24 +62,18 @@ class FollowService
             throw app(CustomException::class, [
                 'apiCode' => ApiResponseCode::ERROR_USER_NOT_EXIST,
             ]);
-
-            return false;
         }
 
         if ($user->id == $followId) {
             throw app(CustomException::class, [
                 'apiCode' => ApiResponseCode::ERROR_UNFOLLOW_SELF,
             ]);
-
-            return false;
         }
 
         if (!$user->following->pluck('id')->contains($followId)) {
             throw app(CustomException::class, [
                 'apiCode' => ApiResponseCode::ERROR_UNFOLLOW_NOT_FOLLOWED,
             ]);
-
-            return false;
         }
         $user->following()->detach((array) $followId);
 
