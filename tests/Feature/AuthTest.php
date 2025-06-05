@@ -3,7 +3,10 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use App\Services\AuthService;
+use App\Services\UserService;
 use Hash;
+use Mockery;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
@@ -25,6 +28,17 @@ class AuthTest extends TestCase
         $this->name = $this->faker->name();
         $this->email = $this->faker->email();
         $this->password = 'password';
+
+        $this->authService = Mockery::mock(AuthService::class);
+        $this->userService = Mockery::mock(UserService::class);
+        $this->app->instance(AuthService::class, $this->authService);
+        $this->app->instance(UserService::class, $this->userService);
+    }
+
+    protected function tearDown(): void
+    {
+        Mockery::close();
+        parent::tearDown();
     }
 
     /**
@@ -34,6 +48,14 @@ class AuthTest extends TestCase
      */
     public function testSignup()
     {
+        $user = new User();
+        $user->name = $this->name;
+        $user->email = $this->email;
+
+        $this->userService->shouldReceive('create')
+            ->once()
+            ->andReturn($user);
+
         $response = $this->postJson('/api/v1/signup', [
             'name' => $this->name,
             'email' => $this->email,
@@ -56,10 +78,19 @@ class AuthTest extends TestCase
      */
     public function testLogin()
     {
-        $user = User::factory()->create([
-            'email' => $this->email,
-            'password' => Hash::make($this->password),
-        ]);
+        $user = new class extends User {
+            public function token()
+            {
+                return 'fake-token';
+            }
+        };
+        $user->id = 1;
+        $user->name = $this->name;
+        $user->email = $this->email;
+
+        $this->authService->shouldReceive('attempt')
+            ->once()
+            ->andReturn($user);
 
         $response = $this->postJson('/api/v1/login', [
             'email' => $this->email,
