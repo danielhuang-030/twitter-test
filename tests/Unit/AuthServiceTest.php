@@ -5,15 +5,11 @@ use App\Exceptions\CustomException;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Services\AuthService;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
-use Laravel\Passport\Passport;
 use Tests\TestCase;
 
 class AuthServiceTest extends TestCase
 {
-    use RefreshDatabase;
-
     protected $userRepository;
     protected $authService;
 
@@ -23,19 +19,11 @@ class AuthServiceTest extends TestCase
 
         $this->userRepository = $this->mock(UserRepository::class);
         $this->authService = new AuthService($this->userRepository);
-
-        // init passport
-        $this->artisan('passport:client', [
-            '--personal' => true,
-            '--name' => config('app.name'),
-            '--redirect_uri' => config('app.url'),
-            '--no-interaction' => true,
-        ]);
     }
 
     protected function tearDown(): void
     {
-        \Mockery::close();
+        Mockery::close();
         parent::tearDown();
     }
 
@@ -87,30 +75,55 @@ class AuthServiceTest extends TestCase
             'password' => 'password',
         ];
 
-        $user = new User();
-        $user->id = 9999;
-        $user->password = Hash::make('password');
+        $userMock = Mockery::mock(User::class);
+
+        // 模擬 setAttribute 方法
+        $userMock->shouldReceive('setAttribute')
+            ->with('password', 'hashed_password')
+            ->once();
+
+        $userMock->password = 'hashed_password';
 
         $this->userRepository
             ->shouldReceive('getByEmail')
             ->once()
             ->with($credentials['email'])
-            ->andReturn($user);
+            ->andReturn($userMock);
 
-        Hash::shouldReceive('driver')->andReturnSelf();
+        $userMock->shouldReceive('getAttribute')
+            ->with('password')
+            ->andReturn('hashed_password');
+
         Hash::shouldReceive('check')
             ->once()
-            ->with($credentials['password'], $user->password)
+            ->with($credentials['password'], 'hashed_password')
             ->andReturn(true);
 
-        $this->actingAs($user);
+        // 模擬 token 物件
+        $tokenMock = Mockery::mock();
+        $tokenMock->shouldReceive('save')->once();
 
-        $this->userRepository->shouldReceive('getById')
-            ->once()
-            ->andReturn($user);
+        // 模擬 createToken 返回的物件
+        $tokenResult = (object) [
+            'token' => $tokenMock,
+            'accessToken' => 'test-access-token',
+        ];
+
+        $userMock->shouldReceive('createToken')
+            ->with(AuthService::TOKEN_KEY)
+            ->andReturn($tokenResult);
+
+        $userMock->shouldReceive('withAccessToken')
+            ->with('test-access-token')
+            ->once();
+
+        // 模擬 auth
+        Auth::shouldReceive('setUser')
+            ->with($userMock)
+            ->once();
 
         $result = $this->authService->attempt($credentials);
 
-        $this->assertSame($user, $result);
+        $this->assertSame($userMock, $result);
     }
 }
