@@ -69,4 +69,16 @@ export default defineConfig({
 
     chunkSizeWarningLimit: 1600,
   },
+  
+  optimizeDeps: {
+    include: ['@popperjs/core', 'element-plus'],
+  },
+
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    deps: {
+      inline: ['element-plus']
+    }
+  },
 });

@@ -4,42 +4,29 @@
     <form @submit.prevent="login">
       <div class="form-group">
         <label for="email">Email</label>
-        <input type="text" id="email" v-model="loginForm.email" required autocomplete="email">
+        <input type="text" id="email" v-model="formState.email" @blur="v$.email.$touch" autocomplete="email">
+        <div v-if="v$.email.$error" class="error-message">
+          <span v-for="error in v$.email.$errors" :key="error.$uid">{{ error.$message }}</span>
+        </div>
       </div>
 
       <div class="form-group">
         <label for="password">Password</label>
-        <input type="password" id="password" v-model="loginForm.password" required autocomplete="current-password">
+        <input type="password" id="password" v-model="formState.password" @blur="v$.password.$touch" autocomplete="current-password">
+        <div v-if="v$.password.$error" class="error-message">
+          <span v-for="error in v$.password.$errors" :key="error.$uid">{{ error.$message }}</span>
+        </div>
       </div>
 
-      <button type="submit">Login</button>
+      <button type="submit" :disabled="isSubmitting">{{ isSubmitting ? 'Logging in...' : 'Login' }}</button>
     </form>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useStore } from 'vuex';
-import apiService from '../apiService';
-import router from '../router';
+import useLoginForm from '../composables/useLoginForm';
 
-const store = useStore();
-const loginForm = ref({
-  email: '',
-  password: ''
-});
-
-const login = async () => {
-  try {
-    const response = await apiService.login(loginForm.value);
-    store.dispatch('setToken', response.data.data.token);
-    store.dispatch('setUserData', response.data.data.user);
-    localStorage.setItem('user-token', response.data.data.token);
-    router.push({ name: 'home' });
-  } catch (error) {
-    // console.error('Login error:', error);
-  }
-};
+const { formState, v$, login, isSubmitting } = useLoginForm();
 </script>
 
 <style scoped>
@@ -69,6 +56,12 @@ const login = async () => {
   border-radius: 4px;
 }
 
+.error-message {
+  color: red;
+  font-size: 0.8em;
+  margin-top: 5px;
+}
+
 button {
   width: 100%;
   padding: 10px;
@@ -81,5 +74,10 @@ button {
 
 button:hover {
   background-color: #0d8bf2;
+}
+
+button:disabled {
+  background-color: #a0d3f2;
+  cursor: not-allowed;
 }
 </style>

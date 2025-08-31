@@ -56,7 +56,11 @@ export default createStore({
     setUserData({ commit }, userData) {
       commit('SET_USER_DATA', userData);
     },
-    async setupWebSocket({ commit }, userId) {
+    async setupWebSocket({ commit, state }, userId) {
+      if (state.echo) {
+        state.echo.disconnect();
+      }
+
       const echo = new Echo({
         broadcaster: 'pusher',
         key: import.meta.env.VITE_PUSHER_APP_KEY,
@@ -70,43 +74,60 @@ export default createStore({
         enabledTransports: ['ws', 'wss']
       });
 
-      echo.channel(`new-user-following-user-${userId}`)
-        .listen('UserFollowCreated', (event) => {
-          ElNotification({
-            title: 'New Follower',
-            message: `${event.name} has just started following you.`,
-            type: 'success',
+      const subscribeToChannels = () => {
+        console.log('[WebSocket] Subscribing to channels...');
+        
+        echo.channel(`new-user-following-user-${userId}`)
+          .listen('UserFollowCreated', (event) => {
+            ElNotification({
+              title: 'New Follower',
+              message: `${event.name} has just started following you.`,
+              type: 'success',
+            });
           });
-        });
 
-      echo.channel(`new-user-unfollow-user-${userId}`)
-        .listen('UserFollowDeleted', (event) => {
-          ElNotification({
-            title: 'Unfollowed',
-            message: `${event.name} has unfollowed you.`,
-            type: 'warning',
+        echo.channel(`new-user-unfollow-user-${userId}`)
+          .listen('UserFollowDeleted', (event) => {
+            ElNotification({
+              title: 'Unfollowed',
+              message: `${event.name} has unfollowed you.`,
+              type: 'warning',
+            });
           });
-        });
 
-      apiService.getFollowingUsers(userId)
-        .then(response => {
-          response.data.data.following.forEach(user => {
-            echo.channel(`new-post-from-user-${user.id}`)
-              .listen('PostCreated', (event) => {
-                ElNotification({
-                    title: 'New Post',
-                    message: `${event.user.name} has a new post. Check it out!`,
-                    type: 'info',
-                    onClick: () => {
-                        router.push(`/user/${event.user_id}/posts`);
-                    }
+        apiService.getFollowingUsers(userId)
+          .then(response => {
+            response.data.data.following.forEach(user => {
+              echo.channel(`new-post-from-user-${user.id}`)
+                .listen('PostCreated', (event) => {
+                  ElNotification({
+                      title: 'New Post',
+                      message: `${event.user.name} has a new post. Check it out!`,
+                      type: 'info',
+                      onClick: () => {
+                          router.push(`/user/${event.user_id}/posts`);
+                      }
+                  });
                 });
-              });
+            });
+          })
+          .catch(error => {
+            console.error('Error getting following users for WS subscription:', error);
           });
-        })
-        .catch(error => {
-          console.error(error);
-        });
+      };
+
+      echo.connector.pusher.connection.bind('connected', () => {
+        console.log('[WebSocket] Connection successful. Subscribing to channels.');
+        subscribeToChannels();
+      });
+
+      echo.connector.pusher.connection.bind('disconnected', () => {
+        console.warn('[WebSocket] Disconnected. Echo will attempt to reconnect automatically.');
+      });
+
+      echo.connector.pusher.connection.bind('error', (err) => {
+        console.error('[WebSocket] Connection Error:', err);
+      });
 
       commit('SET_ECHO', echo);
     },
@@ -132,22 +153,10 @@ export default createStore({
     disconnectWebSocket({ state, commit }) {
       return new Promise(resolve => {
         if (state.echo) {
-          if (state.echo.connector.channels) {
-            const channels = Object.keys(state.echo.connector.channels);
-            channels.forEach(channelName => {
-                const channel = state.echo.connector.channels[channelName];
-                state.echo.leave(channelName);
-            });
-          }
-
-          // state.echo.disconnect();
-
+          state.echo.disconnect();
           commit('SET_ECHO', null);
-
-          resolve();
-        } else {
-          resolve();
         }
+        resolve();
       });
     },
   }

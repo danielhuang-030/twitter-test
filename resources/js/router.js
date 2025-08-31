@@ -4,8 +4,9 @@ import store from './store';
 const HomeComponent = () => import('./components/HomeComponent.vue');
 const LoginComponent = () => import('./components/LoginComponent.vue');
 const UserPostsComponent = () => import('./components/UserPostsComponent.vue');
+const NotFoundComponent = () => import('./components/NotFound.vue');
 
-const routes = [
+export const routes = [
     {
         path: '/',
         name: 'home',
@@ -20,6 +21,11 @@ const routes = [
       path: '/user/:userId/posts',
       name: 'UserPosts',
       component: UserPostsComponent
+    },
+    { 
+      path: '/:pathMatch(.*)*', 
+      name: 'NotFound', 
+      component: NotFoundComponent 
     }
 ];
 

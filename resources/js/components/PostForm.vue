@@ -1,19 +1,18 @@
 <template>
-  <el-dialog v-model="dialogVisible" title="Post">
-    <form @submit.prevent="submitPost">
-      <el-input type="textarea" v-model="postContent" placeholder="Share something new..." />
+  <el-dialog v-model="dialogVisible" :title="isEditMode ? 'Edit Post' : 'Create Post'">
+    <form @submit.prevent="handleSubmit">
+      <el-input type="textarea" v-model="postContent" placeholder="Share something new..." :autosize="{ minRows: 4, maxRows: 8 }" />
       <span class="dialog-footer">
         <el-button @click="dialogVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="submitPost">Post</el-button>
+        <el-button type="primary" @click="handleSubmit">Post</el-button>
       </span>
     </form>
   </el-dialog>
 </template>
 
 <script setup>
-import { ref, watch, defineProps, defineEmits } from 'vue';
-import { ElMessage } from 'element-plus';
-import apiService from '../apiService';
+import { defineProps, defineEmits, watch } from 'vue';
+import usePostForm from '../composables/usePostForm';
 
 const props = defineProps({
   post: Object,
@@ -25,47 +24,23 @@ const props = defineProps({
 
 const emit = defineEmits(['post-submitted']);
 
-const postContent = ref('');
-const dialogVisible = ref(false);
+const { postContent, dialogVisible, submitPost, openDialog } = usePostForm();
 
 watch(() => props.post, (newPost) => {
   if (props.isEditMode && newPost) {
-    postContent.value = newPost.content;
-    dialogVisible.value = true;
-  } else {
-    postContent.value = '';
-    dialogVisible.value = false;
+    openDialog(newPost);
   }
 }, { immediate: true });
 
-const submitPost = async () => {
-  if (!postContent.value.trim()) {
-    ElMessage.error('Please enter some content.');
-    return;
-  }
-
-  try {
-    let response;
-    if (props.isEditMode) {
-      response = await apiService.updatePost(props.post.id, { content: postContent.value });
-    } else {
-      response = await apiService.createPost({ content: postContent.value });
-    }
-    ElMessage.success(response.data.message);
-    postContent.value = '';
-    dialogVisible.value = false;
+const handleSubmit = async () => {
+  const success = await submitPost(props.isEditMode, props.post?.id);
+  if (success) {
     emit('post-submitted');
-
+    // Consider using a more reactive way to update the post list instead of reloading the page
     setTimeout(() => {
       window.location.reload();
-    }, 2000);
-  } catch (error) {
-    // console.error(error);
+    }, 1000);
   }
-};
-
-const openDialog = () => {
-  dialogVisible.value = true;
 };
 
 defineExpose({
@@ -74,4 +49,9 @@ defineExpose({
 </script>
 
 <style scoped>
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
 </style>
