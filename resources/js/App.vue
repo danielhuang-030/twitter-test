@@ -7,22 +7,26 @@
           <li>
             <router-link to="/">Home</router-link>
           </li>
-          <li v-if="!isLoggedIn">
-            <router-link to="/login">Login</router-link>
-          </li>
+          <template v-if="isLoggedIn">
+            <li>
+              <a href="#" @click="openPostDialog">Create New Post</a>
+            </li>
+            <li>
+              <a href="javascript:void(0);">{{ userData.name }}</a> <!-- 父選項 -->
+              <ul class="submenu">
+                <li><router-link :to="`/user/${userData.id}/posts`">Posts</router-link></li>
+                <li><a href="#" @click="logout">Logout</a></li>
+              </ul>
+            </li>
+          </template>
           <li v-else>
-            <a href="javascript:void(0);">{{ userData.name }}</a> <!-- 父選項 -->
-            <ul class="submenu">
-              <li><a href="#" @click="openPostDialog">Create New Post</a></li>
-              <post-form ref="postFormRef" @post-submitted="handlePostSubmit" :isEditMode="false"></post-form>
-              <li><router-link :to="`/user/${userData.id}/posts`">Posts</router-link></li>
-              <li><a href="#" @click="logout">Logout</a></li>
-            </ul>
+            <router-link to="/login">Login</router-link>
           </li>
         </ul>
       </nav>
     </header>
 
+    <post-form ref="postFormRef" @post-submitted="handlePostSubmit" :isEditMode="false"></post-form>
     <router-view :key="$route.fullPath"></router-view>
 
     <footer>
@@ -32,27 +36,22 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, onUnmounted } from 'vue';
+import { ref, computed } from 'vue';
 import { useStore } from 'vuex';
 import PostForm from './components/PostForm.vue';
 
 const store = useStore();
 const currentYear = new Date().getFullYear();
 
-const isLoggedIn = ref(false);
-const userData = ref(null);
 const postFormRef = ref(null);
 
-watch(() => store.state.userData, (newUserData) => {
-  userData.value = newUserData;
-  isLoggedIn.value = !!newUserData;
-});
+const userData = computed(() => store.state.userData);
+const isLoggedIn = computed(() => !!userData.value);
 
 const logout = async () => {
   try {
-    store.dispatch('logout').then(() => {
-      window.location.reload();
-    });
+    await store.dispatch('logout');
+    window.location.reload();
   } catch (error) {
     console.error('Logout error:', error);
   }
@@ -69,7 +68,7 @@ const handlePostSubmit = (postContent) => {
 };
 </script>
 
-<style>
+<style scoped>
 header, footer {
   background-color: #1DA1F2;
   color: white;

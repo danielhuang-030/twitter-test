@@ -27,15 +27,6 @@ apiClient.interceptors.response.use(
       store.dispatch('setToken', null);
       store.dispatch('setUserData', null);
       router.push({ name: 'login' });
-    } else {
-      ElMessageBox.alert(
-        error.response.data.message || 'An error occurred',
-        'Error',
-        {
-          confirmButtonText: 'OK',
-          type: 'error'
-        }
-      );
     }
 
     return Promise.reject(error);
@@ -75,7 +66,7 @@ export default {
     return apiClient.post('/posts', postData);
   },
   updatePost(postId, postData) {
-    return apiClient.put(`/posts/${postId}`, postData);
+    return apiClient.put(`/posts/${postId}`, { ...postData, id: postId });
   },
   deletePost(postId) {
     return apiClient.delete(`/posts/${postId}`);

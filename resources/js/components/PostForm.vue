@@ -11,8 +11,9 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, watch } from 'vue';
-import usePostForm from '../composables/usePostForm';
+import { ref } from 'vue';
+import { ElMessage } from 'element-plus';
+import apiService from '../apiService';
 
 const props = defineProps({
   post: Object,
@@ -24,23 +25,45 @@ const props = defineProps({
 
 const emit = defineEmits(['post-submitted']);
 
-const { postContent, dialogVisible, submitPost, openDialog } = usePostForm();
-
-watch(() => props.post, (newPost) => {
-  if (props.isEditMode && newPost) {
-    openDialog(newPost);
-  }
-}, { immediate: true });
+const postContent = ref('');
+const dialogVisible = ref(false);
+const currentPost = ref(null);
 
 const handleSubmit = async () => {
-  const success = await submitPost(props.isEditMode, props.post?.id);
-  if (success) {
-    emit('post-submitted');
-    // Consider using a more reactive way to update the post list instead of reloading the page
-    setTimeout(() => {
-      window.location.reload();
-    }, 1000);
+  if (!postContent.value.trim()) {
+    ElMessage.error('Post content cannot be empty.');
+    return;
   }
+  if (postContent.value.length > 280) {
+    ElMessage.error('Post cannot exceed 280 characters.');
+    return;
+  }
+
+  try {
+    let response;
+    if (currentPost.value) {
+      response = await apiService.updatePost(currentPost.value.id, { content: postContent.value });
+    } else {
+      response = await apiService.createPost({ content: postContent.value });
+    }
+    ElMessage.success(response.data.message);
+    emit('post-submitted', response.data.data.post);
+    dialogVisible.value = false;
+  } catch (error) {
+    console.log(error);
+
+    ElMessage.error(error.response?.data?.message || 'Submission failed. Please try again.');
+  }
+};
+
+const openDialog = (post = null) => {
+  currentPost.value = post;
+  if (post) {
+    postContent.value = post.content;
+  } else {
+    postContent.value = '';
+  }
+  dialogVisible.value = true;
 };
 
 defineExpose({
