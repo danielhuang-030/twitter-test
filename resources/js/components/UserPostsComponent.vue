@@ -6,26 +6,26 @@
       :page-size="pageSize"
       :total-posts="totalPosts"
       @page-changed="fetchPosts"
-      @edit-post="handleEditPost">
+      @edit-post="handleEditPost"
+      @post-deleted="handlePostDeleted">
     </posts-list>
-    <post-form :post="editingPost" :isEditMode="true"></post-form>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
+import { useStore } from 'vuex';
 import PostsList from './PostsList.vue';
-import PostForm from './PostForm.vue';
 import apiService from '../apiService.js';
 
 const posts = ref([]);
 const currentPage = ref(1);
-const pageSize = 10; // 每頁顯示的文章數量
-const totalPosts = ref(0); // 總文章數量
-const editingPost = ref(null);
+const pageSize = 10;
+const totalPosts = ref(0);
 
 const route = useRoute();
+const store = useStore();
 const userId = computed(() => route.params.userId);
 
 const fetchPosts = async (page) => {
@@ -44,12 +44,44 @@ const fetchPosts = async (page) => {
 };
 
 const handleEditPost = (post) => {
-  editingPost.value = post;
+  store.dispatch('openPostDialog', post);
+};
+
+const handlePostDeleted = (deletedPostId) => {
+  posts.value = posts.value.filter(post => post.id !== deletedPostId);
+  totalPosts.value--;
+};
+
+const handlePostSubmitted = (event) => {
+  const submittedPost = event.detail;
+  // Only update if the post belongs to the user whose page we are on
+  if (submittedPost.author_id.toString() === userId.value) {
+    const index = posts.value.findIndex(p => p.id === submittedPost.id);
+    if (index !== -1) {
+      posts.value[index] = submittedPost;
+    } else {
+      // If it's a new post, it should appear at the top.
+      // We can either prepend it or just refetch the first page.
+      // Refetching is simpler and handles cases where other new posts arrived.
+      if (currentPage.value === 1) {
+          posts.value.unshift(submittedPost);
+          totalPosts.value++;
+      } else {
+          fetchPosts(1); // Or just notify the user that there are new posts.
+      }
+    }
+  }
 };
 
 onMounted(() => {
   fetchPosts(currentPage.value);
+  window.addEventListener('post-submitted', handlePostSubmitted);
 });
+
+onUnmounted(() => {
+  window.removeEventListener('post-submitted', handlePostSubmitted);
+});
+
 </script>
 
 <style scoped>

@@ -236,24 +236,21 @@ class PostController extends BaseController
             'user',
         ]));
 
-        $likedPostIds = $this->postService->getUserLikedPostIds(
-            (int) auth()->user()?->id,
-            $paginator->pluck('id')->toArray()
-        );
-        $followedUserIds = $this->postService->getFollowedUserIds(
-            (int) auth()->user()?->id,
-            $paginator->pluck('user.id')->unique()->toArray()
-        );
-        request()->request->add([
-            'liked_post_ids' => $likedPostIds,
-            'followed_user_ids' => $followedUserIds,
-        ]);
+        $authUser = auth()->user();
+        if ($authUser) {
+            $likedPostIds = $authUser->likePosts()->pluck('id')->toArray();
+            $followedUserIds = $authUser->following()->pluck('id')->toArray();
+
+            $paginator->getCollection()->transform(function ($post) use ($likedPostIds, $followedUserIds) {
+                $post->is_liked = in_array($post->id, $likedPostIds);
+                $post->is_followed = in_array($post->user_id, $followedUserIds);
+                return $post;
+            });
+        }
 
         return $this->responseSuccessWithPagination(
             paginator: $paginator,
-            data: PostResource::collection($paginator)->additional([
-                'liked_post_ids' => $likedPostIds,
-            ])
+            data: PostResource::collection($paginator)
         );
     }
 

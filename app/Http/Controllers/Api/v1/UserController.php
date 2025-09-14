@@ -597,6 +597,18 @@ class UserController extends BaseController
                 ])
         );
 
+        $authUser = auth()->user();
+        if ($authUser) {
+            $likedPostIds = $authUser->likePosts()->pluck('id')->toArray();
+            $followedUserIds = $authUser->following()->pluck('id')->toArray();
+
+            $paginator->getCollection()->transform(function ($post) use ($likedPostIds, $followedUserIds) {
+                $post->is_liked = in_array($post->id, $likedPostIds);
+                $post->is_followed = in_array($post->user_id, $followedUserIds);
+                return $post;
+            });
+        }
+
         return $this->responseSuccessWithPagination(
             paginator: $paginator,
             data: PostResource::collection($paginator)

@@ -177,14 +177,20 @@ const toggleLike = async (post) => {
   }
 };
 
-const toggleFollow = async (post) => {
-  const action = post.is_followed ? apiService.unfollowUser : apiService.followUser;
+const toggleFollow = async (clickedPost) => {
+  const action = clickedPost.is_followed ? apiService.unfollowUser : apiService.followUser;
   const success = await handleApiAction(
-    () => action(post.author_id),
-    `Failed to ${post.is_followed ? 'unfollow' : 'follow'} user.`
+    () => action(clickedPost.author_id),
+    `Failed to ${clickedPost.is_followed ? 'unfollow' : 'follow'} user.`
   );
   if (success) {
-    post.is_followed = !post.is_followed;
+    const newFollowState = !clickedPost.is_followed;
+    // Update all posts from the same author on the page
+    props.posts.forEach(p => {
+      if (p.author_id === clickedPost.author_id) {
+        p.is_followed = newFollowState;
+      }
+    });
   }
 };
 

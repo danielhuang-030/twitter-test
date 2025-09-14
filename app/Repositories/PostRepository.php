@@ -34,6 +34,8 @@ class PostRepository extends BaseRepository
         /** @var \App\Params\PostParam $param */
         $query = parent::getQueryByParam($param);
 
+        $query->withCount('likedUsers');
+
         // join users
         $tableUser = (new User())->getTable();
         $query->addSelect([
