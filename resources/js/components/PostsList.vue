@@ -43,7 +43,7 @@
                 <i class="fa fa-heart action-icon"></i>
                 <span>{{ post.likes_count || 0 }}</span>
               </div>
-              <div class="action-item follow-action" :class="{ 'followed': post.is_followed }" v-if="!isAuthor(post.author_id)" @click="toggleFollow(post)">
+              <div class="action-item follow-action" :class="{ 'followed': post.is_followed }" v-if="!isAuthor(post.author_id)" @click="toggleFollow(post)" :data-author-id="post.author_id">
                 <i class="fa fa-user-plus action-icon"></i>
                 <span>{{ post.is_followed ? 'Following' : 'Follow' }}</span>
               </div>
