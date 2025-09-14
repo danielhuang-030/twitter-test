@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <header>
-      <h1>twitter-test</h1>
+      <h1 class="logo">twitter-test</h1>
       <nav>
         <ul>
           <li>
@@ -11,7 +11,7 @@
             <li>
               <a href="#" @click.prevent="openPostDialog">Create New Post</a>
             </li>
-            <li>
+            <li class="user-menu">
               <a href="javascript:void(0);">{{ userData.name }}</a> <!-- 父選項 -->
               <ul class="submenu">
                 <li><router-link :to="`/user/${userData.id}/posts`">Posts</router-link></li>
@@ -83,49 +83,89 @@ const handlePostSubmit = (submittedPost) => {
 </script>
 
 <style scoped>
-header, footer {
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+  background-color: #1DA1F2;
+  color: white;
+  height: 64px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+nav ul {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  gap: 0.5rem;
+}
+
+nav ul li a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+nav ul li a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.user-menu {
+  position: relative;
+}
+
+.submenu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  padding: 0.5rem;
+  min-width: 180px;
+  z-index: 100;
+  
+  /* Animation */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px) scale(0.98);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+}
+
+.user-menu:hover .submenu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+.submenu li {
+  display: block;
+}
+
+.submenu li a {
+  color: #333;
+  padding: 0.75rem 1rem;
+}
+
+.submenu li a:hover {
+  background-color: #f5f5f5;
+}
+
+footer {
   background-color: #1DA1F2;
   color: white;
   text-align: center;
   padding: 10px 0;
-}
-
-nav ul {
-  list-style: none;
-  padding: 0;
-  text-align: center;
-}
-
-nav ul li {
-  display: inline;
-  margin: 0 10px;
-  position: relative;
-}
-
-nav ul li a {
-  color: white;
-  text-decoration: none;
-}
-
-nav ul li:hover .submenu,
-.submenu:hover {
-  display: block;
-}
-
-/* 子選單的基本樣式 */
-.submenu {
-  display: none;
-  position: absolute;
-  background-color: #1DA1F2;
-  left: 0; /* 將子選單對齊到父元素的左側 */
-  top: 100%; /* 將子選單放在父元素的下方 */
-  min-width: 150px; /* 例如，設置最小寬度 */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* 可選，添加陰影 */
-  padding: 5px 0; /* 添加一些內邊距 */
-}
-
-.submenu li {
-  display: block; /* 讓子選單項目垂直顯示 */
-  padding: 5px 10px; /* 為子選單項目添加填充 */
 }
 </style>

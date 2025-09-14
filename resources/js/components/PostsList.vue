@@ -1,42 +1,62 @@
 <template>
   <div class="posts-list">
-    <ul>
+    <ul v-if="posts.length > 0">
       <li v-for="post in posts" :key="post.id" class="post-item">
-        <div class="post-header">
-          <img src="https://i.pravatar.cc/40" alt="avatar" class="avatar">
-          <div>
-            <p class="author-name">{{ post.author }}</p>
-            <p class="post-date" :title="formatDate(post.updated_at).absolute">
-              {{ formatDate(post.updated_at).relative }}
-            </p>
+        <div class="post-container">
+          <!-- Avatar Column -->
+          <div class="avatar-column">
+            <img :src="`https://i.pravatar.cc/48?u=${post.author_id}`" alt="avatar" class="avatar">
           </div>
-        </div>
-        <p class="post-content">{{ truncateContent(post.content) }}</p>
-        <div class="post-actions">
-          <template v-if="isAuthor(post.author_id)">
-            <div class="action-item" @click="editPost(post)">
-              <i class="fa fa-edit action-icon"></i>
-              <span>Edit</span>
+
+          <!-- Content Column -->
+          <div class="content-column">
+            <div class="post-header">
+              <div class="author-info">
+                <span class="author-name">{{ post.author }}</span>
+                <span class="author-handle">@{{ post.author.toLowerCase().replace(' ', '_') }}</span>
+                <span class="dot">·</span>
+                <span class="post-date" :title="formatDate(post.updated_at).absolute">
+                  {{ formatDate(post.updated_at).relative }}
+                </span>
+              </div>
+              <div class="more-options" v-if="isAuthor(post.author_id)">
+                <div class="more-options-button" @click.stop="toggleOptionsMenu(post.id)">
+                  <i class="fa fa-ellipsis-h"></i>
+                </div>
+                <div v-if="activeOptionsMenu === post.id" class="options-menu">
+                  <div class="action-item" @click="editPost(post)">
+                    <i class="fa fa-edit action-icon"></i>
+                    <span>Edit</span>
+                  </div>
+                  <div class="action-item delete-item" @click="confirmDelete(post.id)">
+                    <i class="fa fa-trash action-icon"></i>
+                    <span>Delete</span>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="action-item" @click="confirmDelete(post.id)">
-              <i class="fa fa-trash action-icon"></i>
-              <span>Delete</span>
+
+            <p class="post-content">{{ post.content }}</p>
+
+            <div class="post-actions">
+              <div class="action-item like-action" :class="{ 'liked': post.is_liked }" v-if="!isAuthor(post.author_id)" @click="toggleLike(post)">
+                <i class="fa fa-heart action-icon"></i>
+                <span>{{ post.likes_count || 0 }}</span>
+              </div>
+              <div class="action-item follow-action" :class="{ 'followed': post.is_followed }" v-if="!isAuthor(post.author_id)" @click="toggleFollow(post)">
+                <i class="fa fa-user-plus action-icon"></i>
+                <span>{{ post.is_followed ? 'Following' : 'Follow' }}</span>
+              </div>
             </div>
-          </template>
-          <template v-else>
-            <div class="action-item" @click="toggleLike(post)">
-              <i class="fa fa-heart action-icon" :class="{ 'liked': post.is_liked, 'not-liked': !post.is_liked }"></i>
-              <span>Like</span>
-            </div>
-            <div class="action-item" @click="toggleFollow(post)">
-              <i class="fa fa-user-plus action-icon" :class="{ 'followed': post.is_followed, 'not-followed': !post.is_followed }"></i>
-              <span>Follow</span>
-            </div>
-          </template>
+          </div>
         </div>
       </li>
     </ul>
+    <div v-else class="no-posts">
+        <p>No posts to display.</p>
+    </div>
     <el-pagination
+      v-if="totalPosts > pageSize"
       @current-change="handlePageChange"
       :current-page="currentPage"
       :page-size="pageSize"
@@ -48,7 +68,7 @@
 
 <script setup>
 import { useStore } from 'vuex';
-import { computed } from 'vue';
+import { computed, ref, onMounted, onUnmounted } from 'vue';
 import { formatDistanceToNow, format, differenceInDays } from 'date-fns';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import apiService from '../apiService';
@@ -65,27 +85,35 @@ const store = useStore();
 const userData = computed(() => store.state.userData);
 const emit = defineEmits(['page-changed', 'edit-post', 'post-deleted']);
 
-const truncateContent = (content, maxLength = 50) => {
-  if (content.length <= maxLength) {
-    return content;
-  }
-  let truncated = content.slice(0, maxLength);
+const activeOptionsMenu = ref(null);
 
-  const lastNewline = truncated.lastIndexOf('\n');
-  if (lastNewline > -1) {
-    truncated = truncated.slice(0, lastNewline);
+const toggleOptionsMenu = (postId) => {
+  if (activeOptionsMenu.value === postId) {
+    activeOptionsMenu.value = null;
+  } else {
+    activeOptionsMenu.value = postId;
   }
-
-  return truncated + '...';
 };
+
+const closeOptionsMenu = () => {
+  activeOptionsMenu.value = null;
+};
+
+onMounted(() => {
+  document.addEventListener('click', closeOptionsMenu);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('click', closeOptionsMenu);
+});
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
   const now = new Date();
 
   return {
-    relative: differenceInDays(now, date) > 7
-      ? format(date, 'yyyy-MM-dd HH:mm:ss')
+    relative: differenceInDays(now, date) > 1
+      ? format(date, 'MMM d')
       : formatDistanceToNow(date, { addSuffix: true }),
     absolute: format(date, 'yyyy-MM-dd HH:mm:ss')
   };
@@ -145,6 +173,7 @@ const toggleLike = async (post) => {
   );
   if (success) {
     post.is_liked = !post.is_liked;
+    post.likes_count = post.is_liked ? (post.likes_count || 0) + 1 : (post.likes_count || 1) - 1;
   }
 };
 
@@ -158,114 +187,179 @@ const toggleFollow = async (post) => {
     post.is_followed = !post.is_followed;
   }
 };
+
 </script>
 
 <style scoped>
 ul {
-  list-style-type: none; /* 移除列表項目前的點 */
+  list-style-type: none;
   padding: 0;
 }
 
 .post-item {
-  border: 1px solid #e1e8ed;
-  border-radius: 12px;
-  padding: 1rem;
-  margin-bottom: 1rem;
+  border-bottom: 1px solid #e1e8ed;
+  padding: 1rem 1.5rem;
   background-color: white;
-  transition: box-shadow 0.2s ease-in-out;
+  transition: background-color 0.2s ease-in-out;
 }
 
 .post-item:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  background-color: #f5f8fa;
+}
+
+.post-container {
+  display: flex;
+  gap: 1rem;
+}
+
+.avatar-column {
+  flex-shrink: 0;
+}
+
+.content-column {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
 }
 
 .post-header {
   display: flex;
-  align-items: center;
-  margin-bottom: 0.75rem;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.25rem;
 }
 
-.avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  margin-right: 10px;
+.author-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .author-name {
-  font-weight: 600;
-  margin-right: 10px;
+  font-weight: bold;
+  color: #14171a;
 }
 
-.post-date {
+.author-handle, .post-date, .dot {
   color: #657786;
-  font-size: 0.85em;
+  font-size: 0.95em;
 }
 
 .post-content {
   white-space: pre-wrap;
   margin-bottom: 1rem;
   line-height: 1.5;
+  color: #14171a;
+  font-size: 1.05em;
 }
 
 .post-actions {
   display: flex;
-  justify-content: space-around;
+  gap: 3rem; /* Add gap between actions */
+  justify-content: flex-start;
   color: #657786;
+  max-width: 425px;
 }
 
 .action-item {
   display: flex;
   align-items: center;
+  gap: 0.5rem;
   cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 9999px;
+  font-size: 0.9em;
+}
+
+.action-item .action-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
   transition: background-color 0.2s, color 0.2s;
 }
 
-.action-item:hover {
+.action-item:hover .action-icon {
   background-color: rgba(29, 161, 242, 0.1);
   color: #1DA1F2;
 }
 
-.action-icon {
-  margin-right: 0.5rem;
-  font-size: 1.25em;
+.like-action .action-icon {
+  color: inherit; /* Default color is grey */
 }
 
-.liked {
-  color: #E0245E; /* Twitter's like red */
+.like-action.liked, .like-action.liked .action-icon {
+  color: #E0245E; /* Red when liked */
 }
 
-.not-liked {
-  color: inherit;
+.like-action:hover .action-icon {
+  background-color: rgba(224, 36, 94, 0.1);
+  color: #E0245E;
 }
 
-.followed {
-  color: #17BF63; /* A vibrant green */
+.follow-action.followed, .follow-action.followed .action-icon {
+  color: #17BF63; /* Green when followed */
 }
 
-.not-followed {
-  color: inherit;
+.more-options {
+  position: relative;
 }
 
-@media (max-width: 768px) {
-  .post-item {
-    padding: 0.75rem;
-    border-radius: 8px;
-  }
+.more-options-button {
+  cursor: pointer;
+  color: #657786;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
 
-  .action-item span {
-    display: none;
-  }
+.more-options-button:hover {
+  background-color: rgba(29, 161, 242, 0.1);
+  color: #1DA1F2;
+}
 
-  .action-icon {
-    margin-right: 0;
-    font-size: 1.2rem;
-  }
+.options-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  padding: 0.5rem;
+  min-width: 180px;
+  z-index: 100;
+  border: 1px solid #e1e8ed;
+}
 
-  .post-actions {
-    justify-content: space-around;
-  }
+.options-menu .action-item {
+  width: 100%;
+  padding: 0.75rem;
+  color: #14171a;
+}
+
+.options-menu .action-item:hover {
+  background-color: #f5f8fa;
+}
+
+.options-menu .delete-item:hover {
+  background-color: rgba(224, 36, 94, 0.1);
+  color: #E0245E;
+}
+
+.no-posts {
+    text-align: center;
+    padding: 3rem;
+    color: #657786;
 }
 </style>
+
