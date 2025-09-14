@@ -1,9 +1,14 @@
 <template>
-  <el-dialog v-model="dialogVisible" :title="isEditMode ? 'Edit Post' : 'Create Post'">
+  <el-dialog
+    :model-value="dialogVisible"
+    :title="isEditMode ? 'Edit Post' : 'Create Post'"
+    @update:model-value="$emit('update:dialogVisible', $event)"
+    @opened="onDialogOpened"
+  >
     <form @submit.prevent="handleSubmit">
-      <el-input type="textarea" v-model="postContent" placeholder="Share something new..." :autosize="{ minRows: 4, maxRows: 8 }" />
+      <el-input type="textarea" v-model="postContent" placeholder="Share something new..." :autosize="{ minRows: 4, maxRows: 8 }" ref="postInputRef" />
       <span class="dialog-footer">
-        <el-button @click="dialogVisible = false">Cancel</el-button>
+        <el-button @click="handleCancel">Cancel</el-button>
         <el-button type="primary" @click="handleSubmit">Post</el-button>
       </span>
     </form>
@@ -11,11 +16,12 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watch, nextTick } from 'vue';
 import { ElMessage } from 'element-plus';
 import apiService from '../apiService';
 
 const props = defineProps({
+  dialogVisible: Boolean,
   post: Object,
   isEditMode: {
     type: Boolean,
@@ -23,11 +29,20 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['post-submitted']);
+const emit = defineEmits(['update:dialogVisible', 'post-submitted']);
 
 const postContent = ref('');
-const dialogVisible = ref(false);
-const currentPost = ref(null);
+const postInputRef = ref(null);
+
+watch(() => props.post, (newPost) => {
+  postContent.value = newPost ? newPost.content : '';
+}, { immediate: true });
+
+const onDialogOpened = () => {
+  nextTick(() => {
+    postInputRef.value?.focus();
+  });
+};
 
 const handleSubmit = async () => {
   if (!postContent.value.trim()) {
@@ -41,34 +56,23 @@ const handleSubmit = async () => {
 
   try {
     let response;
-    if (currentPost.value) {
-      response = await apiService.updatePost(currentPost.value.id, { content: postContent.value });
+    if (props.isEditMode && props.post) {
+      response = await apiService.updatePost(props.post.id, { content: postContent.value });
     } else {
       response = await apiService.createPost({ content: postContent.value });
     }
     ElMessage.success(response.data.message);
     emit('post-submitted', response.data.data.post);
-    dialogVisible.value = false;
+    emit('update:dialogVisible', false);
   } catch (error) {
     console.log(error);
-
     ElMessage.error(error.response?.data?.message || 'Submission failed. Please try again.');
   }
 };
 
-const openDialog = (post = null) => {
-  currentPost.value = post;
-  if (post) {
-    postContent.value = post.content;
-  } else {
-    postContent.value = '';
-  }
-  dialogVisible.value = true;
+const handleCancel = () => {
+  emit('update:dialogVisible', false);
 };
-
-defineExpose({
-  openDialog
-});
 </script>
 
 <style scoped>

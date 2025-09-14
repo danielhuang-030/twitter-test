@@ -9,7 +9,7 @@
           </li>
           <template v-if="isLoggedIn">
             <li>
-              <a href="#" @click="openPostDialog">Create New Post</a>
+              <a href="#" @click.prevent="openPostDialog">Create New Post</a>
             </li>
             <li>
               <a href="javascript:void(0);">{{ userData.name }}</a> <!-- 父選項 -->
@@ -26,7 +26,14 @@
       </nav>
     </header>
 
-    <post-form ref="postFormRef" @post-submitted="handlePostSubmit" :isEditMode="false"></post-form>
+    <!-- Global Post Form Dialog -->
+    <post-form 
+      v-model:dialogVisible="postDialogVisible"
+      :post="editingPost"
+      :isEditMode="isEditMode" 
+      @post-submitted="handlePostSubmit"
+    ></post-form>
+
     <router-view :key="$route.fullPath"></router-view>
 
     <footer>
@@ -36,17 +43,25 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 import { useStore } from 'vuex';
 import PostForm from './components/PostForm.vue';
 
 const store = useStore();
 const currentYear = new Date().getFullYear();
 
-const postFormRef = ref(null);
-
 const userData = computed(() => store.state.userData);
 const isLoggedIn = computed(() => !!userData.value);
+const postDialogVisible = computed({
+  get: () => store.state.postDialogVisible,
+  set: (value) => {
+    if (!value) {
+      store.dispatch('closePostDialog');
+    }
+  }
+});
+const editingPost = computed(() => store.state.editingPost);
+const isEditMode = computed(() => !!store.state.editingPost);
 
 const logout = async () => {
   try {
@@ -58,13 +73,12 @@ const logout = async () => {
 };
 
 const openPostDialog = () => {
-  if (postFormRef.value) {
-    postFormRef.value.openDialog();
-  }
+  store.dispatch('openPostDialog');
 };
 
-const handlePostSubmit = (postContent) => {
-  // ... 處理貼文提交
+const handlePostSubmit = (submittedPost) => {
+  window.dispatchEvent(new CustomEvent('post-submitted', { detail: submittedPost }));
+  store.dispatch('closePostDialog');
 };
 </script>
 

@@ -9,22 +9,20 @@
       @edit-post="handleEditPost"
       @post-deleted="handlePostDeleted">
     </posts-list>
-    <post-form ref="postFormRef" :post="editingPost" :isEditMode="!!editingPost" @post-submitted="handlePostSubmitted"></post-form>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
+import { useStore } from 'vuex';
 import PostsList from './PostsList.vue';
-import PostForm from './PostForm.vue';
 import apiService from '../apiService';
 
+const store = useStore();
 const posts = ref([]);
 const currentPage = ref(1);
-const pageSize = 10; // 每頁顯示的文章數量
-const totalPosts = ref(0); // 總文章數量
-const editingPost = ref(null);
-const postFormRef = ref(null);
+const pageSize = 10;
+const totalPosts = ref(0);
 
 const fetchPosts = async (page) => {
   try {
@@ -41,10 +39,7 @@ const fetchPosts = async (page) => {
 };
 
 const handleEditPost = (post) => {
-  editingPost.value = post;
-  if (postFormRef.value) {
-    postFormRef.value.openDialog(post);
-  }
+  store.dispatch('openPostDialog', post);
 };
 
 const handlePostDeleted = (deletedPostId) => {
@@ -52,22 +47,26 @@ const handlePostDeleted = (deletedPostId) => {
   totalPosts.value--;
 };
 
-const handlePostSubmitted = (submittedPost) => {
+const handlePostSubmitted = (event) => {
+  const submittedPost = event.detail;
   const index = posts.value.findIndex(p => p.id === submittedPost.id);
   if (index !== -1) {
-    // Editing an existing post
     posts.value[index] = submittedPost;
   } else {
-    // Adding a new post
     posts.value.unshift(submittedPost);
     totalPosts.value++;
   }
-  editingPost.value = null; // Reset editing state
 };
 
 onMounted(() => {
   fetchPosts(currentPage.value);
+  window.addEventListener('post-submitted', handlePostSubmitted);
 });
+
+onUnmounted(() => {
+  window.removeEventListener('post-submitted', handlePostSubmitted);
+});
+
 </script>
 
 <style scoped>

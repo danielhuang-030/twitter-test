@@ -11,6 +11,8 @@ export default createStore({
       token: null,
       userData: null,
       echo: null,
+      postDialogVisible: false,
+      editingPost: null, // Add this
     };
   },
   getters: {
@@ -25,6 +27,12 @@ export default createStore({
     },
     SET_ECHO(state, echo) {
       state.echo = echo;
+    },
+    SET_POST_DIALOG_VISIBLE(state, visible) {
+      state.postDialogVisible = visible;
+    },
+    SET_EDITING_POST(state, post) { // Add this
+      state.editingPost = post;
     }
   },
   actions: {
@@ -158,6 +166,14 @@ export default createStore({
         }
         resolve();
       });
+    },
+    openPostDialog({ commit }, post = null) { // Modified
+      commit('SET_EDITING_POST', post);
+      commit('SET_POST_DIALOG_VISIBLE', true);
+    },
+    closePostDialog({ commit }) {
+      commit('SET_POST_DIALOG_VISIBLE', false);
+      commit('SET_EDITING_POST', null); // Modified
     },
   }
 });
