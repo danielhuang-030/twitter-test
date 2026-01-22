@@ -9,7 +9,7 @@
         "axios": "^1.7.2",
         "chokidar": "^3.5.3",
         "laravel-vite-plugin": "^1.0.4",
-        "lodash": "^4.17.19",
+        "lodash": "^4.17.23",
         "postcss": "^8.4.31",
         "resolve-url-loader": "^5.0.0",
         "sass": "^1.49.9",
